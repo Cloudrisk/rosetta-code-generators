@@ -37,7 +37,8 @@
                                 <configuration>
                                     <sourceRoots>
             							<!-- Checkout FINOS/common-domain-model locally, and specify the relative path (or absolute path) here -->
-                                        <sourceRoot>../../finos/common-domain-model/rosetta-source/src/main/rosetta</sourceRoot>
+                                        <!--<sourceRoot>../../finos/common-domain-model/rosetta-source/src/main/rosetta</sourceRoot>-->
+                                        <sourceRoot>python/build/resources/rosetta/cdm_3.3.2</sourceRoot>
                                     </sourceRoots>
                                     <classPathLookupFilter>.*com\.regnosys\.rosetta.*</classPathLookupFilter>
                                     <languages>
