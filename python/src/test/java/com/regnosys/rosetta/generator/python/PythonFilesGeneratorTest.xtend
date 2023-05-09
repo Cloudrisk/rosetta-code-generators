@@ -38,6 +38,7 @@ import com.regnosys.rosetta.tests.util.ModelHelper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.configuration2.INIConfiguration
 import org.slf4j.LoggerFactory;
+import java.nio.file.Path
 
 /*
  * Test Principal
@@ -225,36 +226,29 @@ class PythonFilesGeneratorTest {
 	def writeFiles(String pythonTgtPath, Map<String, ? extends CharSequence> generatedFiles){
 		// Assuming 'generatedFiles' is a HashMap<String, CharSequence>
 		for (entry : generatedFiles.entrySet) {
-		  val key   = entry.key
-		  val value = entry.value.toString
+		  val filePath   = entry.key
+		  val fileContents = entry.value.toString
 		
 		  // Split the key into its components and replace '.' with the file separator
-		  val filePathComponents = key.split("\\.").toList
-		  val fileName   = filePathComponents.last
-		  val outputPath = pythonTgtPath + File.separator + filePathComponents.take(filePathComponents.size - 1).join(File.separator)
-		  val outputDir  = new File(outputPath)
+		  val outputPath = Path.of(pythonTgtPath + "/" + filePath);
 		
 		  // Create the directory structure if it doesn't exist
-		  if (!outputDir.exists) {
-		    outputDir.mkdirs()
-		   }
+		  
 		   // Create __init__.py files in each subdirectory starting from the second element of the key
-	       var parentDir = outputDir
-	       var stop      = false
-	       while (parentDir !== null && parentDir.getParent.contains(File.separator) && !stop) {
-	           new File(parentDir, "__init__.py").createNewFile()
-	           parentDir = parentDir.getParentFile
-	           // Stop at the first element of the key (e.g., "cdm" folder)
-	           if (parentDir.getName == filePathComponents.get(0)) {
-	               stop = true
-	           }
-	       }
-			  	
-		  // Create the output file with a '.py' extension
-		  val outputFile = new File(outputDir, fileName + ".py")
+//	       var parentDir = outputDir
+//	       var stop      = false
+//	       while (parentDir !== null && parentDir.getParent.contains(File.separator) && !stop) {
+//	           new File(parentDir, "__init__.py").createNewFile()
+//	           parentDir = parentDir.getParentFile
+//	           // Stop at the first element of the key (e.g., "cdm" folder)
+//	           if (parentDir.getName == filePathComponents.get(0)) {
+//	               stop = true
+//	           }
+//	       }
 		
-		  // Overwrite the content of the file
-		  Files.write(outputFile.toPath, value.getBytes(StandardCharsets.UTF_8))
+		  LOGGER.info("Writing {}", outputPath);
+		  Files.createDirectories(outputPath.parent);
+		  Files.write(outputPath, fileContents.getBytes(StandardCharsets.UTF_8))
 		}
 		
 	}

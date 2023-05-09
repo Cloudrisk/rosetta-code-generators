@@ -140,7 +140,7 @@ class PythonModelObjectGenerator {
 				val namespace = tr.name
 				try{
 					val classes = type.generateClasses(version, models).replaceTabsWithSpaces
-					result.put(namespace+"."+type.name, utils.createImports(type.name) + classes)
+					result.put(utils.toPyFileName(namespace, type.name), utils.createImports(type.name) + classes)
 								
 				}
 				catch(Exception ex){

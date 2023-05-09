@@ -63,4 +63,8 @@ class PythonModelGeneratorUtil {
 		
 		
 	}
+	
+    def String toPyFileName(String namespace, String fileName) {
+       '''«namespace.replace(".", "/")»/«fileName».py''';
+    }
 }

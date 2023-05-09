@@ -19,8 +19,6 @@ class PythonEnumGenerator {
 	@Inject
 	PythonModelGeneratorUtil utils;
 	
-    static final String FILENAME = 'Enums.py'
-
     def Map<String, ? extends CharSequence> generate(Iterable<RosettaEnumeration> rosettaEnums, String version) {
         val result = new HashMap
         if(rosettaEnums.size>0){
@@ -37,7 +35,7 @@ class PythonEnumGenerator {
 	        		all = ['«enum.name»']
 	  
 	        		'''
-	        		result.put(namespace+"."+enum.name, all +enums)
+	        		result.put(utils.toPyFileName(namespace, enum.name), all +enums)
 				}
 				catch(Exception ex){
 					println ('PythonFilesGeneratorTest::Error in... ' + enum.name )	
