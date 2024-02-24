@@ -228,18 +228,21 @@ class BaseDataClass(BaseModel):
                 log.info('Condition %s for %s satisfied.', name, self)
         if recursively:
             for k, v in self.__dict__.items():
-                if isinstance(v, BaseDataClass):
-                    log.info(
-                        'Invoking conditions validation on the property '
-                        '"%s" of %s', k, self
-                    )
-                    exc = v.validate_conditions(recursively=True,  # type:ignore
-                                                raise_exc=raise_exc)
-                    exceptions += exc  # type:ignore
-                    if exc:
-                        log.error(
-                            'Validation of the property "%s" of %s failed!', k,
-                            self)
+                log.info('Validating conditions of property %s', k)
+                exceptions += _validate_conditions_recursively(
+                    v, raise_exc=raise_exc)
+                # if isinstance(v, BaseDataClass):
+                #     log.info(
+                #         'Invoking conditions validation on the property '
+                #         '"%s" of %s', k, self
+                #     )
+                #     exc = v.validate_conditions(recursively=True,  # type:ignore
+                #                                 raise_exc=raise_exc)
+                #     exceptions += exc  # type:ignore
+                #     if exc:
+                #         log.error(
+                #             'Validation of the property "%s" of %s failed!', k,
+                #             self)
         err = 'with' if exceptions else 'without'
         log.info('Done conditions checking for %s %s errors.', self, err)
         return exceptions
@@ -289,6 +292,27 @@ class BaseDataClass(BaseModel):
             )
 
         attr.append(value)
+
+
+def _validate_conditions_recursively(obj, raise_exc=True):
+    '''Helper to execute conditions recursively on a model.'''
+    if not obj:
+        return []
+    if isinstance(obj, BaseDataClass):
+        return obj.validate_conditions(recursively=True,  # type:ignore
+                                       raise_exc=raise_exc)
+    if isinstance(obj, (list, tuple)):
+        exc = []
+        for item in obj:
+            exc += _validate_conditions_recursively(item, raise_exc=raise_exc)
+        return exc
+    if isinstance(obj, (AttributeWithMeta,
+                        AttributeWithAddress,
+                        AttributeWithMetaWithAddress,
+                        AttributeWithMetaWithReference,
+                        AttributeWithMetaWithAddressWithReference)):
+        return _validate_conditions_recursively(obj.value, raise_exc=raise_exc)
+    return []
 
 
 def get_allowed_types_for_list_field(model_class: type, field_name: str):
