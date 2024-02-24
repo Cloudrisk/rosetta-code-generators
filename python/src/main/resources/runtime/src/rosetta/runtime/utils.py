@@ -213,10 +213,11 @@ class BaseDataClass(BaseModel):
             thrown if a condition is not met or if a list with all encountered
             condition violations should be returned instead.
         '''
-        log.info('Checking conditions for %s ...', self)
+        self_rep = object.__repr__(self)
+        log.info('Checking conditions for %s ...', self_rep)
         exceptions = []
         for name, condition in _get_conditions(self.__class__):
-            log.info('Checking condition %s for %s...', name, self)
+            log.info('Checking condition %s for %s...', name, self_rep)
             if not condition(self):
                 msg = f'Condition "{name}" for {repr(self)} failed!'
                 log.error(msg)
@@ -225,7 +226,7 @@ class BaseDataClass(BaseModel):
                     raise exc
                 exceptions.append(exc)
             else:
-                log.info('Condition %s for %s satisfied.', name, self)
+                log.info('Condition %s for %s satisfied.', name, self_rep)
         if recursively:
             for k, v in self.__dict__.items():
                 log.info('Validating conditions of property %s', k)
@@ -244,12 +245,12 @@ class BaseDataClass(BaseModel):
                 #             'Validation of the property "%s" of %s failed!', k,
                 #             self)
         err = 'with' if exceptions else 'without'
-        log.info('Done conditions checking for %s %s errors.', self, err)
+        log.info('Done conditions checking for %s %s errors.', self_rep, err)
         return exceptions
 
     def check_one_of_constraint(self, *attr_names, necessity=True) -> bool:
         """ Checks that one and only one attribute is set. """
-        values = self.dict()
+        values = self.model_dump()
         vals = [values.get(n) for n in attr_names]
         n_attr = sum(1 for v in vals if v is not None)
         if necessity and n_attr != 1:

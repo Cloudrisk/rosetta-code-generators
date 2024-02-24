@@ -1,5 +1,6 @@
 # pylint: disable=unused-import,missing-function-docstring,invalid-name
 from datetime import date
+import logging
 from cdm.event.common.Trade import Trade
 from cdm.event.common.TradeIdentifier import TradeIdentifier
 from cdm.product.template.TradableProduct import TradableProduct
@@ -42,6 +43,7 @@ def test_trade():
 
 
 if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.DEBUG)
     test_trade()
 
 # EOF
