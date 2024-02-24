@@ -15,6 +15,7 @@ __all__ = ['if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition',
            'execute_local_conditions',
            'flatten_list',
            '_resolve_rosetta_attr',
+           'rosetta_count',
            '_get_rosetta_object',
            'set_rosetta_attr',
            'add_rosetta_attr',
@@ -58,6 +59,16 @@ def _resolve_rosetta_attr(obj: Any | None,
                if item is not None]
         return res if res else None
     return getattr(obj, attrib, None)
+
+
+def rosetta_count(obj: Any | None) -> int:
+    '''Implements the lose count semantics of the rosetta DSL'''
+    if not obj:
+        return 0
+    try:
+        return len(obj)
+    except TypeError:
+        return 1
 
 
 def _get_rosetta_object(base_model: str, attribute: str, value: Any) -> Any:
