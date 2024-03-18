@@ -42,8 +42,7 @@ class PythonFilesGeneratorTest {
     @Inject extension ParseHelper<RosettaModel>
     @Inject extension ModelHelper
     
-    @Inject
-    Provider<XtextResourceSet> resourceSetProvider;
+    @Inject Provider<XtextResourceSet> resourceSetProvider;
 
     def private Properties getProperties () throws Exception {
         var reader     = new MavenXpp3Reader();
@@ -59,7 +58,7 @@ class PythonFilesGeneratorTest {
                 LOGGER.error ("Failed to delete folder content: " + e.message)
             }
         } else {
-            LOGGER.error (folderPath + " does not exist or is not a directory")
+            LOGGER.error (folder + " does not exist or is not a directory")
         }
     }
     
@@ -116,12 +115,11 @@ class PythonFilesGeneratorTest {
             val python = generatePythonFromRosettaModel (model, resourceSet);
             generatedFiles.putAll (python)
         }
-        println("number of python files: " + generatedFiles.size())
         deleteFolderContent(outputPath)
         writeFiles(outputPath, generatedFiles)
         LOGGER.info ("generatePythonFromRosettaFiles ... done")
     } 
-    //@Disabled("Generate CDM from Rosetta Files")
+    @Disabled("Generate CDM from Rosetta Files")
     @Test
     def void generateCDMPythonFromRosetta () {
         // the process: get directory information from the POM, create Python from Rosetta definitions and write out results
@@ -168,7 +166,6 @@ class PythonFilesGeneratorTest {
             } else if (outputPath === null) {
                 LOGGER.debug ('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... target directory not specified')
             } else {
-//#### not working yet for one rosetta file
                 generatePythonFromRosettaFiles (rosettaSource, outputPath)
             }
         } 
