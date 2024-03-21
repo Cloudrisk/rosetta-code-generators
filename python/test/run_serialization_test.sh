@@ -25,7 +25,6 @@ $PYEXE -m venv --clear .pydevenv || processError
 source .pydevenv/$ACDIR/activate || processError
 
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-echo $MYPATH
 ROSETTARUNTIMEDIR="../src/main/resources/runtime"
 PYTHONCDMDIR="../target/python"
 $PYEXE -m pip install pydantic

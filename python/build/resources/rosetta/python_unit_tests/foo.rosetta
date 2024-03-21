@@ -1,4 +1,4 @@
-namespace rosetta-python-unit-tests : <"generate Python unit tests from Rosetta.">
+namespace unittests : <"generate Python unit tests from Rosetta.">
 
 type Foo:
     attr int (1..1) 
