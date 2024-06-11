@@ -559,15 +559,8 @@
             }
           }
         },
-        "contractualParty" : [ {
-          "globalReference" : "b6bdbfc2",
-          "externalReference" : "p1"
-        }, {
-          "globalReference" : "a14913ec",
-          "externalReference" : "p2"
-        } ],
         "meta" : {
-          "globalKey" : "553bc828"
+          "globalKey" : "c4592b87"
         }
       }, {
         "legalAgreementIdentification" : {
@@ -581,19 +574,12 @@
             } ]
           }
         },
-        "contractualParty" : [ {
-          "globalReference" : "b6bdbfc2",
-          "externalReference" : "p1"
-        }, {
-          "globalReference" : "a14913ec",
-          "externalReference" : "p2"
-        } ],
         "meta" : {
-          "globalKey" : "b6ba3b81"
+          "globalKey" : "6b413360"
         }
       } ],
       "meta" : {
-        "globalKey" : "9fb92059"
+        "globalKey" : "bd492439"
       }
     },
     "account" : [ {
@@ -630,10 +616,10 @@
       }
     } ],
     "meta" : {
-      "globalKey" : "281f81f1"
+      "globalKey" : "10dad4d1"
     }
   },
   "meta" : {
-    "globalKey" : "281f81f1"
+    "globalKey" : "10dad4d1"
   }
 }

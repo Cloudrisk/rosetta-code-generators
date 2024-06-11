@@ -42,8 +42,6 @@ import com.regnosys.rosetta.rosetta.expression.RosettaSymbolReference
 import com.regnosys.rosetta.rosetta.expression.SortOperation
 import com.regnosys.rosetta.rosetta.expression.SumOperation
 import com.regnosys.rosetta.rosetta.expression.ThenOperation
-import com.regnosys.rosetta.rosetta.expression.ToStringOperation
-import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -54,6 +52,7 @@ import java.util.List
 
 class PythonExpressionGenerator {
 
+    
     public var List<String> importsFound
     public var if_cond_blocks = new ArrayList<String>()
 
@@ -225,7 +224,11 @@ class PythonExpressionGenerator {
                 if (receiver === null) {
                     '''«right»'''
                 } else {
+<<<<<<< HEAD
                     '''rosetta_resolve_attr(«receiver», "«right»")'''
+=======
+                    '''_resolve_rosetta_attr(«receiver», "«right»")'''
+>>>>>>> master
                 }
             }
             RosettaExistsExpression: {
@@ -357,14 +360,7 @@ class PythonExpressionGenerator {
 
                 return pythonConstructor
             }
-            ToStringOperation: {
-                val argument = generateExpression(expr.argument, iflvl);
-                return '''rosetta_str(«argument»)''';
-            }
-            ToEnumOperation: {
-                val argument = generateExpression(expr.argument, iflvl);
-                return '''«expr.enumeration.name»(«argument»)''';
-            }
+
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
         }
@@ -389,7 +385,11 @@ class PythonExpressionGenerator {
                 '''«s.name»'''
             }
             Attribute: {
+<<<<<<< HEAD
                 '''rosetta_resolve_attr(self, "«s.name»")'''
+=======
+                '''_resolve_rosetta_attr(self, "«s.name»")'''
+>>>>>>> master
             }
             RosettaEnumeration: {
                 '''«s.name»'''
@@ -398,10 +398,17 @@ class PythonExpressionGenerator {
                 callableWithArgsCall(s, expr, iflvl)
             }
             ShortcutDeclaration:{
+<<<<<<< HEAD
                 '''rosetta_resolve_attr(self, "«s.name»")'''
             }
             ClosureParameter:{
                 '''rosetta_resolve_attr(self, "«s.name»")'''
+=======
+                '''_resolve_rosetta_attr(self, "«s.name»")'''
+            }
+            ClosureParameter:{
+                '''_resolve_rosetta_attr(self, "«s.name»")'''
+>>>>>>> master
             }
 
             default:
