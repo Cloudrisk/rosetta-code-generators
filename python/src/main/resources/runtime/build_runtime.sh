@@ -24,11 +24,7 @@ cd $MYPATH
 ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
 
 $PYEXE -m venv --clear .pydevenv || processError
-<<<<<<< HEAD
-source .pydevenv/$ACDIR/activate || processError
-=======
 source .pyenv/$ACDIR/activate || processError
->>>>>>> master
 $PYEXE -m pip install --upgrade pip || processError
 $PYEXE -m pip install "setuptools>=62.0" || processError
 $PYEXE -m pip install pylint || processError
@@ -47,7 +43,7 @@ echo "**************************************************************************
 echo "*                                                                         *"
 echo "*                                 SUCCESS!!!                              *"
 echo "*                                                                         *"
-echo "*Finished installing dependencies and building the rosetta runtime       !*"
+echo "*Finished installing dependencies and building/installing the cdm package!*"
 echo "*                                                                         *"
 echo "***************************************************************************"
 echo ""

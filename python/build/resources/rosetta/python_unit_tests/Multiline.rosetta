@@ -1,7 +1,0 @@
-namespace rosetta.test. : <"generate Python unit tests from Rosetta.">
-
-type Multiline:
-    attr int (1..1) 
-    <"This is a
-    multiline
-    definition">

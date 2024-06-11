@@ -73,14 +73,11 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
                 model.getElements().stream().filter(t -> Function.class.isInstance(t))
                         .map(Function.class::cast).collect(Collectors.toList());
 
-        if (rosettaClasses.size() > 0 ||
-            metaTypes.size () > 0 ||
-            rosettaEnums.size() > 0 ||
-            rosettaFunctions.size() > 0) {
+        if (rosettaFunctions.size() > 0) {
             if (!subfolders.contains(model.getName())) {
                 subfolders.add(model.getName());
             }
-            if (rosettaFunctions.size()> 0 && !subfolders.contains(model.getName() + ".functions")) {
+            if (!subfolders.contains(model.getName() + ".functions")) {
                 subfolders.add(model.getName() + ".functions");
             }
         }
