@@ -58,9 +58,9 @@ def test_trade():
 
 
 def test_rates():
-    ''' The below sample json is conform to CDM 5.8.0, the python library
-        generated for earlier or newer versions of CDM might fail to parse
-        it correctly.
+    ''' The below sample json needs to conform to the same current version of CDM as was used
+        to build the python library.
+        JSON generated for earlier or newer versions of CDM might fail to correctly parse or validate
     '''
     path = os.path.join(os.path.dirname(__file__), 
                         CDM_JSON_SAMPLE_SOURCE,

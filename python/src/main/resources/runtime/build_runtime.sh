@@ -30,7 +30,7 @@ $PYEXE -m pip install "setuptools>=62.0" || processError
 $PYEXE -m pip install pylint || processError
 $PYEXE -m pip install pycodestyle || processError
 $PYEXE -m pip install yapf || processError
-$PYEXE -m pip install "pydantic>=2.0.0" || processError
+$PYEXE -m pip install "pydantic>=2.6.1,<2.10" || processError
 $PYEXE -m pip install jsonpickle || processError
 rm -rf build
 rm rosetta_runtime-*-py3-none-any.whl

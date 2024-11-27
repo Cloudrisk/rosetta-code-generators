@@ -13,7 +13,7 @@ def test_trade_state (cdm_sample_in=None):
     dir_path = os.path.dirname(__file__)
     if cdm_sample_in is None:
         sys.path.append(os.path.join(dir_path))
-        cdm_sample_in = os.path.join(dir_path, CDM_JSON_SAMPLE_SOURCE, 'rates', 'EUR-Vanilla-account.json')
+        cdm_sample_in = os.path.join(dir_path, CDM_JSON_SAMPLE_SOURCE, 'rates', 'ird-ex55-muni-basis-swap.json')
     cdm_comparison_test_from_file (cdm_sample_in, TradeState)
 
 if __name__ == "__main__":
