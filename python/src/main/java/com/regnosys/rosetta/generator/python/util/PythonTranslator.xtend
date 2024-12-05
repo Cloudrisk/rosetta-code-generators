@@ -95,7 +95,7 @@ class PythonTranslator {
         return pythonType
     }
     static def String toPythonType (RAttribute ra) {
-        val rt     = (ra === null) ? null : ra.getRType
+        val rt     = (ra === null) ? null : ra.getRMetaAnnotatedType.getRType
         val rtName = (rt === null) ? null : rt.getName 
         if (rtName === null) 
             return null

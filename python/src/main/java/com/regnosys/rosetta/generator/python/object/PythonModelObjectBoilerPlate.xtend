@@ -22,7 +22,7 @@ class PythonModelObjectBoilerPlate {
         return (ra.isMulti) ? '''MutableList<«ra.toRawType»>''' : '''«ra.toRawType»'''
     }
     def toRawType(RAttribute ra) {
-        ra.getRType.toPythonType
+        ra.getRMetaAnnotatedType.getRType.toPythonType
     }
     def toReferenceWithMetaTypeName(RType type) {
         '''ReferenceWithMeta«type.toMetaTypeName»'''

@@ -9,6 +9,7 @@ import com.regnosys.rosetta.types.RObjectFactory
 import com.regnosys.rosetta.types.RDataType
 import com.regnosys.rosetta.types.RChoiceType
 import com.regnosys.rosetta.types.RAttribute
+import com.regnosys.rosetta.types.RMetaAttribute
 import com.regnosys.rosetta.utils.DeepFeatureCallUtil
 import com.regnosys.rosetta.rosetta.simple.Data
 import com.regnosys.rosetta.generator.python.util.PythonTranslator
@@ -33,12 +34,13 @@ class PythonModelObjectGenerator {
             throw new Exception("Attribute type is null for " + ra.name + " for class " + c.name)
         }
         
-        if (ra.getMetaAnnotations.size > 0) {
+        var metaAnnotations = ra.RMetaAnnotatedType
+        if (metaAnnotations !== null && metaAnnotations.hasMeta) {
             var helperClass = "Attribute";
             var hasRef      = false;
             var hasAddress  = false;
             var hasMeta     = false;
-            for (RAttribute meta : ra.getMetaAnnotations()) {
+            for (RMetaAttribute meta : metaAnnotations.getMetaAttributes) {
                 val mname = meta.getName();
                 if (mname == "reference") { 
                     hasRef = true;
@@ -91,7 +93,7 @@ class PythonModelObjectGenerator {
         val deepReferenceMap = new HashMap <String, ArrayList<String>>()
         val deepFeatures     = choiceType.findDeepFeatures
         choiceType.allNonOverridenAttributes.toMap([it], [
-            val attrType = it.RType
+            val attrType = it.getRMetaAnnotatedType.getRType
             deepFeatures.toMap([it], [
                 var t = attrType
                 if (t instanceof RChoiceType) {
@@ -120,12 +122,13 @@ class PythonModelObjectGenerator {
         
                 // Iterate over all non-overridden attributes
                 choiceType.allNonOverridenAttributes.forEach [ attribute |
-                    val attrType = attribute.RType
+                    val attrType = attribute.getRMetaAnnotatedType.getRType
                     var t = attrType
 
                     // Convert RChoiceType to RDataType if applicable
                     if (t instanceof RChoiceType) {
                         t = t.asRDataType
+                        
                     }
                     // Check if t is an instance of RDataType
                     if (t instanceof RDataType) {
@@ -142,7 +145,7 @@ class PythonModelObjectGenerator {
         return (choiceAlias.isEmpty ()) ? null : choiceAlias
     }
     def boolean checkBasicType(RAttribute ra) {
-        val rosettaType = (ra !== null) ? ra.toRawType : null;
+        val rosettaType = (ra !== null) ? ra.getRMetaAnnotatedType.getRType : null
         return (rosettaType !== null && PythonTranslator::checkPythonType (rosettaType.toString()))
     }
     /**
@@ -180,10 +183,11 @@ class PythonModelObjectGenerator {
 
         val imports = newArrayList
         for (attribute : filteredAttributes) {
-            if (attribute.getRType === null) {
+        	var rt = attribute.getRMetaAnnotatedType.getRType
+            if (rt === null) {
                 throw new Exception("Attribute type is null for " + attribute.name + " for class " + rosettaClass.name)
             }
-            val modelName = attribute.getRType.getQualifiedName
+            val modelName = rt.getQualifiedName
             if (modelName !== null) {
                 imports.add('''import «modelName»''')
             }
@@ -216,7 +220,7 @@ class PythonModelObjectGenerator {
     }
 
     private def generateAttributes(Data rosettaClass) {
-        // get the aattributes for this class
+        // get the attributes for this class
         val attr           = rosettaClass.buildRDataType.getOwnAttributes
         val attrSize       = attr.size()
         val conditionsSize = rosettaClass.conditions.size()
