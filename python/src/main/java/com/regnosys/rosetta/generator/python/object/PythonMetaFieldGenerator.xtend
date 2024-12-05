@@ -1,6 +1,5 @@
 package com.regnosys.rosetta.generator.python.object
 
-//import com.regnosys.rosetta.generator.object.ExpandedType
 import com.google.inject.Inject
 
 import com.regnosys.rosetta.rosetta.RosettaMetaType
@@ -9,15 +8,12 @@ import com.regnosys.rosetta.types.RType
 import com.regnosys.rosetta.types.REnumType
 import java.util.List
 
-import com.regnosys.rosetta.generator.object.ExpandedType
 import com.regnosys.rosetta.types.RObjectFactory
-import com.regnosys.rosetta.types.RDataType
 import com.regnosys.rosetta.types.RChoiceType
 import com.regnosys.rosetta.types.RAttribute
 
 import static extension com.regnosys.rosetta.generator.python.object.PythonModelObjectBoilerPlate.*
 import static extension com.regnosys.rosetta.generator.python.util.PythonTranslator.*
-import static extension com.regnosys.rosetta.generator.util.RosettaAttributeExtensions.*
 import static extension com.regnosys.rosetta.generator.util.IterableUtil.*
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import java.util.Set
