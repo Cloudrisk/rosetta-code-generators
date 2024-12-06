@@ -26,10 +26,10 @@ source .pydevenv/$ACDIR/activate || processError
 
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 echo $MYPATH
-ROSETTARUNTIMEDIR="../src/main/resources/runtime"
-PYTHONCDMDIR="../target/python"
+ROSETTARUNTIMEDIR="../../src/main/resources/runtime"
+PYTHONCDMDIR="../../target/python"
 $PYEXE -m pip install pydantic
 $PYEXE -m pip install pytest
-$PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.0.0-py3-none-any.whl 
+$PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl 
 $PYEXE -m pip install $MYPATH/$PYTHONCDMDIR/python_cdm-0.0.0-py3-none-any.whl
-$PYEXE $MYPATH/cdm_tests/serialization/test_trade_state_product.py
+$PYEXE -m pytest $MYPATH/serialization

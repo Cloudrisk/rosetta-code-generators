@@ -6,7 +6,6 @@ from pathlib import Path
 from cdm.event.common.TradeState import TradeState
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)))
 from test_helpers.config import CDM_JSON_SAMPLE_SOURCE
-from serialization.cdm_comparison_test import cdm_comparison_test_from_file
 
 def test_read_and_validate ():
     ''' The below sample json needs to conform to the same current version of CDM as was used
