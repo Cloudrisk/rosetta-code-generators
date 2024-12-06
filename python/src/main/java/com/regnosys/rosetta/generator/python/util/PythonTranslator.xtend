@@ -115,6 +115,9 @@ class PythonTranslator {
     static def boolean checkBasicType(String rosettaType) {
         return (rosettaType !== null && toPythonBasicTypeInnerFunction (rosettaType) !== null)
     }
+    static def boolean isSupportedBasicRosettaType (String rt) {
+        return (toPythonBasicTypeInnerFunction(rt) !== null)
+    }
     static def boolean checkPythonType (String pythonType) {
         val types = Arrays.asList('int', 
                                   'str', 

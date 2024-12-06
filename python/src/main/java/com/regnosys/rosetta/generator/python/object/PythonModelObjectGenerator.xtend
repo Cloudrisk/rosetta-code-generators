@@ -77,8 +77,8 @@ class PythonModelObjectGenerator {
 
         for (Data type : rosettaClasses) {
             val model      = type.eContainer as RosettaModel
-            val namespace  = Util::getNamespace (model)
-            val pythonBody = type.generateBody(namespace, version).replaceTabsWithSpaces
+            val nameSpace  = Util::getNamespace (model)
+            val pythonBody = type.generateBody(nameSpace, version).replaceTabsWithSpaces
             result.put(
                 PythonModelGeneratorUtil::toPyFileName(model.name, type.name), 
                 PythonModelGeneratorUtil::createImports(type.name) + pythonBody
@@ -151,9 +151,7 @@ class PythonModelObjectGenerator {
     /**
      * Generate the classes
      */
-    private def generateBody(Data rosettaClass, String namespace, String version) {
-        var List<String> enumImports = newArrayList
-        var List<String> dataImports = newArrayList
+    private def generateBody(Data rosettaClass, String nameSpace, String version) {
         var superType = rosettaClass.superType
         if (superType !== null && superType.name === null) {
             throw new Exception("SuperType is null for " + rosettaClass.name)
@@ -162,37 +160,35 @@ class PythonModelObjectGenerator {
         expressionGenerator.importsFound = this.importsFound;
         val classDefinition = generateClass(rosettaClass)
 
-        enumImports = enumImports.toSet().toList()
-        dataImports = dataImports.toSet().toList()
+        val superNameFrom = (superType!==null) ? (superType.eContainer as RosettaModel).name + '.' + superType.name : null
+        val superImport   = (superType!==null) ? superType.name : null
 
         return '''
             «IF superType!==null»from «(superType.eContainer as RosettaModel).name».«superType.name» import «superType.name»«ENDIF»
             
             «classDefinition»
             
-            import «namespace» 
-            «FOR dataImport : importsFound SEPARATOR "\n"»«dataImport»«ENDFOR»
+            import «nameSpace» 
+            «FOR importLine : importsFound SEPARATOR "\n"»«importLine»«ENDFOR»
         '''      
     }
 
     private def getImportsFromAttributes(Data rosettaClass) {
         // expandedAttributes --> Data to RDataType (inject RObjectFactory use method called buildRDataType) --> getAllAttributes
         // getOwnAttributes
-        val rdt = rosettaClass.buildRDataType
-        val filteredAttributes = rdt.getOwnAttributes.filter [(it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")].filter[!checkBasicType(it)]
-
+        val rdt     = rosettaClass.buildRDataType
+        // get all non-Meta attributes
+        val fa      = rdt.getOwnAttributes.filter [(it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")].filter[!checkBasicType(it)]
         val imports = newArrayList
-        for (attribute : filteredAttributes) {
+        for (attribute : fa) {
         	var rt = attribute.getRMetaAnnotatedType.getRType
             if (rt === null) {
                 throw new Exception("Attribute type is null for " + attribute.name + " for class " + rosettaClass.name)
             }
-            val modelName = rt.getQualifiedName
-            if (modelName !== null) {
-                imports.add('''import «modelName»''')
+            if (!PythonTranslator::isSupportedBasicRosettaType(rt.getName())) { // need imports for derived types
+                imports.add('''import «rt.getQualifiedName»''')
             }
         }
-
         return imports.toSet.toList
     }
 
