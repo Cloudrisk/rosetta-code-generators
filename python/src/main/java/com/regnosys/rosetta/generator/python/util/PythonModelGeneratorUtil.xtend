@@ -102,7 +102,7 @@ class PythonModelGeneratorUtil {
     }
 
     static def String createPYProjectTomlFile (String namespace, String version) {
-        return "[build-system]\n" + 
+        return '[build-system]\n' + 
                "requires = [\"setuptools>=62.0\"]\n" +
                "build-backend = \"setuptools.build_meta\"\n\n" +
                "[project]\n" + 
@@ -110,7 +110,7 @@ class PythonModelGeneratorUtil {
                "version = \"" + version + "\"\n" + 
                "requires-python = \">= 3.10\"\n" +
                "dependencies = [\n" + 
-               "   \"pydantic>=2.6.1\",\n" +
+               "   \"pydantic>=2.6.1,<2.10\",\n" +
                "   \"rosetta.runtime==2.1.0\"\n" +
                "]\n" +
                "[tool.setuptools.packages.find]\n" +

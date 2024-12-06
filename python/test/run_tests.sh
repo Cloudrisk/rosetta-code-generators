@@ -17,7 +17,7 @@ ROSETTARUNTIMEDIR="../src/main/resources/runtime"
 PYTHONCDMDIR="../target/python"
 PYTHONUNITTESTDIR="../target/python_unit_tests"
 echo "**** Install Dependencies ****"
-$PYEXE -m pip install 'pydantic>=2.6.1,<2.10'
+$PYEXE -m pip install "pydantic>=2.6.1,<2.10"
 $PYEXE -m pip install pytest
 echo "**** Install Runtime ****"
 $PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl --force-reinstall
