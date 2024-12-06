@@ -1,4 +1,13 @@
 #!/bin/bash
+type -P python > /dev/null && PYEXE=python || PYEXE=python3
+if ! $PYEXE -c 'import sys; assert sys.version_info >= (3,10)' > /dev/null 2>&1; then
+        echo "Found $($PYEXE -V)"
+        echo "Expecting at least python 3.10 - exiting!"
+        exit 1
+fi
+
+export PYTHONDONTWRITEBYTECODE=1
+
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
 $PYEXE -m venv --clear $MYPATH/.pytest
