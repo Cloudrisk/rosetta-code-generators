@@ -8,16 +8,16 @@ fi
 
 export PYTHONDONTWRITEBYTECODE=1
 
-ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
-$PYEXE -m venv --clear .pytest
-source .pytest/$ACDIR/activate
-
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
+$PYEXE -m venv --clear $MYPATH/.pytest
+source $MYPATH/.pytest/$ACDIR/activate
+
 ROSETTARUNTIMEDIR="../src/main/resources/runtime"
 PYTHONCDMDIR="../target/python"
 PYTHONUNITTESTDIR="../target/python_unit_tests"
 echo "**** Install Dependencies ****"
-$PYEXE -m pip install 'pydantic>=2.6.1,<2.10'
+$PYEXE -m pip install "pydantic>=2.6.1,<2.10"
 $PYEXE -m pip install pytest
 echo "**** Install Runtime ****"
 $PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl --force-reinstall

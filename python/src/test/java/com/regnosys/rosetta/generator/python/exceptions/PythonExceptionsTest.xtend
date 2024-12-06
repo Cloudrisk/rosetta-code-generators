@@ -23,26 +23,23 @@ class PythonExceptionsTest {
     
     
     @Test
-    def void testNoneExistingTypeAtrtribute() {
+    def void testNonExistantAttributeType() {
         
         try{
-             
             '''
             type B:
                 intValue1 int (0..1)
                 intValue2 int (0..1)
                 aValue A (1..1)
             '''.generatePython
-            
         }catch(Exception ex){
-            assertTrue(ex.getMessage.contains("Attribute type is null"));     	
+            assertTrue(ex.getMessage.contains("Attribute type is null"));
         }
-
     }
     
     //Conditional test: Adding a non-existing attribute in acondition     
     @Test
-    def void testNoneExistingTypeCondition() {
+    def void testNonExistiantTypeCondition() {
         
         try{
             '''
@@ -62,7 +59,7 @@ class PythonExceptionsTest {
     
    //Conditional test: Adding a non-existing attribute in acondition     
     @Test
-    def void testNoneExistingTypeSuperType() {
+    def void testNonExistiantTypeSuperType() {
     
         try{
             '''

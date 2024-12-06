@@ -21,10 +21,7 @@
       "identifierType" : "UniqueTransactionIdentifier"
     } ],
     "tradeDate" : {
-      "value" : "2018-01-29",
-      "meta" : {
-        "globalKey" : "3f105d"
-      }
+      "value" : "2018-01-29"
     },
     "tradableProduct" : {
       "product" : {
@@ -87,7 +84,6 @@
                     "rateSchedule" : {
                       "price" : {
                         "address" : {
-                          "scope" : "DOCUMENT",
                           "value" : "price-1"
                         }
                       }

@@ -21,3 +21,4 @@ python/.pydevproject
 /python/src/main/resources/runtime/build
 json-schema/src/main/generated-sources/
 json-schema/src/test/generated-sources/
+.checkstyle

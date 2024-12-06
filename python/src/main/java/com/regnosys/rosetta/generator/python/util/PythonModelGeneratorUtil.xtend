@@ -1,6 +1,7 @@
 package com.regnosys.rosetta.generator.python.util
 
-import com.regnosys.rosetta.generator.object.ExpandedAttribute
+import com.regnosys.rosetta.types.RAttribute
+
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -22,7 +23,7 @@ class PythonModelGeneratorUtil {
         «ENDIF»
         '''
 
-    static def classComment(String definition, Iterable<ExpandedAttribute> attributes) 
+    static def classComment(String definition, Iterable<RAttribute> attributes) {
         '''
         «IF definition !==null && !definition.isEmpty »
         #
@@ -34,8 +35,8 @@ class PythonModelGeneratorUtil {
         #
         «ENDIF»
         '''
-        
-    static def String createImports(String name){			
+    }
+    static def String createImports(String name){
         val imports=
         '''
         # pylint: disable=line-too-long, invalid-name, missing-function-docstring
@@ -50,7 +51,7 @@ class PythonModelGeneratorUtil {
         from decimal import Decimal
         from pydantic import Field
         from rosetta.runtime.utils import (
-            BaseDataClass, rosetta_condition, rosetta_resolve_attr
+            BaseDataClass, rosetta_condition, rosetta_resolve_attr, rosetta_resolve_deep_attr
         )
         from rosetta.runtime.utils import *
         
@@ -60,7 +61,7 @@ class PythonModelGeneratorUtil {
         imports
     }
         
-    static def String createImportsFunc(String name) {			
+    static def String createImportsFunc(String name) {
         val imports=
         '''
         # pylint: disable=line-too-long, invalid-name, missing-function-docstring, missing-module-docstring, superfluous-parens
@@ -93,15 +94,15 @@ class PythonModelGeneratorUtil {
     }
 
     static def String createVersionFile (String version) {
-        val versionComma	 = version.replace ('.', ',')
+        val versionComma = version.replace ('.', ',')
         return "version = ("+versionComma+",0)\n"+
                 "version_str = '"+version+"-0'\n"+
                 "__version__ = '"+version+"'\n"+
-                "__build_time__ = '"+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"'"		 	
+                "__build_time__ = '"+LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)+"'"
     }
 
     static def String createPYProjectTomlFile (String namespace, String version) {
-        return "[build-system]\n" + 
+        return '[build-system]\n' + 
                "requires = [\"setuptools>=62.0\"]\n" +
                "build-backend = \"setuptools.build_meta\"\n\n" +
                "[project]\n" + 
@@ -109,7 +110,7 @@ class PythonModelGeneratorUtil {
                "version = \"" + version + "\"\n" + 
                "requires-python = \">= 3.10\"\n" +
                "dependencies = [\n" + 
-               "   \"pydantic>=2.6.1\",\n" +
+               "   \"pydantic>=2.6.1,<2.10\",\n" +
                "   \"rosetta.runtime==2.1.0\"\n" +
                "]\n" +
                "[tool.setuptools.packages.find]\n" +

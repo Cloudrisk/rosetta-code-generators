@@ -1,10 +1,11 @@
 package com.regnosys.rosetta.generator.python.util
 
-
-import com.regnosys.rosetta.generator.object.ExpandedType
 import com.regnosys.rosetta.rosetta.simple.Attribute
-import com.regnosys.rosetta.generator.object.ExpandedAttribute
+import com.regnosys.rosetta.types.RType
+import com.regnosys.rosetta.types.REnumType
+import com.regnosys.rosetta.types.RAttribute
 import java.util.Arrays
+// ExpandedType --> RDataType
 
 class PythonTranslator {
     static private def String toPythonBasicTypeInnerFunction (String rosettaType) {
@@ -84,22 +85,22 @@ class PythonTranslator {
         val pythonType = toPythonBasicTypeInnerFunction (rosettaType)
         return (pythonType === null) ? rosettaType : pythonType
     }
-    static def String toPythonType(ExpandedType rosettaExpandedType) {
-        if (rosettaExpandedType === null)
+    static def String toPythonType(RType rt) {
+        if (rt === null)
             return null
-        var pythonType = toPythonBasicTypeInnerFunction (rosettaExpandedType.name)
+        var pythonType = toPythonBasicTypeInnerFunction (rt.name)
         if (pythonType === null)
-            pythonType = (rosettaExpandedType.enumeration) ? 
-                         '''«rosettaExpandedType.name.toFirstUpper»''' :  
-                         rosettaExpandedType.name.toFirstUpper
+            // rosettaExpandedType.enumeration --> instanceof REnumType
+            pythonType = (rt instanceof REnumType) ? '''«rt.name.toFirstUpper»''' : rt.name.toFirstUpper
         return pythonType
     }
-    static def String toPythonType (ExpandedAttribute rosettaAttribute) {
-        if (rosettaAttribute === null || rosettaAttribute.type === null || rosettaAttribute.type.name === null)
+    static def String toPythonType (RAttribute ra) {
+        val rt     = (ra === null) ? null : ra.getRMetaAnnotatedType.getRType
+        val rtName = (rt === null) ? null : rt.getName 
+        if (rtName === null) 
             return null
-        val rosettaType = rosettaAttribute.type.name;
-        val pythonType  = toPythonBasicTypeInnerFunction (rosettaType);
-        return (pythonType === null) ? rosettaAttribute.type.model.name + '.' + rosettaType + '.' + rosettaType : pythonType
+        val pythonType = toPythonBasicTypeInnerFunction (rtName);
+        return (pythonType === null) ? rt.getNamespace + '.' + rtName + '.' + rtName : pythonType
     }
     static def String toPythonType(Attribute rosettaAttributeType) {
         if (rosettaAttributeType === null)
@@ -113,6 +114,9 @@ class PythonTranslator {
     }
     static def boolean checkBasicType(String rosettaType) {
         return (rosettaType !== null && toPythonBasicTypeInnerFunction (rosettaType) !== null)
+    }
+    static def boolean isSupportedBasicRosettaType (String rt) {
+        return (toPythonBasicTypeInnerFunction(rt) !== null)
     }
     static def boolean checkPythonType (String pythonType) {
         val types = Arrays.asList('int', 

@@ -211,9 +211,6 @@ class PythonMetaDataGenerationTest {
             set rejectedWorkflowStep -> rejected: <"Set the rejected flag to True">
                 True
         '''.generatePython
-        println(python)
-    
-        
     }  
             
     def generatePython(CharSequence model) {

@@ -44,6 +44,7 @@ import com.regnosys.rosetta.rosetta.expression.SumOperation
 import com.regnosys.rosetta.rosetta.expression.ThenOperation
 import com.regnosys.rosetta.rosetta.expression.ToStringOperation
 import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
+import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -95,8 +96,6 @@ class PythonExpressionGenerator {
         return res
     }
 
-
-
     def boolean isConstraintCondition(Condition cond) {
         return cond.isOneOf || cond.isChoice
     }
@@ -140,7 +139,6 @@ class PythonExpressionGenerator {
         val expression = cond.expression
         var attributes = cls.attributes
         var necessity = "necessity=True"
-
         if (expression instanceof ChoiceOperation) {
             attributes = expression.attributes
             if (expression.necessity == Necessity.OPTIONAL) {
@@ -175,12 +173,14 @@ class PythonExpressionGenerator {
 
     def String generateExpression(RosettaExpression expr, int iflvl) {
         switch (expr) {
+            RosettaDeepFeatureCall: {
+                return '''rosetta_resolve_deep_attr(self, "«expr.feature.name»")'''
+            }
             RosettaConditionalExpression: {
                 val ifexpr = generateExpression(expr.getIf(), iflvl + 1)
                 val ifthen = generateExpression(expr.ifthen, iflvl + 1)
                 var elsethen = expr.elsethen !== null && expr.full ? generateExpression(expr.elsethen,
                         iflvl + 1) : 'True'
-
                 val if_blocks = '''
                     def _then_fn«iflvl»():
                         return «ifthen»
@@ -246,13 +246,12 @@ class PythonExpressionGenerator {
                 '''«expr.value»'''
             }
             RosettaBooleanLiteral: {
-            	val trimmedValue = expr.value.toString()
-				if (trimmedValue.equals("true")) {
-				    '''True'''
-				} else {
-				    '''False'''
-				}
-
+                val trimmedValue = expr.value.toString()
+                if (trimmedValue.equals("true")) {
+                    '''True'''
+                } else {
+                    '''False'''
+                }
             }
             RosettaIntLiteral: {
                 '''«expr.value»'''
@@ -279,12 +278,10 @@ class PythonExpressionGenerator {
             ListLiteral: {
                 '''[«FOR arg : expr.elements SEPARATOR ', '»«generateExpression(arg, iflvl)»«ENDFOR»]'''
             }
-
             DistinctOperation: {
                 val argument = generateExpression(expr.argument, iflvl);
                 return '''set(«argument»)''';
             }
-
             SortOperation: {
                 val argument = generateExpression(expr.argument, iflvl);
                 return '''sorted(«argument»)''';
@@ -294,13 +291,11 @@ class PythonExpressionGenerator {
                 val argExpr = generateExpression(expr.argument, iflvl)
                 val body = generateExpression(funcExpr.body, iflvl)
                 val funcParams = funcExpr.parameters.map[it.name].join(", ")
-
                 val lambdaFunction = if (funcParams.empty) {
                     '''(lambda item: «body»)'''
                 } else {
                     '''(lambda «funcParams»: «body»)'''
                 }
-
                 return '''«lambdaFunction»(«argExpr»)'''
             }
             LastOperation: {
@@ -317,28 +312,21 @@ class PythonExpressionGenerator {
             }
             FilterOperation: {
                 val argument = generateExpression(expr.argument, iflvl);
-
                 val filterExpression = generateExpression(expr.function.body, iflvl);
-
                 val filterCall = "rosetta_filter(" + argument + ", lambda item: " + filterExpression + ")";
-
                 return filterCall;
             }
-
             MapOperation: {
                 val inlineFunc = expr.function as InlineFunction;
                 val funcParameters = inlineFunc.parameters.map[it.name].join(", ");
                 val funcBody = generateExpression(inlineFunc.body, iflvl);
                 val lambdaFunction = "lambda item: " + funcBody;
-
                 val argument = generateExpression(expr.argument, iflvl);
                 val pythonMapOperation = "map(" + lambdaFunction + ", " + argument + ")";
-
                 return pythonMapOperation;
             }
             AsKeyOperation: {
                 val argument = generateExpression(expr.argument, iflvl)
-
                 return '''{«argument»: True}''' 
             }
             FlattenOperation: {
@@ -348,13 +336,11 @@ class PythonExpressionGenerator {
             RosettaConstructorExpression: {
                 val type = expr.typeCall?.type?.name 
                 val keyValuePairs = expr.values 
-
                 val pythonConstructor = if (type !== null) {
                     '''«type»(«FOR pair : keyValuePairs SEPARATOR ', '»«pair.key.name»=«generateExpression(pair.value, iflvl)»«ENDFOR»)'''
                 } else {
                     '''{«FOR pair : keyValuePairs SEPARATOR ', '»'«pair.key.name»': «generateExpression(pair.value, iflvl)»«ENDFOR»}'''
                 }
-
                 return pythonConstructor
             }
             ToStringOperation: {

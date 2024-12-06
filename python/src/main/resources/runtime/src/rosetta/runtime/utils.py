@@ -17,6 +17,7 @@ __all__ = ['if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition',
            'execute_local_conditions',
            'flatten_list',
            'rosetta_resolve_attr',
+           'rosetta_resolve_deep_attr',
            'rosetta_count',
            'rosetta_attr_exists',
            '_get_rosetta_object',
@@ -93,6 +94,26 @@ def rosetta_resolve_attr(obj: Any | None,
         obj = obj.value
     attrib = mangle_name(attrib)
     return getattr(obj, attrib, None)
+
+
+def rosetta_resolve_deep_attr(obj: Any | None,
+                              attrib: str) -> Any | list[Any] | None:
+    ''' Resolves a "deep path" attribute. If the attribute or the object is
+        not a "deep path" one, the function falls back to the regular
+        `rosetta_resolve_attr`.
+    '''
+    # pylint: disable=protected-access
+    if obj is None:
+        return None
+    # if not a "deep path" object or attribute, fall back to the std function
+    if (not hasattr(obj, '_CHOICE_ALIAS_MAP') or
+            attrib not in obj._CHOICE_ALIAS_MAP):
+        return rosetta_resolve_attr(obj, attrib)
+
+    for container_nm, getter_fn in obj._CHOICE_ALIAS_MAP[attrib]:
+        if container_obj := rosetta_resolve_attr(obj, container_nm):
+            return getter_fn(container_obj, attrib)
+    return None
 
 
 def rosetta_count(obj: Any | None) -> int:

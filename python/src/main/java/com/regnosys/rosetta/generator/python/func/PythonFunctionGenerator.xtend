@@ -38,13 +38,13 @@ class  PythonFunctionGenerator {
                 val tr = func.eContainer as RosettaModel
                 val namespace = tr.name
                 try{
-                    val funcs = func.generateFunctions(version)			
+                    val funcs = func.generateFunctions(version)
                     result.put(PythonModelGeneratorUtil::toPyFunctionFileName(namespace, func.name), 
-           				PythonModelGeneratorUtil::createImportsFunc(func.name) + funcs);
+                           PythonModelGeneratorUtil::createImportsFunc(func.name) + funcs);
                 }
                 catch(Exception ex){
-                    LOGGER.error("Exception occurred generating func {}", func.name, ex)	
-                }		
+                    LOGGER.error("Exception occurred generating func {}", func.name, ex)
+                }
             } 
         }
         return result
@@ -87,10 +87,10 @@ class  PythonFunctionGenerator {
             if(dependency instanceof Function){
                 imports.append("from ").append(importPath).append(".functions.").append(dependency.name).append(" import ").append(dependency.name).append("\n");
             }else if(dependency instanceof RosettaEnumeration){
-                imports.append("from ").append(importPath).append(".").append(dependency.name).append(" import ").append(dependency.name).append("\n");      	
+                imports.append("from ").append(importPath).append(".").append(dependency.name).append(" import ").append(dependency.name).append("\n");
             }
             else if(dependency instanceof Data){
-                imports.append("from ").append(importPath).append(".").append(dependency.name).append(" import ").append(dependency.name).append("\n");      	
+                imports.append("from ").append(importPath).append(".").append(dependency.name).append(" import ").append(dependency.name).append("\n");
             }
         }
         imports.append("\n")
@@ -111,7 +111,7 @@ class  PythonFunctionGenerator {
             
             return «output.name»
             '''
-        }	
+        }
     }
     
     private def generatesInputs(Function function) {
@@ -192,8 +192,8 @@ class  PythonFunctionGenerator {
         }
         
         dependencies.removeIf[
-		    it instanceof Function && (it as Function).name == func.name
-		]
+            it instanceof Function && (it as Function).name == func.name
+        ]
 
         return dependencies
     }
@@ -223,7 +223,7 @@ class  PythonFunctionGenerator {
         '''
     }
     
-    private def generatePostConditions(Function function) {	
+    private def generatePostConditions(Function function) {
         '''     
         «IF function.postConditions.size>0»
         # post-conditions
@@ -240,7 +240,7 @@ class  PythonFunctionGenerator {
         var level = 0
     
         for (shortcut : function.shortcuts) {
-            expressionGenerator.if_cond_blocks = new ArrayList<String>();	    	
+            expressionGenerator.if_cond_blocks = new ArrayList<String>();
             val expression = expressionGenerator.generateExpression(shortcut.expression, level);
             val if_cond_blocks = expressionGenerator.if_cond_blocks;
             val isEmpty = if_cond_blocks.isEmpty();
@@ -285,15 +285,15 @@ class  PythonFunctionGenerator {
         var result=""
         if(attribute.typeCall.type instanceof RosettaEnumeration){
             if(operation == function.getOperations().head){
-                result = '''«root.name» = []'''  + lineSeparator	
+                result = '''«root.name» = []'''  + lineSeparator
             }
-            result += '''«root.name».extend(«expression»)''' 		
+            result += '''«root.name».extend(«expression»)''' 
         }else{
             if(operation == function.getOperations().head){
-                result = '''«root.name» = «expression»''' 		
+                result = '''«root.name» = «expression»'''
             }
             else{
-                result = '''«root.name».add_rosetta_attr(«fullPath», «expression»)''' 		
+                result = '''«root.name».add_rosetta_attr(«fullPath», «expression»)'''
             }
         }
         return result
@@ -301,7 +301,7 @@ class  PythonFunctionGenerator {
     /*
     private def List<Operation> getNonAddOperations(Function function) {
         return function.getOperations().filter[!isAdd()].toList()
-    }	
+    }
      */
     private def generateSetOperation(AssignPathRoot root, Operation operation, Function function, String expression, List<String> setNames){
         var result=""
@@ -314,7 +314,7 @@ class  PythonFunctionGenerator {
             if(!setNames.contains(attributeRoot.name)){
                 result = '''«attributeRoot.name» = _get_rosetta_object('«attributeRoot.typeCall.type.name»', «getNextPathElementName(operation.path)», «buildObject(expression, operation.path)»)'''
                 setNames.add(attributeRoot.name)
-            }  	
+            }
             else{
                 result = '''«attributeRoot.name» = set_rosetta_attr(rosetta_resolve_attr(self, '«attributeRoot.name»'), «generateAttributesPath(operation.path)», «expression»)'''
             }
