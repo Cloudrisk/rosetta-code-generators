@@ -6,6 +6,15 @@ from pathlib import Path
 from cdm.event.common.TradeState import TradeState
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)))
 from test_helpers.config import CDM_JSON_SAMPLE_SOURCE
+from cdm.product.template.functions import FpmlIrd8
+
+
+def dummy_FpmlIrd8(tradableProduct, accounts) -> bool:
+    return True
+
+
+FpmlIrd8.FpmlIrd8 = dummy_FpmlIrd8
+
 
 def test_read_and_validate ():
     ''' The below sample json needs to conform to the same current version of CDM as was used
