@@ -9,29 +9,19 @@ from functools import wraps
 from collections import defaultdict
 from pydantic import BaseModel, ValidationError, ConfigDict
 
-__all__ = ['if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition',
-           'BaseDataClass', 'ConditionViolationError', 'any_elements',
-           'get_only_element', 'rosetta_filter',
-           'all_elements', 'contains', 'disjoint', 'join',
-           'rosetta_local_condition',
-           'execute_local_conditions',
-           'flatten_list',
-           'rosetta_resolve_attr',
-           'rosetta_resolve_deep_attr',
-           'rosetta_count',
-           'rosetta_attr_exists',
-           '_get_rosetta_object',
-           'set_rosetta_attr',
-           'add_rosetta_attr',
-           'check_cardinality',
-           'AttributeWithMeta',
-           'AttributeWithAddress',
-           'AttributeWithReference',
-           'AttributeWithMetaWithAddress',
-           'AttributeWithMetaWithReference',
-           'AttributeWithAddressWithReference',
-           'AttributeWithMetaWithAddressWithReference',
-           'rosetta_str']
+__all__ = [
+    'if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition', 'BaseDataClass',
+    'ConditionViolationError', 'any_elements', 'get_only_element',
+    'rosetta_filter', 'all_elements', 'contains', 'disjoint', 'join',
+    'rosetta_local_condition', 'execute_local_conditions', 'flatten_list',
+    'rosetta_resolve_attr', 'rosetta_resolve_deep_attr', 'rosetta_count',
+    'rosetta_attr_exists', '_get_rosetta_object', 'set_rosetta_attr',
+    'add_rosetta_attr', 'check_cardinality', 'AttributeWithMeta',
+    'AttributeWithAddress', 'AttributeWithReference',
+    'AttributeWithMetaWithAddress', 'AttributeWithMetaWithReference',
+    'AttributeWithAddressWithReference',
+    'AttributeWithMetaWithAddressWithReference', 'rosetta_str'
+]
 
 
 def if_cond(ifexpr, thenexpr: str, elseexpr: str, obj: object):
@@ -51,7 +41,7 @@ def if_cond_fn(ifexpr, thenexpr: Callable, elseexpr: Callable) -> Any:
 def _to_list(obj) -> list | tuple:
     if isinstance(obj, (list, tuple)):
         return obj
-    return (obj,)
+    return (obj, )
 
 
 def _is_meta(obj: Any) -> bool:
@@ -106,8 +96,8 @@ def rosetta_resolve_deep_attr(obj: Any | None,
     if obj is None:
         return None
     # if not a "deep path" object or attribute, fall back to the std function
-    if (not hasattr(obj, '_CHOICE_ALIAS_MAP') or
-            attrib not in obj._CHOICE_ALIAS_MAP):
+    if (not hasattr(obj, '_CHOICE_ALIAS_MAP')
+            or attrib not in obj._CHOICE_ALIAS_MAP):
         return rosetta_resolve_attr(obj, attrib)
 
     for container_nm, getter_fn in obj._CHOICE_ALIAS_MAP[attrib]:
@@ -151,6 +141,7 @@ class Multiprop(list):
     ''' A class allowing for dot access to a attribute of all elements of a
         list.
     '''
+
     def __getattr__(self, attr):
         # return multiprop(getattr(x, attr) for x in self)
         res = Multiprop()
@@ -177,6 +168,7 @@ def rosetta_condition(condition):
 
 def rosetta_local_condition(registry: dict):
     '''Registers a condition function in a local registry.'''
+
     def decorator(condition):
         path_components = condition.__qualname__.split('.')
         path = '.'.join([condition.__module__ or ''] + path_components)
@@ -197,6 +189,7 @@ def execute_local_conditions(registry: dict, cond_type: str):
 
 def rosetta_local_condition(registry: dict):
     '''Registers a condition function in a local registry.'''
+
     def decorator(condition):
         path_components = condition.__qualname__.split('.')
         path = '.'.join([condition.__module__ or ''] + path_components)
@@ -205,6 +198,7 @@ def rosetta_local_condition(registry: dict):
         @wraps(condition)
         def wrapper(*args, **kwargs):
             return condition(*args, **kwargs)
+
         return wrapper
 
     return decorator
@@ -271,7 +265,9 @@ class BaseDataClass(BaseModel):
         return att_errors + self.validate_conditions(recursively=recursively,
                                                      raise_exc=raise_exc)
 
-    def validate_attribs(self, raise_exc: bool = True, strict: bool = True) -> list:
+    def validate_attribs(self,
+                         raise_exc: bool = True,
+                         strict: bool = True) -> list:
         ''' This method performs attribute type validation.
             The parameter `raise_exc` controls whether an exception should be
             thrown if a validation or condition is violated or if a list with
@@ -359,10 +355,8 @@ class BaseDataClass(BaseModel):
 
         # Check if value is an instance of one of the allowed types
         if not isinstance(value, allowed_types):
-            raise TypeError(
-                f"Value must be an instance of {allowed_types}, "
-                f"not {type(value)}"
-            )
+            raise TypeError(f"Value must be an instance of {allowed_types}, "
+                            f"not {type(value)}")
 
         attr.append(value)
 
@@ -372,8 +366,9 @@ def _validate_conditions_recursively(obj, raise_exc=True):
     if not obj:
         return []
     if isinstance(obj, BaseDataClass):
-        return obj.validate_conditions(recursively=True,  # type:ignore
-                                       raise_exc=raise_exc)
+        return obj.validate_conditions(
+            recursively=True,  # type:ignore
+            raise_exc=raise_exc)
     if isinstance(obj, (list, tuple)):
         exc = []
         for item in obj:
@@ -401,7 +396,7 @@ def get_allowed_types_for_list_field(model_class: type, field_name: str):
         list_elem_type = get_args(field_type)[0]
         if get_origin(list_elem_type):
             return get_args(list_elem_type)
-        return (list_elem_type,)  # Single type or | operator used
+        return (list_elem_type, )  # Single type or | operator used
     return ()
 
 
@@ -590,18 +585,15 @@ def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
         if parent_obj is None:
             raise ValueError(
                 f"Attribute '{attrib}' in the path is None, cannot "
-                "proceed to set value."
-            )
+                "proceed to set value.")
 
     # Set the value to the last attribute in the path
     final_attr = path_components[-1]
     if hasattr(parent_obj, final_attr):
         setattr(parent_obj, final_attr, value)
     else:
-        raise AttributeError(
-            f"Invalid attribute '{final_attr}' for object of "
-            f"type {type(parent_obj).__name__}"
-        )
+        raise AttributeError(f"Invalid attribute '{final_attr}' for object of "
+                             f"type {type(parent_obj).__name__}")
 
 
 def add_rosetta_attr(obj: Any, attrib: str, value: Any) -> None:
