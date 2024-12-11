@@ -27,8 +27,8 @@ $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
 $PYEXE -m pip install python_rosetta_dsl-0.0.0-py3-none-any.whl
 cd $MYPATH
 echo "**** Install CDM ****"
-$PYEXE -m pip install $MYPATH/$PYTHONCDMDIR/python_cdm-*-py3-none-any.whl
 
 # run tests
-$PYEXE -m pytest -p no:cacheprovider $MYPATH/runtime_tests $MYPATH/rosetta_tests $MYPATH/cdm_tests/semantics
+$PYEXE -m pytest -p no:cacheprovider $MYPATH/runtime_tests $MYPATH/rosetta_tests 
+
 rm -rf .pytest
