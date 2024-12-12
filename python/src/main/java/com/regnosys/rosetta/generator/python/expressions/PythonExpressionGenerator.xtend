@@ -42,6 +42,9 @@ import com.regnosys.rosetta.rosetta.expression.RosettaSymbolReference
 import com.regnosys.rosetta.rosetta.expression.SortOperation
 import com.regnosys.rosetta.rosetta.expression.SumOperation
 import com.regnosys.rosetta.rosetta.expression.ThenOperation
+import com.regnosys.rosetta.rosetta.expression.ToStringOperation
+import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
+import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -53,7 +56,7 @@ import java.util.List
 class PythonExpressionGenerator {
 
     
-    public var List<String> importsFound= newArrayList
+    public var List<String> importsFound
     public var if_cond_blocks = new ArrayList<String>()
 
     def String generateConditions(Data cls) {
@@ -174,6 +177,9 @@ class PythonExpressionGenerator {
 
     def String generateExpression(RosettaExpression expr, int iflvl, boolean isLambda) {
         switch (expr) {
+            RosettaDeepFeatureCall: {
+                return '''rosetta_resolve_deep_attr(self, "«expr.feature.name»")'''
+            }
             RosettaConditionalExpression: {
                 val ifexpr = generateExpression(expr.getIf(), iflvl + 1, isLambda)
                 val ifthen = generateExpression(expr.ifthen, iflvl + 1, isLambda)
@@ -202,7 +208,7 @@ class PythonExpressionGenerator {
                     }
                     RosettaEnumValue: {
                         val rosettaValue = expr.feature as RosettaEnumValue
-                        val value = EnumHelper.convertValues(rosettaValue)
+                        val value = EnumHelper.convertValue(rosettaValue)
 
                         val symbol = (expr.receiver as RosettaSymbolReference).symbol
                         val model = symbol.eContainer as RosettaModel
@@ -224,7 +230,7 @@ class PythonExpressionGenerator {
                 if (receiver === null) {
                     '''«right»'''
                 } else {
-                    '''_resolve_rosetta_attr(«receiver», "«right»")'''
+                    '''rosetta_resolve_attr(«receiver», "«right»")'''
                 }
             }
             RosettaExistsExpression: {
@@ -245,9 +251,10 @@ class PythonExpressionGenerator {
                 '''«expr.value»'''
             }
             RosettaBooleanLiteral: {
-                if (expr.value == "true")
+                val trimmedValue = expr.value.toString()
+                if (trimmedValue.equals("true")) {
                     '''True'''
-                else
+                } else {
                     '''False'''
             }
             RosettaIntLiteral: {
@@ -261,12 +268,12 @@ class PythonExpressionGenerator {
                 '''get_only_element(«generateExpression(argument, iflvl, isLambda)»)'''
             }
             RosettaEnumValueReference: {
-                val value = EnumHelper.convertValues(expr.value)
+                val value = EnumHelper.convertValue(expr.value)
                 '''«expr.enumeration».«value»'''
             }
             RosettaOnlyExistsExpression: {
                 var aux = expr as RosettaOnlyExistsExpression;
-                '''check_one_of(self, «generateExpression(aux.getArgs().get(0), iflvl, isLambda)»)'''
+                '''self.check_one_of_constraint(self, «generateExpression(aux.getArgs().get(0), iflvl)»)'''
             }
             RosettaCountOperation: {
                 val argument = expr.argument as RosettaExpression
@@ -313,10 +320,10 @@ class PythonExpressionGenerator {
             }
             FilterOperation: {
                 val argument = generateExpression(expr.argument, iflvl, isLambda);
-				
+
                 val filterExpression = generateExpression(expr.function.body, iflvl,true);
-                
-                
+
+
                 val filterCall = "rosetta_filter(" + argument + ", lambda item: " + filterExpression+")";
 
                 return filterCall;
@@ -354,7 +361,14 @@ class PythonExpressionGenerator {
 
                 return pythonConstructor
             }
-
+            ToStringOperation: {
+                val argument = generateExpression(expr.argument, iflvl);
+                return '''rosetta_str(«argument»)''';
+            }
+            ToEnumOperation: {
+                val argument = generateExpression(expr.argument, iflvl);
+                return '''«expr.enumeration.name»(«argument»)''';
+            }
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
         }
@@ -368,13 +382,12 @@ class PythonExpressionGenerator {
             RosettaSymbolReference: {
                 symbolReference(expr, iflvl, isLambda)
             }
-            
         }
     }
 
     def String symbolReference(RosettaSymbolReference expr, int iflvl, boolean isLambda) {
         val s = expr.symbol
-		
+
         switch (s) {
             Data: {
                 '''«s.name»'''
@@ -390,11 +403,11 @@ class PythonExpressionGenerator {
 					            }
 					        }
 					    }
-					
 
-    			if (notInput){'''_resolve_rosetta_attr(item, "«s.name»")'''}
-    			else {'''_resolve_rosetta_attr(self, "«s.name»")'''}}
-                else {'''_resolve_rosetta_attr(self, "«s.name»")'''}
+
+    			if (notInput){'''resolve_rosetta_attr(item, "«s.name»")'''}
+    			else {'''resolve_rosetta_attr(self, "«s.name»")'''}}
+                else {'''resolve_rosetta_attr(self, "«s.name»")'''}
             }
             RosettaEnumeration: {
                 '''«s.name»'''
@@ -403,11 +416,10 @@ class PythonExpressionGenerator {
                 callableWithArgsCall(s, expr, iflvl,isLambda)
             }
             ShortcutDeclaration:{
-                '''_resolve_rosetta_attr(self, "«s.name»")'''
+                '''rosetta_resolve_attr(self, "«s.name»")'''
             }
             ClosureParameter:{
-                
-               '''_resolve_rosetta_attr(self, "«s.name»")'''
+                '''rosetta_resolve_attr(self, "«s.name»")'''
             }
 
             default:
@@ -422,6 +434,7 @@ class PythonExpressionGenerator {
             addImportsFromConditions(s.name, (s.eContainer as RosettaModel).name)
         var args = '''«FOR arg : expr.args SEPARATOR ', '»«generateExpression(arg, iflvl, isLambda)»«ENDFOR»'''
         '''«s.name»(«args»)'''
+
     }
 
     def String binaryExpr(RosettaBinaryOperation expr, int iflvl, boolean isLambda) {

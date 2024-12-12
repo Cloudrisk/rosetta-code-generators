@@ -18,37 +18,31 @@ class PythonObjectGenerationTest {
     @Inject extension ModelHelper
     @Inject PythonCodeGenerator generator;
 
-	@Test
-	def void testMultilineAttributeDefinition() {
-		val python = '''
-			type Foo:
-				attr int (1..1) 
-					<"This is a
-					multiline
-					definition">
-			'''.generatePython
-		
-		val expected=
-		'''
-		class Foo(BaseDataClass):
-		    attr: int = Field(..., description="This is a multiline definition")
-		    """
-		    This is a
-		        multiline
-		        definition
-		    """
-		'''
-		
-		assertTrue(python.toString.contains(expected))
-	}
-	
-	@Test
-	def void testConditions1() {
-		val python = '''
-			type A:
-				a0 int (0..1)
-				a1 int (0..1)
-				condition: one-of
+    @Test
+    def void testMultilineAttributeDefinition() {
+        val python = '''type Foo:
+            attr int (1..1)
+                <"This is a
+multiline
+definition">
+        '''.generatePython
+        val expected = '''class Foo(BaseDataClass):
+    attr: int = Field(..., description="This is a multiline definition")
+    """
+    This is a
+    multiline
+    definition
+    """'''
+        assertTrue(python.get("src/com/rosetta/test/model/Foo.py").toString.contains(expected))
+    }
+
+    @Test
+    def void testConditions1() {
+        val python = '''
+            type A:
+                a0 int (0..1)
+                a1 int (0..1)
+                condition: one-of
 
             type B:
                 intValue1 int (0..1)
@@ -81,39 +75,38 @@ class PythonObjectGenerationTest {
 
 		val expectedB=
 		'''
-	class B(BaseDataClass):
-	    intValue1: Optional[int] = Field(None, description="")
-	    intValue2: Optional[int] = Field(None, description="")
-	    aValue: com.rosetta.test.model.A.A = Field(..., description="")
-	    
-	    @rosetta_condition
-	    def condition_0_Rule(self):
-	        item = self
-	        return all_elements(_resolve_rosetta_attr(self, "intValue1"), "<", 100)
-	    
-	    @rosetta_condition
-	    def condition_1_OneOrTwo(self):
-	        """
-	        Choice rule to represent an FpML choice construct.
-	        """
-	        item = self
-	        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=False)
-	    
-	    @rosetta_condition
-	    def condition_2_SecondOneOrTwo(self):
-	        """
-	        FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
-	        """
-	        item = self
-	        return ((rosetta_attr_exists(_resolve_rosetta_attr(_resolve_rosetta_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue2")) and rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1"))) and rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1")))) or ((rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue2")) and rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1"))) and (not rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1")))))
-		'''
+		class B(BaseDataClass):
+		    intValue1: Optional[int] = Field(None, description="")
+		    intValue2: Optional[int] = Field(None, description="")
+		    aValue: com.rosetta.test.model.A.A = Field(..., description="")
+		    
+		    @rosetta_condition
+		    def condition_0_Rule(self):
+		        item = self
+        return all_elements(rosetta_resolve_attr(self, "intValue1"), "<", 100)
+		    
+		    @rosetta_condition
+		    def condition_1_OneOrTwo(self):
+		        """
+		        Choice rule to represent an FpML choice construct.
+		        """
+		        item = self
+		        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=False)
+		    
+		    @rosetta_condition
+		    def condition_2_SecondOneOrTwo(self):
+		        """
+		        FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
+		        """
+		        item = self
+        return ((rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and (not rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))))'''
 		assertTrue(python.toString.contains(expectedA))
 		assertTrue(python.toString.contains(expectedB))
 	}
 	
 	
 	@Test
-	def void shouldGenerateTypes1() {
+    def void testGenerateTypes1() {
 		val python = '''
 		type TestType: <"Test type description.">
 			testTypeValue1 string (1..1) <"Test string">
@@ -203,7 +196,7 @@ class PythonObjectGenerationTest {
 	}
 	
 	@Test 
-	def void shouldGenerateTypes2() {
+    def void testGenerateTypes2() {
 		val python = '''
 		enum CapacityUnitEnum: <"Provides enumerated values for capacity units, generally used in the context of defining quantities for commodities.">
 			ALW <"Denotes Allowances as standard unit.">
@@ -623,7 +616,7 @@ class PythonObjectGenerationTest {
 
 
 	@Test
-	def void shouldGenerateTypes3() {
+    def void testGenerateTypes3() {
 		val python =
 		'''
 		enum AncillaryRoleEnum: <"Defines the enumerated values to specify the ancillary roles to the transaction. The product is agnostic to the actual parties involved in the transaction, with the party references abstracted away from the product definition and replaced by the AncillaryRoleEnum. The AncillaryRoleEnum can then be positioned in the product and the AncillaryParty type, which is positioned outside of the product definition, allows the AncillaryRoleEnum to be associated with an actual party reference.">
@@ -680,29 +673,18 @@ class PythonObjectGenerationTest {
 		    name: AttributeWithMeta[str] | str = Field(..., description="The legal entity name.")
 		    """
 		    The legal entity name.
+    """'''
+        val expectedTestType2 ='''class TelephoneNumber(BaseDataClass):
 		    """
-		'''
-		val expectedTestType2 =
-		'''
-		class TelephoneTypeEnum(Enum):
+		    A class to specify a telephone number as a type of phone number (e.g. work, personal, ...) alongside with the actual number.
 		    """
-		    The enumerated values to specify the type of telephone number, e.g. work vs. mobile.
+		    telephoneNumberType: Optional[com.rosetta.test.model.TelephoneTypeEnum.TelephoneTypeEnum] = Field(None, description="The type of telephone number, e.g. work, mobile.")
 		    """
-		    FAX = "Fax"
+		    The type of telephone number, e.g. work, mobile.
 		    """
-		    A number used primarily for work-related facsimile transmissions.
+		    number: str = Field(..., description="The actual telephone number.")
 		    """
-		    MOBILE = "Mobile"
-		    """
-		    A number on a mobile telephone that is often or usually used for work-related calls. This type of number can be used for urgent work related business when a work number is not sufficient to contact the person or firm.
-		    """
-		    PERSONAL = "Personal"
-		    """
-		    A number used primarily for non work-related calls. (Normally this type of number would be used only as an emergency backup number, not as a regular course of business).
-		    """
-		    WORK = "Work"
-		    """
-		    A number used primarily for work-related calls. Includes home office numbers used primarily for work purposes.
+		    The actual telephone number.
 		    """
 		'''
 		val expectedTestType3 =
@@ -713,7 +695,7 @@ class PythonObjectGenerationTest {
 		    """
 		    ancillaryParty: Optional[com.rosetta.test.model.AncillaryRoleEnum.AncillaryRoleEnum] = Field(None, description="Identifies a party via its ancillary role on a transaction (e.g. CCP or DCO through which the trade should be cleared.)")
 		    """
-		    Identifies a party via its ancillary role on a transaction (e.g. CCP or DCO through which the trade should be cleared.)
+    Identifies a party via its ancillary role on a transaction (e.g. CCP or DCO through which the trade test be cleared.)
 		    """
 		    legalEntity: Optional[com.rosetta.test.model.LegalEntity.LegalEntity] = Field(None, description="")
 		    
@@ -808,7 +790,7 @@ class PythonObjectGenerationTest {
 
 
     @Test
-    def void shouldGenerateTypesMethod2() {
+    def void testGenerateTypesMethod2() {
         val python = '''
         type UnitType: <"Defines the unit to be used for price, quantity, or other purposes">
             currency string (0..1) <"Defines the currency to be used as a unit for a price, quantity, or other purpose.">
@@ -847,6 +829,7 @@ class PythonObjectGenerationTest {
 		    """
 		    Defines the currency to be used as a unit for a price, quantity, or other purpose.
 		    """
+
         '''
 		val expectedQuantity=
 		'''
@@ -870,7 +853,7 @@ class PythonObjectGenerationTest {
 	}
 
     @Test
-    def void shouldGenerateTypesExtends1() {
+    def void testGenerateTypesExtends1 () {
         val python = '''
         type TestType extends TestType2:
             TestTypeValue1 string (1..1) <"Test string">
@@ -885,10 +868,10 @@ class PythonObjectGenerationTest {
             TestType4Value2 int (1..*) <"Test int">
         '''.generatePython
 
-		
-		val expectedTestType=
-		'''
-		class TestType(TestType2):
+
+        val types = python.toString
+
+        val expectedTestType='''class TestType(TestType2):
 		    TestTypeValue1: str = Field(..., description="Test string")
 		    """
 		    Test string
@@ -926,14 +909,14 @@ class PythonObjectGenerationTest {
 		        return check_cardinality(self.TestType4Value2, 1, None)
 		'''
 
-		assertTrue(python.toString.contains(expectedTestType))
-		assertTrue(python.toString.contains(expectedTestType2))
-		assertTrue(python.toString.contains(expectedTestType3))
+		assertTrue(types.contains(expectedTestType))
+		assertTrue(types.contains(expectedTestType2))
+		assertTrue(types.contains(expectedTestType3))
 
 	}
 
 	@Test
-	def void shouldGenerateTypesExtends2() {
+    def void testGenerateTypesExtends2() {
 		val python =
 		'''
 		enum CapacityUnitEnum: <"Provides enumerated values for capacity units, generally used in the context of defining quantities for commodities.">
@@ -1060,11 +1043,9 @@ class PythonObjectGenerationTest {
 		        The value attribute must be present in a concrete measure.
 		        """
 		        item = self
-		        return rosetta_attr_exists(_resolve_rosetta_attr(self, "value"))
-		'''
-		val expectedTestType3=
-		'''
-		class WeatherUnitEnum(Enum):
+        return rosetta_attr_exists(rosetta_resolve_attr(self, "value"))'''
+
+        val expectedTestType3='''class WeatherUnitEnum(Enum):
 		    """
 		    Provides enumerated values for weather units, generally used in the context of defining quantities for commodities.
 		    """
@@ -1398,7 +1379,7 @@ class PythonObjectGenerationTest {
 
 
     @Test
-        def void shouldGenerateTypesChoiceCondition() {
+    def void testGenerateTypesChoiceCondition() {
             val python = '''
                 type TestType: <"Test type with one-of condition.">
                     field1 string (0..1) <"Test string field 1">
@@ -1408,6 +1389,8 @@ class PythonObjectGenerationTest {
                     condition BusinessCentersChoice: <"Choice rule to represent an FpML choice construct.">
                             required choice field1, field2
                 '''.generatePython
+
+            val types = python.toString
 
             val expected =
             '''
@@ -1440,13 +1423,13 @@ class PythonObjectGenerationTest {
                     item = self
                     return self.check_one_of_constraint('field1', 'field2', necessity=True)
             '''
-            assertTrue(python.toString.contains(expected))
+            assertTrue(types.contains(expected))
         }
 
         
 
 		@Test
-		def void shouldGenerateIfThenCondition() {
+    def void testGenerateIfThenCondition() {
 			val python = '''
 				type TestType: <"Test type with one-of condition.">
 					field1 string (0..1) <"Test string field 1">
@@ -1458,9 +1441,9 @@ class PythonObjectGenerationTest {
 									then field3 > 0
 				'''.generatePython
 
-			val expected =
-			'''
-			class TestType(BaseDataClass):
+        val types = python.toString
+
+        val expected ='''class TestType(BaseDataClass):
 			    """
 			    Test type with one-of condition.
 			    """
@@ -1494,13 +1477,14 @@ class PythonObjectGenerationTest {
 			            return True
 			        
 			        return if_cond_fn(rosetta_attr_exists(_resolve_rosetta_attr(self, "field1")), _then_fn0, _else_fn0)
+			
             '''
-            assertTrue(python.toString.contains(expected))
+            assertTrue(types.contains(expected))
         }
 
 
     @Test
-    def void shouldGenerateIfThenElseCondition() {
+    def void testGenerateIfThenElseCondition() {
             val python = '''
                 type TestType: <"Test type with one-of condition.">
                     field1 string (0..1) <"Test string field 1">
@@ -1543,13 +1527,14 @@ class PythonObjectGenerationTest {
 			        """
 			        item = self
 			        def _then_fn0():
-			            return all_elements(_resolve_rosetta_attr(self, "field3"), ">", 0)
+            return all_elements(rosetta_resolve_attr(self, "field3"), ">", 0)
 			        
 			        def _else_fn0():
-			            return all_elements(_resolve_rosetta_attr(self, "field4"), ">", 0)
+            return all_elements(rosetta_resolve_attr(self, "field4"), ">", 0)
 			        
-			        return if_cond_fn(rosetta_attr_exists(_resolve_rosetta_attr(self, "field1")), _then_fn0, _else_fn0)
+			        return if_cond_fn(rosetta_attr_exists(resolve_rosetta_attr(self, "field1")), _then_fn0, _else_fn0)
 			'''
+        return if_cond_fn(rosetta_attr_exists(rosetta_resolve_attr(self, "field1")), _then_fn0, _else_fn0)'''
 			assertTrue(python.toString.contains(expected))
 		}
 
@@ -1587,8 +1572,7 @@ class PythonObjectGenerationTest {
 		        The start date must fall on or before the end date (a date range of only one date is allowed).
 		        """
 		        item = self
-		        return all_elements(_resolve_rosetta_attr(self, "startDate"), "<=", _resolve_rosetta_attr(self, "endDate"))
-		'''
+        return all_elements(rosetta_resolve_attr(self, "startDate"), "<=", rosetta_resolve_attr(self, "endDate"))'''
 		assertTrue(python.toString.contains(expectedCondition))
 	}
 
@@ -1637,7 +1621,7 @@ class PythonObjectGenerationTest {
 		    @rosetta_condition
 		    def condition_0_Rule(self):
 		        item = self
-		        return all_elements(_resolve_rosetta_attr(self, "intValue1"), "<", 100)
+        return all_elements(rosetta_resolve_attr(self, "intValue1"), "<", 100)
 		    
 		    @rosetta_condition
 		    def condition_1_OneOrTwo(self):
@@ -1661,14 +1645,14 @@ class PythonObjectGenerationTest {
 		        FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
 		        """
 		        item = self
-		        return ((rosetta_attr_exists(_resolve_rosetta_attr(_resolve_rosetta_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue2")) and rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1"))) and rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1")))) or ((rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue2")) and rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1"))) and (not rosetta_attr_exists(_resolve_rosetta_attr(self, "intValue1")))))
+		        return ((rosetta_attr_exists(resolve_rosetta_attr(resolve_rosetta_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(resolve_rosetta_attr(self, "intValue2")) and rosetta_attr_exists(resolve_rosetta_attr(self, "intValue1"))) and rosetta_attr_exists(resolve_rosetta_attr(self, "intValue1")))) or ((rosetta_attr_exists(resolve_rosetta_attr(self, "intValue2")) and rosetta_attr_exists(resolve_rosetta_attr(self, "intValue1"))) and (not rosetta_attr_exists(resolve_rosetta_attr(self, "intValue1")))))
 		'''
 		
 		assertTrue(python.toString.contains(expectedA))
 		assertTrue(python.toString.contains(expectedB))
 	}
 	
-		
+	
 	def generatePython(CharSequence model) {
 		val m = model.parseRosettaWithNoErrors
         val resourceSet = m.eResource.resourceSet

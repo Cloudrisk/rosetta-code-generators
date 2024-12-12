@@ -2,6 +2,8 @@
 from __future__ import annotations
 import logging as log
 import inspect
+import keyword
+from enum import Enum
 from typing import get_args, get_origin
 from typing import TypeVar, Generic, Callable, Any
 from functools import wraps
@@ -15,7 +17,7 @@ __all__ = ['if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition',
            'rosetta_local_condition',
            'execute_local_conditions',
            'flatten_list',
-           '_resolve_rosetta_attr',
+           'rosetta_resolve_attr', 'rosetta_resolve_deep_attr',
            'rosetta_count',
            'rosetta_attr_exists',
            '_get_rosetta_object',
@@ -24,18 +26,18 @@ __all__ = ['if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition',
            'check_cardinality',
            'AttributeWithMeta',
            'AttributeWithAddress',
-           'AttributeWithLocation',
            'AttributeWithReference',
            'AttributeWithMetaWithAddress',
            'AttributeWithMetaWithReference',
            'AttributeWithAddressWithReference',
+    'AttributeWithMetaWithAddressWithReference', 'rosetta_str',
            'AttributeWithMetaWithAddressWithReference',
            'AttributeWithScheme',
            'AttributeWithMetaWithScheme',
            'calculation_func','qualification_func',
            'scheme','check_one_of']
-           
-           
+
+
 def if_cond(ifexpr, thenexpr: str, elseexpr: str, obj: object):
     '''A helper to return the value of the ternary operator.'''
     expr = thenexpr if ifexpr else elseexpr
@@ -65,14 +67,30 @@ def _is_meta(obj: Any) -> bool:
               AttributeWithMetaWithScheme))
 
 
-def _resolve_rosetta_attr(obj: Any | None,
-                          attrib: str) -> Any | list[Any] | None:
+def mangle_name(attrib: str) -> str:
+    ''' Mangle any attrib that is a Python keyword, is a Python soft keyword
+        or begins with _
+    '''
+    if (keyword.iskeyword(attrib) or keyword.issoftkeyword(attrib)
+            or attrib.startswith('_')):
+        return 'rosetta_attr_' + attrib
+    return attrib
+
+
+def rosetta_resolve_attr(obj: Any | None,
+                         attrib: str) -> Any | list[Any] | None:
+    ''' Rosetta semantics compliant attribute resolver.
+        Lists and mangled attributes are treated as defined by
+        the rosetta definition (list flattening).
+    '''
     if obj is None:
         return None
     if isinstance(obj, (list, tuple)):
-        res = [item for elem in obj
-               for item in _to_list(_resolve_rosetta_attr(elem, attrib))
-               if item is not None]
+        res = [
+            item for elem in obj
+            for item in _to_list(rosetta_resolve_attr(elem, attrib))
+            if item is not None
+        ]
         return res if res else None
     if _is_meta(obj):
         # NOTE: ignores (for now) all meta attributes in the expressions.
@@ -83,8 +101,28 @@ def _resolve_rosetta_attr(obj: Any | None,
         obj=getattr(obj,'f_locals')
     if (isinstance(obj, dict)):
         return obj[attrib]
+    attrib = mangle_name(attrib)
     return getattr(obj, attrib, None)
 
+
+def rosetta_resolve_deep_attr(obj: Any | None,
+                              attrib: str) -> Any | list[Any] | None:
+    ''' Resolves a "deep path" attribute. If the attribute or the object is
+        not a "deep path" one, the function falls back to the regular
+        `rosetta_resolve_attr`.
+    '''
+    # pylint: disable=protected-access
+    if obj is None:
+        return None
+    # if not a "deep path" object or attribute, fall back to the std function
+    if (not hasattr(obj, '_CHOICE_ALIAS_MAP')
+            or attrib not in obj._CHOICE_ALIAS_MAP):
+        return rosetta_resolve_attr(obj, attrib)
+
+    for container_nm, getter_fn in obj._CHOICE_ALIAS_MAP[attrib]:
+        if container_obj := rosetta_resolve_attr(obj, container_nm):
+            return getter_fn(container_obj, attrib)
+    return None
 
 
 def rosetta_count(obj: Any | None) -> int:
@@ -104,6 +142,13 @@ def rosetta_attr_exists(val: Any) -> bool:
     return True
 
 
+def rosetta_str(x: Any) -> str:
+    '''Returns a Rosetta conform string representation'''
+    if isinstance(x, Enum):
+        x = x.value
+    return str(x)
+
+
 def _get_rosetta_object(base_model: str, attribute: str, value: Any) -> Any:
     model_class = globals()[base_model]
     instance_kwargs = {attribute: value}
@@ -115,7 +160,6 @@ class Multiprop(list):
     ''' A class allowing for dot access to a attribute of all elements of a
         list.
     '''
-
     def __getattr__(self, attr):
         # return multiprop(getattr(x, attr) for x in self)
         res = Multiprop()
@@ -158,11 +202,7 @@ def rosetta_condition(condition):
     name = path_components[-1]
     _CONDITIONS_REGISTRY[path][name] = condition
 
-    @wraps(condition)
-    def wrapper(*args, **kwargs):
-        return condition(*args, **kwargs)
-
-    return wrapper
+    return condition
 
 
 def rosetta_local_condition(registry: dict):
@@ -173,10 +213,29 @@ def rosetta_local_condition(registry: dict):
         path = '.'.join([condition.__module__ or ''] + path_components)
         registry[path] = condition
 
+        return condition
+
+    return decorator
+
+
+def execute_local_conditions(registry: dict, cond_type: str):
+    '''Executes all registered in a local registry.'''
+    for condition_path, condition_func in registry.items():
+        if not condition_func():
+            raise ConditionViolationError(
+                f"{cond_type} '{condition_path}' failed.")
+
+
+def rosetta_local_condition(registry: dict):
+    '''Registers a condition function in a local registry.'''
+    def decorator(condition):
+        path_components = condition.__qualname__.split('.')
+        path = '.'.join([condition.__module__ or ''] + path_components)
+        registry[path] = condition
+
         @wraps(condition)
         def wrapper(*args, **kwargs):
             return condition(*args, **kwargs)
-
         return wrapper
 
     return decorator
@@ -220,9 +279,11 @@ def _get_conditions(cls) -> list:
                 for k, v in _CONDITIONS_REGISTRY.get(fqcn, {}).items()]
     return res
 
+
 class MetaAddress(BaseModel):  # pylint: disable=missing-class-docstring
-    scope: str
+    scope: str | None = None
     value: str
+
 
 class BaseDataClass(BaseModel):
     ''' A base class for all cdm generated classes. It is derived from
@@ -344,15 +405,12 @@ class BaseDataClass(BaseModel):
 
         # Check if value is an instance of one of the allowed types
         if not isinstance(value, allowed_types):
-            raise TypeError(
-                f"Value must be an instance of {allowed_types}, "
-                f"not {type(value)}"
-            )
+            raise TypeError(f"Value must be an instance of {allowed_types}, "
+                            f"not {type(value)}")
 
         attr.append(value)
 
 
-     
 def _validate_conditions_recursively(obj, raise_exc=True):
     '''Helper to execute conditions recursively on a model.'''
     if not obj:
@@ -462,6 +520,7 @@ class AttributeWithMetaWithAddressWithReference(BaseModel, Generic[ValueT]):
     globalReference: str | None = None
     value: ValueT
 
+
 def _ntoz(v):
     '''Support the lose rosetta treatment of None in comparisons'''
     if v is None:
@@ -477,7 +536,6 @@ _cmp = {
     '>': lambda x, y: _ntoz(x) > _ntoz(y),
     '<': lambda x, y: _ntoz(x) < _ntoz(y)
 }
-
 
 
 def all_elements(lhs, op, rhs) -> bool:
@@ -590,7 +648,7 @@ def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
 
     # Iterate through the path components, except the last one
     for attrib in path_components[:-1]:
-        parent_obj = _resolve_rosetta_attr(parent_obj, attrib)
+        parent_obj = rosetta_resolve_attr(parent_obj, attrib)
         if parent_obj is None:
             raise ValueError(
                 f"Attribute '{attrib}' in the path is None, cannot "
@@ -602,10 +660,8 @@ def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
     if hasattr(parent_obj, final_attr):
         setattr(parent_obj, final_attr, value)
     else:
-        raise AttributeError(
-            f"Invalid attribute '{final_attr}' for object of "
-            f"type {type(parent_obj).__name__}"
-        )
+        raise AttributeError(f"Invalid attribute '{final_attr}' for object of "
+                             f"type {type(parent_obj).__name__}")
 
 
 def add_rosetta_attr(obj: Any, attrib: str, value: Any) -> None:

@@ -1,7 +1,6 @@
 package com.regnosys.rosetta.generator.c_sharp.expression;
 
 import com.google.inject.Inject
-import com.regnosys.rosetta.RosettaExtensions
 import com.regnosys.rosetta.generator.c_sharp.util.CSharpNames
 import com.regnosys.rosetta.generator.c_sharp.util.CSharpType
 import com.regnosys.rosetta.generator.util.RosettaFunctionExtensions
@@ -49,7 +48,7 @@ import com.regnosys.rosetta.rosetta.expression.ExistsModifier
 import com.regnosys.rosetta.rosetta.expression.RosettaReference
 import com.regnosys.rosetta.rosetta.expression.RosettaSymbolReference
 import com.regnosys.rosetta.rosetta.expression.RosettaNumberLiteral
-import com.regnosys.rosetta.rosetta.TypeCall
+import com.regnosys.rosetta.RosettaEcoreUtil
 
 class ExpressionGenerator {
 
@@ -64,7 +63,7 @@ class ExpressionGenerator {
     @Inject
     RosettaFunctionExtensions funcExt
     @Inject
-    extension RosettaExtensions
+    extension RosettaEcoreUtil
     @Inject
     ExpressionHelper exprHelper
     
@@ -433,8 +432,8 @@ class ExpressionGenerator {
     def StringConcatenationClient binaryExpr(RosettaBinaryOperation expr, RosettaExpression test, ParamMap params) {
         val left = expr.left
         val right = expr.right
-        val leftRtype = typeProvider.getRType(expr.left)
-        val rightRtype = typeProvider.getRType(expr.right)
+        val leftRtype = typeProvider.getRMetaAnnotatedType(expr.left).RType
+        val rightRtype = typeProvider.getRMetaAnnotatedType(expr.right).RType
         val resultType = operators.resultType(expr.operator, leftRtype, rightRtype)
         val leftType = '''«leftRtype.name.toCSharpType»'''
         val rightType = '''«rightRtype.name.toCSharpType»'''
@@ -553,7 +552,7 @@ class ExpressionGenerator {
         if (attribute.card.isIsMany) {
             '''.«attribute.propertyName»«IF isLast && attribute.isMetaType && autoValue».EmptyIfNull().Select(«attribute.name.toFirstLower» => «attribute.name.toFirstLower».Value)«ENDIF»'''
         } else {
-            val memberCall = '''«IF attribute.override»(«attribute.typeCall.toCSharpType») «ENDIF»«IF !(attribute.card.eContainer instanceof Attribute)»«attribute.attributeTypeVariableName»«ENDIF».«attribute.propertyName»'''
+            val memberCall = '''«IF !(attribute.card.eContainer instanceof Attribute)»«attribute.attributeTypeVariableName»«ENDIF».«attribute.propertyName»'''
             if (!attribute.isMetaType || !autoValue) {
                 '''«memberCall»'''
             } else {// FieldWithMeta
@@ -562,9 +561,6 @@ class ExpressionGenerator {
         }
     }
 
-	private def CSharpType toCSharpType(TypeCall typeCall) {
-        typeCall.type.toCSharpType
-    }
     private def CSharpType toCSharpType(RosettaType rosType) {
         val model = rosType.model
         if (model === null)
@@ -600,9 +596,11 @@ class ExpressionGenerator {
         }
     }
     
-    private def typeName(Attribute attribute)
+    private def typeName(Attribute attribute) {
         // TODO: Handle Meta types
-        '''«attribute.typeCall.type.toCSharpType»'''
+    	val foo = attribute.typeCall.type
+        '''«foo.toCSharpType»'''    
+    }
 
     private def attributeTypeVariableName(Attribute attribute)
          '''«(attribute.eContainer as Data).toCSharpType.simpleName.toFirstLower»'''

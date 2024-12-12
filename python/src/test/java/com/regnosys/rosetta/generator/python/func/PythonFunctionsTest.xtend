@@ -56,12 +56,12 @@ class PythonFunctionsTest {
 		    
 		    
 		    def _then_fn0():
-		        return (-1 * _resolve_rosetta_attr(self, "arg"))
+                return (-1 * rosetta_resolve_attr(self, "arg"))
 		    
 		    def _else_fn0():
-		        return _resolve_rosetta_attr(self, "arg")
+                return rosetta_resolve_attr(self, "arg")
 		    
-		    result =  if_cond_fn(all_elements(_resolve_rosetta_attr(self, "arg"), "<", 0), _then_fn0, _else_fn0)
+            result =  if_cond_fn(all_elements(rosetta_resolve_attr(self, "arg"), "<", 0), _then_fn0, _else_fn0)
 		    
 		    
 		    return result
@@ -111,11 +111,13 @@ class PythonFunctionsTest {
 		    self = inspect.currentframe()
 		    
 		    
-		    resultVector = _resolve_rosetta_attr(self, "vector")
-		    resultVector.add_rosetta_attr(self, _resolve_rosetta_attr(self, "value"))
-		    
-		    
-		    return resultVector
+            resultVector = rosetta_resolve_attr(self, "vector")
+            resultVector.add_rosetta_attr(self, rosetta_resolve_attr(self, "value"))
+
+
+            return resultVector
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
 		'''
 		assertTrue(python.toString.contains(expected))
 	  	
@@ -254,15 +256,17 @@ class PythonFunctionsTest {
 		    
 		    @rosetta_local_condition(_pre_registry)
 		    def condition_0_CurrencyOrFinancialUnitExists(self):
-		        return (rosetta_attr_exists(_resolve_rosetta_attr(self, "currency")) or rosetta_attr_exists(_resolve_rosetta_attr(self, "financialUnit")))
+                return (rosetta_attr_exists(rosetta_resolve_attr(self, "currency")) or rosetta_attr_exists(rosetta_resolve_attr(self, "financialUnit")))
 		    # Execute all registered conditions
 		    execute_local_conditions(_pre_registry, 'Pre-condition')
 		    
-		    unitType = _get_rosetta_object('UnitType', 'currency', _resolve_rosetta_attr(self, "currency"))
-		    unitType = set_rosetta_attr(_resolve_rosetta_attr(self, 'unitType'), 'financialUnit', _resolve_rosetta_attr(self, "financialUnit"))
+            unitType = _get_rosetta_object('UnitType', 'currency', rosetta_resolve_attr(self, "currency"))
+            unitType = set_rosetta_attr(rosetta_resolve_attr(self, 'unitType'), 'financialUnit', rosetta_resolve_attr(self, "financialUnit"))
 		    
 		    
 		    return unitType
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
 		'''
 		assertTrue(python.toString.contains(expected))
     }
@@ -321,12 +325,14 @@ class PythonFunctionsTest {
 		    self = inspect.currentframe()
 		    
 		    
-		    reset = _get_rosetta_object('Reset', 'resetValue', _resolve_rosetta_attr(_resolve_rosetta_attr(self, "observation"), "observedValue"))
-		    reset = set_rosetta_attr(_resolve_rosetta_attr(self, 'reset'), 'resetDate', _resolve_rosetta_attr(self, "date"))
-		    reset.add_rosetta_attr(_resolve_rosetta_attr(_resolve_rosetta_attr(self, reset), 'observations'), _resolve_rosetta_attr(self, "observation"))
+            reset = _get_rosetta_object('Reset', 'resetValue', rosetta_resolve_attr(rosetta_resolve_attr(self, "observation"), "observedValue"))
+            reset = set_rosetta_attr(rosetta_resolve_attr(self, 'reset'), 'resetDate', rosetta_resolve_attr(self, "date"))
+            reset.add_rosetta_attr(rosetta_resolve_attr(rosetta_resolve_attr(self, reset), 'observations'), rosetta_resolve_attr(self, "observation"))
 		    
 		    
 		    return reset
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
 		'''
 		assertTrue(python.toString.contains(expected))
 		
@@ -376,10 +382,12 @@ class PythonFunctionsTest {
 		    self = inspect.currentframe()
 		    
 		    
-		    filteredQuantities = rosetta_filter(_resolve_rosetta_attr(self, "quantities"), lambda item: all_elements(_resolve_rosetta_attr(_resolve_rosetta_attr(self, "quantities"), "unit"), "=", _resolve_rosetta_attr(self, "unit")))
+            filteredQuantities = rosetta_filter(rosetta_resolve_attr(self, "quantities"), lambda item: all_elements(rosetta_resolve_attr(rosetta_resolve_attr(self, "quantities"), "unit"), "=", rosetta_resolve_attr(self, "unit")))
 		    
 		    
 		    return filteredQuantities
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
 		'''
 		assertTrue(python.toString.contains(expected))
 		
@@ -446,45 +454,47 @@ class PythonFunctionsTest {
 		    
 		    
 		    def _then_fn5():
-		        return Min(_resolve_rosetta_attr(self, "n1"), _resolve_rosetta_attr(self, "n2"))
+                return Min(rosetta_resolve_attr(self, "n1"), rosetta_resolve_attr(self, "n2"))
 		    
 		    def _else_fn5():
 		        return True
 		    
 		    def _then_fn4():
-		        return Max(_resolve_rosetta_attr(self, "n1"), _resolve_rosetta_attr(self, "n2"))
+                return Max(rosetta_resolve_attr(self, "n1"), rosetta_resolve_attr(self, "n2"))
 		    
 		    def _else_fn4():
-		        return if_cond_fn(all_elements(_resolve_rosetta_attr(self, "op"), "=", _resolve_rosetta_attr(ArithmeticOperationEnum, "MIN")), _then_fn5, _else_fn5)
+                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "MIN")), _then_fn5, _else_fn5)
 		    
 		    def _then_fn3():
-		        return (_resolve_rosetta_attr(self, "n1") / _resolve_rosetta_attr(self, "n2"))
+                return (rosetta_resolve_attr(self, "n1") / rosetta_resolve_attr(self, "n2"))
 		    
 		    def _else_fn3():
-		        return if_cond_fn(all_elements(_resolve_rosetta_attr(self, "op"), "=", _resolve_rosetta_attr(ArithmeticOperationEnum, "MAX")), _then_fn4, _else_fn4)
+                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "MAX")), _then_fn4, _else_fn4)
 		    
 		    def _then_fn2():
-		        return (_resolve_rosetta_attr(self, "n1") * _resolve_rosetta_attr(self, "n2"))
+                return (rosetta_resolve_attr(self, "n1") * rosetta_resolve_attr(self, "n2"))
 		    
 		    def _else_fn2():
-		        return if_cond_fn(all_elements(_resolve_rosetta_attr(self, "op"), "=", _resolve_rosetta_attr(ArithmeticOperationEnum, "DIVIDE")), _then_fn3, _else_fn3)
+                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "DIVIDE")), _then_fn3, _else_fn3)
 		    
 		    def _then_fn1():
-		        return (_resolve_rosetta_attr(self, "n1") - _resolve_rosetta_attr(self, "n2"))
+                return (rosetta_resolve_attr(self, "n1") - rosetta_resolve_attr(self, "n2"))
 		    
 		    def _else_fn1():
-		        return if_cond_fn(all_elements(_resolve_rosetta_attr(self, "op"), "=", _resolve_rosetta_attr(ArithmeticOperationEnum, "MULTIPLY")), _then_fn2, _else_fn2)
+                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "MULTIPLY")), _then_fn2, _else_fn2)
 		    
 		    def _then_fn0():
-		        return (_resolve_rosetta_attr(self, "n1") + _resolve_rosetta_attr(self, "n2"))
+                return (rosetta_resolve_attr(self, "n1") + rosetta_resolve_attr(self, "n2"))
 		    
 		    def _else_fn0():
-		        return if_cond_fn(all_elements(_resolve_rosetta_attr(self, "op"), "=", _resolve_rosetta_attr(ArithmeticOperationEnum, "SUBTRACT")), _then_fn1, _else_fn1)
+                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "SUBTRACT")), _then_fn1, _else_fn1)
 		    
-		    result =  if_cond_fn(all_elements(_resolve_rosetta_attr(self, "op"), "=", _resolve_rosetta_attr(ArithmeticOperationEnum, "ADD")), _then_fn0, _else_fn0)
+            result =  if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "ADD")), _then_fn0, _else_fn0)
 		    
 		    
 		    return result
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
 		'''
     	assertTrue(python.toString.contains(expected))
     }
@@ -530,11 +540,13 @@ class PythonFunctionsTest {
     	    self = inspect.currentframe()
     	    
     	    
-    	    filteredQuantities = rosetta_filter(_resolve_rosetta_attr(self, "quantities"), lambda item: rosetta_attr_exists(_resolve_rosetta_attr(_resolve_rosetta_attr(item, "unit"), "currency")))
+            filteredQuantities = rosetta_filter(rosetta_resolve_attr(self, "quantities"), lambda item: rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(item, "unit"), "currency")))
     	    
     	    
     	    return filteredQuantities
-    	    '''
+    	
+    	sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
+    	'''
     	assertTrue(python.toString.contains(expected))
     	
     }
@@ -580,16 +592,18 @@ class PythonFunctionsTest {
 		    
 		    
 		    def _then_fn0():
-		        return _resolve_rosetta_attr(self, "inp1")
+                return rosetta_resolve_attr(self, "inp1")
 		    
 		    def _else_fn0():
 		        return True
 		    
-		    Alias = if_cond_fn(all_elements(_resolve_rosetta_attr(self, "inp1"), "<", 0), _then_fn0, _else_fn0)
-		    result =  _resolve_rosetta_attr(self, "Alias")
+            Alias = if_cond_fn(all_elements(rosetta_resolve_attr(self, "inp1"), "<", 0), _then_fn0, _else_fn0)
+            result =  rosetta_resolve_attr(self, "Alias")
 		    
 		    
 		    return result
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
 		'''
 		assertTrue(python.toString.contains(expected))
     	
@@ -644,12 +658,14 @@ class PythonFunctionsTest {
     	    self = inspect.currentframe()
     	    
     	    
-    	    Alias1 = _resolve_rosetta_attr(_resolve_rosetta_attr(self, "a"), "valueA")
-    	    Alias2 = _resolve_rosetta_attr(_resolve_rosetta_attr(self, "b"), "valueB")
-    	    c = _get_rosetta_object('C', 'valueC', (_resolve_rosetta_attr(self, "Alias1") * _resolve_rosetta_attr(self, "Alias2")))
+            Alias1 = rosetta_resolve_attr(rosetta_resolve_attr(self, "a"), "valueA")
+            Alias2 = rosetta_resolve_attr(rosetta_resolve_attr(self, "b"), "valueB")
+            c = _get_rosetta_object('C', 'valueC', (rosetta_resolve_attr(self, "Alias1") * rosetta_resolve_attr(self, "Alias2")))
     	    
     	    
     	    return c
+    	
+    	sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
     	'''
     	
     	assertTrue(python.toString.contains(expected))
@@ -720,12 +736,14 @@ class PythonFunctionsTest {
 		    self = inspect.currentframe()
 		    
 		    
-		    identifiers = _get_rosetta_object('ObservationIdentifier', 'observable', _get_rosetta_object('Observable', 'rateOption', _resolve_rosetta_attr(_resolve_rosetta_attr(_resolve_rosetta_attr(_resolve_rosetta_attr(self, "payout"), "rateSpecification"), "floatingRate"), "rateOption")))
-		    identifiers = set_rosetta_attr(_resolve_rosetta_attr(self, 'identifiers'), 'observationDate', _resolve_rosetta_attr(self, "date"))
+            identifiers = _get_rosetta_object('ObservationIdentifier', 'observable', _get_rosetta_object('Observable', 'rateOption', rosetta_resolve_attr(rosetta_resolve_attr(rosetta_resolve_attr(rosetta_resolve_attr(self, "payout"), "rateSpecification"), "floatingRate"), "rateOption")))
+            identifiers = set_rosetta_attr(rosetta_resolve_attr(self, 'identifiers'), 'observationDate', rosetta_resolve_attr(self, "date"))
 		    
 		    
 		    return identifiers
-	    '''
+		
+		sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
+		'''
 		assertTrue(python.toString.contains(expected))
     	
     }
@@ -775,14 +793,16 @@ class PythonFunctionsTest {
     	    
     	    @rosetta_local_condition(_pre_registry)
     	    def condition_0_PositiveNearest(self):
-    	        return all_elements(_resolve_rosetta_attr(self, "nearest"), ">", 0)
+                return all_elements(rosetta_resolve_attr(self, "nearest"), ">", 0)
     	    # Execute all registered conditions
     	    execute_local_conditions(_pre_registry, 'Pre-condition')
     	    
-    	    roundedValue = _resolve_rosetta_attr(self, "roundedValue")
+            roundedValue = rosetta_resolve_attr(self, "roundedValue")
     	    
     	    
     	    return roundedValue
+    	
+    	sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
     	'''
     	assertTrue(python.toString.contains(expected))
     }
@@ -834,18 +854,20 @@ class PythonFunctionsTest {
     	    
     	    @rosetta_local_condition(_pre_registry)
     	    def condition_0_PositiveNearest(self):
-    	        return all_elements(_resolve_rosetta_attr(self, "nearest"), ">", 0)
+                return all_elements(rosetta_resolve_attr(self, "nearest"), ">", 0)
     	    
     	    @rosetta_local_condition(_pre_registry)
     	    def condition_1_valueNegative(self):
-    	        return all_elements(_resolve_rosetta_attr(self, "value"), "<", 0)
+                return all_elements(rosetta_resolve_attr(self, "value"), "<", 0)
     	    # Execute all registered conditions
     	    execute_local_conditions(_pre_registry, 'Pre-condition')
     	    
-    	    roundedValue = _resolve_rosetta_attr(self, "roundedValue")
+            roundedValue = rosetta_resolve_attr(self, "roundedValue")
     	    
     	    
     	    return roundedValue
+    	
+    	sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
     	'''
     	assertTrue(python.toString.contains(expected))
     }
@@ -890,7 +912,7 @@ class PythonFunctionsTest {
     	    self = inspect.currentframe()
     	    
     	    
-    	    interestRatePayout = _resolve_rosetta_attr(self, "interestRatePayout")
+            interestRatePayout = rosetta_resolve_attr(self, "interestRatePayout")
     	    
     	    # post-conditions
     	    
@@ -900,7 +922,7 @@ class PythonFunctionsTest {
     	        Interest rate payout must inherit terms from the Master Confirmation Agreement when it exists.
     	        """
     	        def _then_fn0():
-    	            return all_elements(_resolve_rosetta_attr(_resolve_rosetta_attr(self, "interestRatePayout"), "paymentDates"), "=", _resolve_rosetta_attr(_resolve_rosetta_attr(self, "masterConfirmation"), "equityCashSettlementDates"))
+                    return all_elements(rosetta_resolve_attr(rosetta_resolve_attr(self, "interestRatePayout"), "paymentDates"), "=", rosetta_resolve_attr(rosetta_resolve_attr(self, "masterConfirmation"), "equityCashSettlementDates"))
     	        
     	        def _else_fn0():
     	            return True
@@ -910,6 +932,8 @@ class PythonFunctionsTest {
     	    execute_local_conditions(_post_registry, 'Post-condition')
     	    
     	    return interestRatePayout
+    	
+    	sys.modules[__name__].__class__ = create_module_attr_guardian(sys.modules[__name__].__class__)
     	'''
     	assertTrue(python.toString.contains(expected))
     	
@@ -971,7 +995,7 @@ class PythonFunctionsTest {
     	    self = inspect.currentframe()
     	    
     	    
-    	    a = _resolve_rosetta_attr(self, "a")
+            a = rosetta_resolve_attr(self, "a")
     	    
     	    
     	    return a
@@ -979,67 +1003,7 @@ class PythonFunctionsTest {
     	assertTrue(python.toString.contains(expected))
     }
     
-    @Test
-    def void qualificationFuncTest(){
-    	val python = 
-    	'''
-    	type BusinessEvent:
-    		testTypeValue1 string (1..1) <"Test string">
-    		[metadata scheme]
-    	func Qualify_OnDemandPayment: <"Qualification of a on-demand payment.">
-	    [qualification BusinessEvent]
-	    inputs:
-	        businessEvent BusinessEvent (1..1)
-	    output:
-	        is_event boolean (1..1)
-	    '''.generatePython
-	    val expected = 
-    	'''
-    	@replaceable
-    	@qualification_func
-    	def Qualify_OnDemandPayment(businessEvent: BusinessEvent) -> bool:
-    	    """
-    	    Qualification of a on-demand payment.
-    	    
-    	    Parameters 
-    	    ----------
-    	    businessEvent : BusinessEvent
-    	    
-    	    Returns
-    	    -------
-    	    is_event : boolean
-    	    
-    	    """
-    	    self = inspect.currentframe()
-    	    
-    	    
-    	    is_event = _resolve_rosetta_attr(self, "is_event")
-    	    
-    	    
-    	    return is_event
-    	'''
-    	
-    	assertTrue(python.toString.contains(expected))
-    	
-	    }
-	    
-	    
-    @Test
-    def void prova(){
-    	val python = 
-    	'''
-    	func FilterClosedTradeStates: <"Filter to only 'closed' TradeState - where either the closedState or positionState are set.">
-    	    inputs:
-    	        tradeStates TradeState (0..*)
-    	    output:
-    	        closedTradeStates TradeState (0..*)
-    	
-    	    add closedTradeStates: tradeStates filter state -> closedState exists
-    	'''.generatePython
-    	val expected='''
-    	'''
-    	
-    	}
+
 	def generatePython(CharSequence model) {
 		val m = model.parseRosetta
         val resourceSet = m.eResource.resourceSet
