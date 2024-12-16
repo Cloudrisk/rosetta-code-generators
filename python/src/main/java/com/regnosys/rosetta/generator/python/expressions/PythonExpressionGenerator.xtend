@@ -45,6 +45,7 @@ import com.regnosys.rosetta.rosetta.expression.ThenOperation
 import com.regnosys.rosetta.rosetta.expression.ToStringOperation
 import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
 import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
+
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -257,6 +258,7 @@ class PythonExpressionGenerator {
                 } else {
                     '''False'''
             }
+            }
             RosettaIntLiteral: {
                 '''«expr.value»'''
             }
@@ -273,7 +275,7 @@ class PythonExpressionGenerator {
             }
             RosettaOnlyExistsExpression: {
                 var aux = expr as RosettaOnlyExistsExpression;
-                '''self.check_one_of_constraint(self, «generateExpression(aux.getArgs().get(0), iflvl)»)'''
+                '''self.check_one_of_constraint(self, «generateExpression(aux.getArgs().get(0), iflvl, isLambda)»)'''
             }
             RosettaCountOperation: {
                 val argument = expr.argument as RosettaExpression
@@ -362,13 +364,14 @@ class PythonExpressionGenerator {
                 return pythonConstructor
             }
             ToStringOperation: {
-                val argument = generateExpression(expr.argument, iflvl);
+                val argument = generateExpression(expr.argument, iflvl,isLambda);
                 return '''rosetta_str(«argument»)''';
             }
             ToEnumOperation: {
-                val argument = generateExpression(expr.argument, iflvl);
+                val argument = generateExpression(expr.argument, iflvl,isLambda);
                 return '''«expr.enumeration.name»(«argument»)''';
             }
+            
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
         }
