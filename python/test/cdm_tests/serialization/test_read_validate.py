@@ -10,11 +10,11 @@ sys.path.append(
         os.path.join(os.path.dirname(os.path.realpath(__file__)), os.pardir)))
 from test_helpers.config import CDM_JSON_SAMPLE_SOURCE
 from cdm.product.template.functions import FpmlIrd8
+from cdm.base.staticdata.party.Account import Account
+from cdm.event.common.Trade import Trade
 
-
-def dummy_FpmlIrd8(tradableProduct, accounts) -> bool:
+def dummy_FpmlIrd8(trade: Trade, accounts: list[Account] | None)  -> bool:
     return True
-
 
 FpmlIrd8.FpmlIrd8 = dummy_FpmlIrd8
 
