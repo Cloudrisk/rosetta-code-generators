@@ -45,7 +45,9 @@ import com.regnosys.rosetta.rosetta.expression.ThenOperation
 import com.regnosys.rosetta.rosetta.expression.ToStringOperation
 import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
 import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
-
+import com.regnosys.rosetta.rosetta.expression.SwitchOperation
+import com.regnosys.rosetta.utils.RosettaTypeSwitch
+import com.regnosys.rosetta.utils.RosettaExpressionSwitch
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -54,12 +56,14 @@ import com.regnosys.rosetta.rosetta.simple.impl.FunctionImpl
 import java.util.ArrayList
 import java.util.List
 
+import com.google.inject.Inject
+
 class PythonExpressionGenerator {
 
     
     public var List<String> importsFound
     public var if_cond_blocks = new ArrayList<String>()
-
+	//@Inject RosettaExpressionSwitch expressionSwitch;
     def String generateConditions(Data cls) {
         var n_condition = 0;
         var res = '';
@@ -175,11 +179,40 @@ class PythonExpressionGenerator {
         }
         return '''«blocks»'''
     }
+    
+    def generateSwitchCasesFunc(List<String> funcs){
+    	if (!funcs.isEmpty()){
+           '''    «FOR arg : funcs»«arg»«ENDFOR»'''
+         }
+    }
 
     def String generateExpression(RosettaExpression expr, int iflvl, boolean isLambda) {
         switch (expr) {
             RosettaDeepFeatureCall: {
                 return '''rosetta_resolve_deep_attr(self, "«expr.feature.name»")'''
+            }
+            SwitchOperation: {
+            	val attr= generateExpression(expr.argument,0,isLambda)
+            	var dictCases=new ArrayList<String>()
+            	var funcNames= new ArrayList<String>()
+            	for (thenExpr:expr.cases){
+            		val thenExprDef=generateExpression(thenExpr.getExpression(),iflvl + 1,isLambda)
+            		val funcName='''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
+            		funcNames.add(funcName)
+            		val block_then='''
+            		def «funcName»():
+            			return «thenExprDef»
+            		'''
+            		dictCases.add(block_then)
+            	}
+            	'''«generateSwitchCasesFunc(dictCases)»
+            		match «attr»:
+	            	«FOR i : 0 ..< expr.cases.length»
+	            		«generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»: return «funcNames.get(i)»
+	            	«ENDFOR»
+	            		case _: return «generateExpression(expr.getDefault(),0,isLambda)» 
+            	'''
+            	//expressionSwitch.doSwitch(expr,null)
             }
             RosettaConditionalExpression: {
                 val ifexpr = generateExpression(expr.getIf(), iflvl + 1, isLambda)
@@ -408,9 +441,9 @@ class PythonExpressionGenerator {
 					    }
 
 
-    			if (notInput){'''resolve_rosetta_attr(item, "«s.name»")'''}
-    			else {'''resolve_rosetta_attr(self, "«s.name»")'''}}
-                else {'''resolve_rosetta_attr(self, "«s.name»")'''}
+    			if (notInput){'''rosetta_resolve_attr(item, "«s.name»")'''}
+    			else {'''rosetta_resolve_attr(self, "«s.name»")'''}}
+                else {'''rosetta_resolve_attr(self, "«s.name»")'''}
             }
             RosettaEnumeration: {
                 '''«s.name»'''
