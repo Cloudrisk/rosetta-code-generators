@@ -408,9 +408,9 @@ class PythonExpressionGenerator {
 					    }
 
 
-    			if (notInput){'''resolve_rosetta_attr(item, "«s.name»")'''}
-    			else {'''resolve_rosetta_attr(self, "«s.name»")'''}}
-                else {'''resolve_rosetta_attr(self, "«s.name»")'''}
+    			if (notInput){'''rosetta_resolve_attr(item, "«s.name»")'''}
+    			else {'''rosetta_resolve_attr(self, "«s.name»")'''}}
+                else {'''rosetta_resolve_attr(self, "«s.name»")'''}
             }
             RosettaEnumeration: {
                 '''«s.name»'''
