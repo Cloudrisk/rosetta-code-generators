@@ -1,6 +1,7 @@
 '''Utility functions (runtime) for rosetta models.'''
 from __future__ import annotations
 import logging as log
+import inspect
 import keyword
 from enum import Enum
 from typing import get_args, get_origin
@@ -9,19 +10,32 @@ from functools import wraps
 from collections import defaultdict
 from pydantic import BaseModel, ValidationError, ConfigDict
 
-__all__ = [
-    'if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition', 'BaseDataClass',
-    'ConditionViolationError', 'any_elements', 'get_only_element',
-    'rosetta_filter', 'all_elements', 'contains', 'disjoint', 'join',
-    'rosetta_local_condition', 'execute_local_conditions', 'flatten_list',
-    'rosetta_resolve_attr', 'rosetta_resolve_deep_attr', 'rosetta_count',
-    'rosetta_attr_exists', '_get_rosetta_object', 'set_rosetta_attr',
-    'add_rosetta_attr', 'check_cardinality', 'AttributeWithMeta',
-    'AttributeWithAddress', 'AttributeWithReference',
-    'AttributeWithMetaWithAddress', 'AttributeWithMetaWithReference',
-    'AttributeWithAddressWithReference',
-    'AttributeWithMetaWithAddressWithReference', 'rosetta_str'
-]
+__all__ = ['if_cond', 'if_cond_fn', 'Multiprop', 'rosetta_condition',
+           'BaseDataClass', 'ConditionViolationError', 'any_elements',
+           'get_only_element', 'rosetta_filter',
+           'all_elements', 'contains', 'disjoint', 'join',
+           'rosetta_local_condition',
+           'execute_local_conditions',
+           'flatten_list',
+           'rosetta_resolve_attr', 'rosetta_resolve_deep_attr',
+           'rosetta_count',
+           'rosetta_attr_exists',
+           '_get_rosetta_object',
+           'set_rosetta_attr',
+           'add_rosetta_attr',
+           'check_cardinality',
+           'AttributeWithMeta',
+           'AttributeWithAddress',
+           'AttributeWithReference',
+           'AttributeWithMetaWithAddress',
+           'AttributeWithMetaWithReference',
+           'AttributeWithAddressWithReference',
+    'AttributeWithMetaWithAddressWithReference', 'rosetta_str',
+           'AttributeWithMetaWithAddressWithReference',
+           'AttributeWithScheme',
+           'AttributeWithMetaWithScheme',
+           'calculation_func','qualification_func',
+           'scheme','check_one_of']
 
 
 def if_cond(ifexpr, thenexpr: str, elseexpr: str, obj: object):
@@ -41,15 +55,16 @@ def if_cond_fn(ifexpr, thenexpr: Callable, elseexpr: Callable) -> Any:
 def _to_list(obj) -> list | tuple:
     if isinstance(obj, (list, tuple)):
         return obj
-    return (obj, )
+    return (obj,)
 
 
 def _is_meta(obj: Any) -> bool:
     '''Returns true if it is a meta data with embedded rosetta type.'''
     return isinstance(
-        obj, (AttributeWithMeta, AttributeWithAddress,
+        obj, (AttributeWithMeta, AttributeWithReference, AttributeWithScheme, AttributeWithAddress,
               AttributeWithMetaWithAddress, AttributeWithMetaWithReference,
-              AttributeWithMetaWithAddressWithReference))
+              AttributeWithMetaWithAddressWithReference, AttributeWithLocation,
+              AttributeWithMetaWithScheme))
 
 
 def mangle_name(attrib: str) -> str:
@@ -82,6 +97,10 @@ def rosetta_resolve_attr(obj: Any | None,
         # In the future one might want to check if the attrib is contained
         # in the metadata and return it instead of failing.
         obj = obj.value
+    if inspect.isframe(obj):
+        obj=getattr(obj,'f_locals')
+    if (isinstance(obj, dict)):
+        return obj[attrib]
     attrib = mangle_name(attrib)
     return getattr(obj, attrib, None)
 
@@ -141,7 +160,6 @@ class Multiprop(list):
     ''' A class allowing for dot access to a attribute of all elements of a
         list.
     '''
-
     def __getattr__(self, attr):
         # return multiprop(getattr(x, attr) for x in self)
         res = Multiprop()
@@ -155,6 +173,27 @@ class Multiprop(list):
 
 _CONDITIONS_REGISTRY: defaultdict[str, dict[str, Any]] = defaultdict(dict)
 
+
+def scheme(rclass):
+    @wraps(rclass)
+    def wrapper(*args, **kwargs):
+        return rclass(*args, **kwargs)
+
+    return wrapper
+
+def qualification_func(rclass):
+    @wraps(rclass)
+    def wrapper(*args, **kwargs):
+        return rclass(*args, **kwargs)
+
+    return wrapper
+
+def calculation_func(rclass):
+    @wraps(rclass)
+    def wrapper(*args, **kwargs):
+        return rclass(*args, **kwargs)
+
+    return wrapper
 
 def rosetta_condition(condition):
     '''Wrapper to register all constraint functions in the global registry'''
@@ -189,7 +228,6 @@ def execute_local_conditions(registry: dict, cond_type: str):
 
 def rosetta_local_condition(registry: dict):
     '''Registers a condition function in a local registry.'''
-
     def decorator(condition):
         path_components = condition.__qualname__.split('.')
         path = '.'.join([condition.__module__ or ''] + path_components)
@@ -198,7 +236,6 @@ def rosetta_local_condition(registry: dict):
         @wraps(condition)
         def wrapper(*args, **kwargs):
             return condition(*args, **kwargs)
-
         return wrapper
 
     return decorator
@@ -211,6 +248,19 @@ def execute_local_conditions(registry: dict, cond_type: str):
             raise ConditionViolationError(
                 f"{cond_type} '{condition_path}' failed.")
 
+def check_one_of(self, *attr_names, necessity=True) -> bool:
+    """ Checks that one and only one attribute is set. """
+    if inspect.isframe(self):
+        values=getattr(self,'f_locals')
+    vals = [values.get(n) for n in attr_names]
+    n_attr = sum(1 for v in vals if v is not None and v != [])
+    if necessity and n_attr != 1:
+        log.error('One and only one of %s should be set!', attr_names)
+        return False
+    if not necessity and n_attr > 1:
+        log.error('Only one of %s can be set!', attr_names)
+        return False
+    return True
 
 class ConditionViolationError(ValueError):
     '''Exception thrown on violation of a constraint'''
@@ -249,6 +299,8 @@ class BaseDataClass(BaseModel):
 
     meta: dict | None = None
     address: MetaAddress | None = None
+    def __repr__(self):
+        return f"<{self.__class__.__name__}>"
 
     def validate_model(self,
                        recursively: bool = True,
@@ -263,11 +315,9 @@ class BaseDataClass(BaseModel):
         '''
         att_errors = self.validate_attribs(raise_exc=raise_exc, strict=strict)
         return att_errors + self.validate_conditions(recursively=recursively,
-                                                     raise_exc=raise_exc)
+                                                     raise_exc=raise_exc)+self.validate_meta()
 
-    def validate_attribs(self,
-                         raise_exc: bool = True,
-                         strict: bool = True) -> list:
+    def validate_attribs(self, raise_exc: bool = True, strict: bool = True) -> list:
         ''' This method performs attribute type validation.
             The parameter `raise_exc` controls whether an exception should be
             thrown if a validation or condition is violated or if a list with
@@ -366,9 +416,8 @@ def _validate_conditions_recursively(obj, raise_exc=True):
     if not obj:
         return []
     if isinstance(obj, BaseDataClass):
-        return obj.validate_conditions(
-            recursively=True,  # type:ignore
-            raise_exc=raise_exc)
+        return obj.validate_conditions(recursively=True,  # type:ignore
+                                       raise_exc=raise_exc)
     if isinstance(obj, (list, tuple)):
         exc = []
         for item in obj:
@@ -396,7 +445,7 @@ def get_allowed_types_for_list_field(model_class: type, field_name: str):
         list_elem_type = get_args(field_type)[0]
         if get_origin(list_elem_type):
             return get_args(list_elem_type)
-        return (list_elem_type, )  # Single type or | operator used
+        return (list_elem_type,)  # Single type or | operator used
     return ()
 
 
@@ -404,6 +453,18 @@ ValueT = TypeVar('ValueT')
 
 
 class AttributeWithMeta(BaseModel, Generic[ValueT]):
+    '''Meta support'''
+    meta: dict | None = None
+    value: ValueT
+
+
+class AttributeWithScheme(BaseModel, Generic[ValueT]):
+    '''Meta support'''
+    link: str | None = None
+    value: ValueT
+
+
+class AttributeWithLocation(BaseModel, Generic[ValueT]):
     '''Meta support'''
     meta: dict | None = None
     value: ValueT
@@ -425,6 +486,13 @@ class AttributeWithMetaWithAddress(BaseModel, Generic[ValueT]):
     '''Meta support'''
     meta: dict | None = None
     address: MetaAddress | None = None
+    value: ValueT
+
+
+class AttributeWithMetaWithScheme(BaseModel, Generic[ValueT]):
+    '''Meta support'''
+    link: str | None = None
+    meta: dict | None = None
     value: ValueT
 
 
@@ -475,8 +543,7 @@ def all_elements(lhs, op, rhs) -> bool:
     cmp = _cmp[op]
     op1 = _to_list(lhs)
     op2 = _to_list(rhs)
-
-    return all(cmp(el1, el2) for el1 in op1 for el2 in op2)
+    return all(cmp(el1, el2) for el1, el2 in zip(op1, op2)) if len(op1) == len(op2) else False
 
 
 def disjoint(op1, op2):
@@ -540,7 +607,7 @@ def get_only_element(collection):
 
 def flatten_list(nested_list):
     '''flattens the list of lists (no-recursively)'''
-    return [item for sublist in nested_list for item in sublist]
+    return [item for sublist in _to_list(nested_list) for item in _to_list(sublist)]
 
 
 def rosetta_filter(items, filter_func, item_name='item'):
@@ -555,7 +622,7 @@ def rosetta_filter(items, filter_func, item_name='item'):
         expression.
     :return: Filtered list.
     """
-    return [item for item in items if filter_func(locals()[item_name])]
+    return [item for item in (items or []) if filter_func(locals()[item_name])]
 
 
 def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
@@ -585,7 +652,8 @@ def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
         if parent_obj is None:
             raise ValueError(
                 f"Attribute '{attrib}' in the path is None, cannot "
-                "proceed to set value.")
+                "proceed to set value."
+            )
 
     # Set the value to the last attribute in the path
     final_attr = path_components[-1]
