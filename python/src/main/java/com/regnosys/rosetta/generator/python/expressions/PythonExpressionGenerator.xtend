@@ -45,6 +45,8 @@ import com.regnosys.rosetta.rosetta.expression.ThenOperation
 import com.regnosys.rosetta.rosetta.expression.ToStringOperation
 import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
 import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
+import com.regnosys.rosetta.rosetta.expression.MinOperation
+import com.regnosys.rosetta.rosetta.expression.MaxOperation
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -318,7 +320,7 @@ class PythonExpressionGenerator {
             }
             MapOperation: {
                 val inlineFunc = expr.function as InlineFunction;
-                val funcParameters = inlineFunc.parameters.map[it.name].join(", ");
+                //val funcParameters = inlineFunc.parameters.map[it.name].join(", ");
                 val funcBody = generateExpression(inlineFunc.body, iflvl);
                 val lambdaFunction = "lambda item: " + funcBody;
                 val argument = generateExpression(expr.argument, iflvl);
@@ -350,6 +352,14 @@ class PythonExpressionGenerator {
             ToEnumOperation: {
                 val argument = generateExpression(expr.argument, iflvl);
                 return '''«expr.enumeration.name»(«argument»)''';
+            }
+            MinOperation: {
+                val argument = generateExpression(expr.getArgument (), iflvl);
+                return '''min(«argument»)''';
+            }
+            MaxOperation: {
+                val argument = generateExpression(expr.getArgument (), iflvl);
+                return '''max(«argument»)''';            	
             }
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
