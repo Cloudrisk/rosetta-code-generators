@@ -145,7 +145,7 @@ class PythonExpressionGenerator {
                 necessity = "necessity=False"
             }
         }
-        '''    return self.check_one_of_constraint(«FOR a : attributes SEPARATOR ", "»'«a.name»'«ENDFOR», «necessity»)
+        '''    return rosetta_check_one_of(self, «FOR a : attributes SEPARATOR ", "»'«a.name»'«ENDFOR», «necessity»)
         '''
     }
 
@@ -269,7 +269,7 @@ class PythonExpressionGenerator {
             }
             RosettaOnlyExistsExpression: {
                 var aux = expr as RosettaOnlyExistsExpression;
-                '''self.check_one_of_constraint(self, «generateExpression(aux.getArgs().get(0), iflvl, isLambda)»)'''
+                '''rosetta_check_one_of(self, «generateExpression(aux.getArgs().get(0), iflvl, isLambda)»)'''
             }
             RosettaCountOperation: {
                 val argument = expr.argument as RosettaExpression
