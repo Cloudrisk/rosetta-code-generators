@@ -781,7 +781,7 @@ class PythonExpressionGeneratorTest {
         Test condition
         """
         item = self
-        return (lambda item: rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field2")[0])(rosetta_filter(item, lambda item: rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field1")))'''
+        return (lambda item: rosetta_resolve_attr(rosetta_resolve_attr(item, "aValue"), "field2")[0])(rosetta_filter(item, lambda item: rosetta_resolve_attr(rosetta_resolve_attr(item, "aValue"), "field1")))'''
         val expectedClassA='''class A(BaseDataClass):
     """
     Test type
