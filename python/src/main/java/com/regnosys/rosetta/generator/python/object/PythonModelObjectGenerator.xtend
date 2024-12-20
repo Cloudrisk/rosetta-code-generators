@@ -160,8 +160,8 @@ class PythonModelObjectGenerator {
         expressionGenerator.importsFound = this.importsFound;
         val classDefinition = generateClass(rosettaClass)
 
-        val superNameFrom = (superType!==null) ? (superType.eContainer as RosettaModel).name + '.' + superType.name : null
-        val superImport   = (superType!==null) ? superType.name : null
+//        val superNameFrom = (superType!==null) ? (superType.eContainer as RosettaModel).name + '.' + superType.name : null
+//        val superImport   = (superType!==null) ? superType.name : null
 
         return '''
             «IF superType!==null»from «(superType.eContainer as RosettaModel).name».«superType.name» import «superType.name»«ENDIF»
