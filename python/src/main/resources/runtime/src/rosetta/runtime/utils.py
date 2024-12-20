@@ -572,7 +572,7 @@ def rosetta_filter(items, filter_func, item_name='item'):
         expression.
     :return: Filtered list.
     """
-    return [item for item in (items or []) if filter_func(locals()[item_name])]
+    return [item for item in (items or []) if filter_func(item)]
 
 
 def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
