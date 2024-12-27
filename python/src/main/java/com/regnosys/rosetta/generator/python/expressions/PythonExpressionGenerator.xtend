@@ -354,11 +354,11 @@ class PythonExpressionGenerator {
                 return '''«expr.enumeration.name»(«argument»)''';
             }
             MinOperation: {
-                val argument = generateExpression(expr.getArgument (), iflvl);
+                val argument = generateExpression(expr.getArgument (), iflvl,isLambda);
                 return '''min(«argument»)''';
             }
             MaxOperation: {
-                val argument = generateExpression(expr.getArgument (), iflvl);
+                val argument = generateExpression(expr.getArgument (), iflvl, isLambda);
                 return '''max(«argument»)''';
             }
             default:
