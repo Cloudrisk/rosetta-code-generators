@@ -26,3 +26,10 @@
 
 ##
         bash test/cdm_tests/run_serialization_test.sh
+
+6. To setup a local testing environment for the Python packages (ideally in a virtual Python environment)
+
+##
+        bash python -m pip install src/...
+##
+        bash python -m pip install target/...

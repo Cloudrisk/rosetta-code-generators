@@ -18,6 +18,7 @@ import com.regnosys.rosetta.rosetta.expression.RosettaOnlyExistsExpression
 import com.regnosys.rosetta.rosetta.expression.RosettaReference
 import com.regnosys.rosetta.rosetta.expression.RosettaSymbolReference
 import com.regnosys.rosetta.rosetta.expression.RosettaUnaryOperation
+import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
 import com.regnosys.rosetta.rosetta.simple.Data
 import com.regnosys.rosetta.rosetta.simple.Function
 import com.regnosys.rosetta.types.RFunction
@@ -85,11 +86,12 @@ class FunctionDependencyProvider {
             RosettaEnumValueReference,
             RosettaLiteral,
             RosettaReference,
-            RosettaSymbol:
+            RosettaSymbol,
+            RosettaDeepFeatureCall:
                 dependencies = newHashSet()
             default:
                 if (object !== null)
-                    throw new IllegalArgumentException('''«object?.eClass?.name»: the conversion for this type is not yet implemented.''')
+                    throw new IllegalArgumentException('''«object?.eClass?.name»: depedency checking for this type is not yet implemented.''')
                 else
                     dependencies = newHashSet()
         }
