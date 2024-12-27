@@ -68,7 +68,7 @@ definition">
     @rosetta_condition
     def condition_0_(self):
         item = self
-        return self.check_one_of_constraint('a0', 'a1', necessity=True)'''
+        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
 
         val expectedB='''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description="")
@@ -86,7 +86,7 @@ definition">
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=False)
+        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
     @rosetta_condition
     def condition_2_SecondOneOrTwo(self):
@@ -332,7 +332,7 @@ definition">
         Requires that a unit type must be set.
         """
         item = self
-        return self.check_one_of_constraint('capacityUnit', 'weatherUnit', 'financialUnit', 'currency', necessity=True)
+        return rosetta_check_one_of(self, 'capacityUnit', 'weatherUnit', 'financialUnit', 'currency', necessity=True)
     '''
         val expectedTestType3='''class WeatherUnitEnum(Enum):
     """
@@ -670,7 +670,7 @@ definition">
     @rosetta_condition
     def condition_0_(self):
         item = self
-        return self.check_one_of_constraint('ancillaryParty', 'legalEntity', necessity=True)'''
+        return rosetta_check_one_of(self, 'ancillaryParty', 'legalEntity', necessity=True)'''
 
         val expectedTestType4='''class AncillaryRoleEnum(Enum):
     """
@@ -1062,7 +1062,7 @@ definition">
         Requires that a unit type must be set.
         """
         item = self
-        return self.check_one_of_constraint('capacityUnit', 'weatherUnit', 'financialUnit', 'currency', necessity=True)'''
+        return rosetta_check_one_of(self, 'capacityUnit', 'weatherUnit', 'financialUnit', 'currency', necessity=True)'''
         
         val expectedTestType6='''class CapacityUnitEnum(Enum):
     """
@@ -1348,7 +1348,7 @@ definition">
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('field1', 'field2', necessity=True)'''
+        return rosetta_check_one_of(self, 'field1', 'field2', necessity=True)'''
         assertTrue(types.contains(expected))
     }
 
@@ -1521,7 +1521,7 @@ definition">
     @rosetta_condition
     def condition_0_(self):
         item = self
-        return self.check_one_of_constraint('a0', 'a1', necessity=True)'''
+        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
 
         val expectedB='''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description="")
@@ -1539,7 +1539,7 @@ definition">
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=False)
+        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
     @rosetta_condition
     def condition_2_ReqOneOrTwo(self):
@@ -1547,7 +1547,7 @@ definition">
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=True)
+        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=True)
     
     @rosetta_condition
     def condition_3_SecondOneOrTwo(self):

@@ -12,8 +12,9 @@ from test_helpers.config import CDM_JSON_SAMPLE_SOURCE
 from cdm.product.template.functions import FpmlIrd8
 from cdm.base.staticdata.party.Account import Account
 from cdm.event.common.Trade import Trade
+from cdm.product.template.TradableProduct import TradableProduct
 
-def dummy_FpmlIrd8(trade: Trade, accounts: list[Account] | None)  -> bool:
+def dummy_FpmlIrd8(tradableProduct: TradableProduct, accounts: list[Account] | None)  -> bool:
     return True
 
 FpmlIrd8.FpmlIrd8 = dummy_FpmlIrd8

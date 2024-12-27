@@ -32,15 +32,14 @@ class PythonExceptionsTest {
                 intValue2 int (0..1)
                 aValue A (1..1)
             '''.generatePython
-        }catch(Exception ex){
+        } catch(Exception ex){
             assertTrue(ex.getMessage.contains("Attribute type is null"));
         }
     }
     
-    //Conditional test: Adding a non-existing attribute in acondition     
+    //Conditional test: Using a non-existing attribute in a condition     
     @Test
-    def void testNonExistiantTypeCondition() {
-        
+    def void testUNonExistentSymbolUsage() {
         try{
             '''
             type TestType: <"Test type with one-of condition.">
@@ -50,16 +49,15 @@ class PythonExceptionsTest {
                      if field1 exists
                          then field3 > 0
             '''.generatePython
-            
-        }catch(Exception ex){
-            assertTrue(ex.getMessage.contains("Unsupported callable type"));
+        } catch(Exception ex){
+            assertTrue(ex.getMessage.contains("Unsupported symbol reference"));
         }
 
     }
     
    //Conditional test: Adding a non-existing attribute in acondition     
     @Test
-    def void testNonExistiantTypeSuperType() {
+    def void testNonExistentTypeSuperType() {
     
         try{
             '''
@@ -67,7 +65,7 @@ class PythonExceptionsTest {
             TestType2Value1 number (0..1) <"Test number">
             TestType2Value2 date (0..*) <"Test date">
             '''.generatePython
-        }catch(Exception ex){
+        } catch(Exception ex){
             assertTrue(ex.getMessage.contains("SuperType is null"))
         }      
     }

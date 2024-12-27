@@ -6,6 +6,7 @@ import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import com.regnosys.rosetta.generator.python.util.PythonTranslator
 import com.regnosys.rosetta.rosetta.RosettaEnumeration
 import com.regnosys.rosetta.rosetta.RosettaModel
+//import com.regnosys.rosetta.rosetta.RosettaEnumValue
 import com.regnosys.rosetta.rosetta.simple.AssignPathRoot
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -52,6 +53,15 @@ class  PythonFunctionGenerator {
 
     private def generateFunctions(Function function,String version) {
         val dependencies = collectFunctionDependencies(function);
+/*
+        @replaceable
+        « IF function.output!==null && function.output.getTypeCall().getType().getName() == "number"»
+        @calculation_func
+        «ENDIF»
+        « IF function.name.contains("Qualify") && function.output.getTypeCall().getType().getName() == "boolean"»
+        @qualification_func
+        «ENDIF»
+*/
         '''
         «generateImports(dependencies, function)»
         
@@ -241,7 +251,7 @@ class  PythonFunctionGenerator {
     
         for (shortcut : function.shortcuts) {
             expressionGenerator.if_cond_blocks = new ArrayList<String>();
-            val expression = expressionGenerator.generateExpression(shortcut.expression, level);
+            val expression = expressionGenerator.generateExpression(shortcut.expression, level,false);
             val if_cond_blocks = expressionGenerator.if_cond_blocks;
             val isEmpty = if_cond_blocks.isEmpty();
             if (!isEmpty) {
@@ -261,7 +271,7 @@ class  PythonFunctionGenerator {
             val setNames = new ArrayList<String>();
             for (operation: function.getOperations()) {
                 val root = operation.getAssignRoot()
-                val expression = expressionGenerator.generateExpression(operation.getExpression(), level)
+                val expression = expressionGenerator.generateExpression(operation.getExpression(), level, false)
                 val if_cond_blocks = expressionGenerator.if_cond_blocks;
                 val isEmpty = if_cond_blocks.isEmpty();
                 if (!isEmpty) {
