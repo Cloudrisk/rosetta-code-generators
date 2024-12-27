@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=62.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "test_helpers"
+version = "0.0.0"
+requires-python = ">= 3.10"
+dependencies = [
+   "pydantic>=2.6.1,<2.10",
+]
+[tool.setuptools.packages.find]
+where = ["src"]
