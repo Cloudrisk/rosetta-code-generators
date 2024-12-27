@@ -241,7 +241,7 @@ class  PythonFunctionGenerator {
     
         for (shortcut : function.shortcuts) {
             expressionGenerator.if_cond_blocks = new ArrayList<String>();
-            val expression = expressionGenerator.generateExpression(shortcut.expression, level);
+            val expression = expressionGenerator.generateExpression(shortcut.expression, level,false);
             val if_cond_blocks = expressionGenerator.if_cond_blocks;
             val isEmpty = if_cond_blocks.isEmpty();
             if (!isEmpty) {
@@ -261,7 +261,7 @@ class  PythonFunctionGenerator {
             val setNames = new ArrayList<String>();
             for (operation: function.getOperations()) {
                 val root = operation.getAssignRoot()
-                val expression = expressionGenerator.generateExpression(operation.getExpression(), level)
+                val expression = expressionGenerator.generateExpression(operation.getExpression(), level, false)
                 val if_cond_blocks = expressionGenerator.if_cond_blocks;
                 val isEmpty = if_cond_blocks.isEmpty();
                 if (!isEmpty) {

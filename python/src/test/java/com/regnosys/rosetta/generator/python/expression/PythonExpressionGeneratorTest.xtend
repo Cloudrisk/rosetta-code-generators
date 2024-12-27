@@ -62,7 +62,7 @@ class PythonExpressionGeneratorTest {
     @rosetta_condition
     def condition_0_TestChoice(self):
         item = self
-        return self.check_one_of_constraint('field1', 'field2', 'field3', necessity=False)'''
+        return rosetta_check_one_of(self, 'field1', 'field2', 'field3', necessity=False)'''
 
         assertTrue(python.toString.contains(expected))
     }
@@ -87,7 +87,7 @@ class PythonExpressionGeneratorTest {
     @rosetta_condition
     def condition_0_OneOf(self):
         item = self
-        return self.check_one_of_constraint('field1', necessity=True)'''
+        return rosetta_check_one_of(self, 'field1', necessity=True)'''
         assertTrue(python.toString.contains(expected))
     }
 
@@ -391,7 +391,7 @@ class PythonExpressionGeneratorTest {
         assertTrue(python.toString.contains(expected))
     }
     
-     @Test
+    @Test
     def void testGenerateOnlyExistsCondition(){
         val python = '''type A: <"Test type">
             field1 number (0..1) <"Test number field 1">
@@ -402,8 +402,8 @@ class PythonExpressionGeneratorTest {
                 condition TestCond: <"Test condition">
                     if aValue -> field1 exists 
                         then aValue -> field1 only exists
-            '''.generatePython 
-            
+            '''.generatePython
+
             val expected= '''class Test(BaseDataClass):
     """
     Test only exists condition
@@ -420,7 +420,7 @@ class PythonExpressionGeneratorTest {
         """
         item = self
         def _then_fn0():
-            return self.check_one_of_constraint(self, rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field1"))
+            return rosetta_check_one_of(self, rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field1"))
         
         def _else_fn0():
             return True
@@ -781,7 +781,7 @@ class PythonExpressionGeneratorTest {
         Test condition
         """
         item = self
-        return (lambda item: rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field2")[0])(rosetta_filter(item, lambda item: rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field1")))'''
+        return (lambda item: rosetta_resolve_attr(rosetta_resolve_attr(item, "aValue"), "field2")[0])(rosetta_filter(item, lambda item: rosetta_resolve_attr(rosetta_resolve_attr(item, "aValue"), "field1")))'''
         val expectedClassA='''class A(BaseDataClass):
     """
     Test type

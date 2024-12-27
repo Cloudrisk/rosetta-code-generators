@@ -2,10 +2,10 @@
 from __future__ import annotations
 import logging as log
 import keyword
+import inspect
 from enum import Enum
 from typing import get_args, get_origin
 from typing import TypeVar, Generic, Callable, Any
-from functools import wraps
 from collections import defaultdict
 from pydantic import BaseModel, ValidationError, ConfigDict
 
@@ -20,7 +20,8 @@ __all__ = [
     'AttributeWithAddress', 'AttributeWithReference',
     'AttributeWithMetaWithAddress', 'AttributeWithMetaWithReference',
     'AttributeWithAddressWithReference',
-    'AttributeWithMetaWithAddressWithReference', 'rosetta_str'
+    'AttributeWithMetaWithAddressWithReference', 'rosetta_str',
+    'rosetta_check_one_of'
 ]
 
 
@@ -82,7 +83,11 @@ def rosetta_resolve_attr(obj: Any | None,
         # In the future one might want to check if the attrib is contained
         # in the metadata and return it instead of failing.
         obj = obj.value
+    elif inspect.isframe(obj):
+        obj = getattr(obj, 'f_locals')
     attrib = mangle_name(attrib)
+    if isinstance(obj, dict):
+        return obj[attrib]
     return getattr(obj, attrib, None)
 
 
@@ -130,6 +135,23 @@ def rosetta_str(x: Any) -> str:
     return str(x)
 
 
+def rosetta_check_one_of(obj, *attr_names, necessity=True) -> bool:
+    """ Checks that one and only one attribute is set. """
+    if inspect.isframe(obj):
+        values = getattr(obj, 'f_locals')
+    else:
+        values = obj.model_dump()
+    vals = [values.get(n) for n in attr_names]
+    n_attr = sum(1 for v in vals if v is not None and v != [])
+    if necessity and n_attr != 1:
+        log.error('One and only one of %s should be set!', attr_names)
+        return False
+    if not necessity and n_attr > 1:
+        log.error('Only one of %s can be set!', attr_names)
+        return False
+    return True
+
+
 def _get_rosetta_object(base_model: str, attribute: str, value: Any) -> Any:
     model_class = globals()[base_model]
     instance_kwargs = {attribute: value}
@@ -175,31 +197,6 @@ def rosetta_local_condition(registry: dict):
         registry[path] = condition
 
         return condition
-
-    return decorator
-
-
-def execute_local_conditions(registry: dict, cond_type: str):
-    '''Executes all registered in a local registry.'''
-    for condition_path, condition_func in registry.items():
-        if not condition_func():
-            raise ConditionViolationError(
-                f"{cond_type} '{condition_path}' failed.")
-
-
-def rosetta_local_condition(registry: dict):
-    '''Registers a condition function in a local registry.'''
-
-    def decorator(condition):
-        path_components = condition.__qualname__.split('.')
-        path = '.'.join([condition.__module__ or ''] + path_components)
-        registry[path] = condition
-
-        @wraps(condition)
-        def wrapper(*args, **kwargs):
-            return condition(*args, **kwargs)
-
-        return wrapper
 
     return decorator
 
@@ -315,19 +312,6 @@ class BaseDataClass(BaseModel):
         err = f'with {len(exceptions)}' if exceptions else 'without'
         log.info('Done conditions checking for %s %s errors.', self_rep, err)
         return exceptions
-
-    def check_one_of_constraint(self, *attr_names, necessity=True) -> bool:
-        """ Checks that one and only one attribute is set. """
-        values = self.model_dump()
-        vals = [values.get(n) for n in attr_names]
-        n_attr = sum(1 for v in vals if v is not None and v != [])
-        if necessity and n_attr != 1:
-            log.error('One and only one of %s should be set!', attr_names)
-            return False
-        if not necessity and n_attr > 1:
-            log.error('Only one of %s can be set!', attr_names)
-            return False
-        return True
 
     def add_to_list_attribute(self, attr_name: str, value) -> None:
         """
@@ -476,8 +460,7 @@ def all_elements(lhs, op, rhs) -> bool:
     op1 = _to_list(lhs)
     op2 = _to_list(rhs)
 
-    return all(cmp(el1, el2) for el1 in op1 for el2 in op2)
-
+    return all(cmp(el1, el2) for el1, el2 in zip(op1, op2)) if len(op1) == len(op2) else False
 
 def disjoint(op1, op2):
     '''Checks if two lists have no common elements'''
@@ -540,10 +523,10 @@ def get_only_element(collection):
 
 def flatten_list(nested_list):
     '''flattens the list of lists (no-recursively)'''
-    return [item for sublist in nested_list for item in sublist]
+    return [item for sublist in _to_list(nested_list) for item in _to_list(sublist)]
 
 
-def rosetta_filter(items, filter_func, item_name='item'):
+def rosetta_filter(items, filter_func):
     """
     Filters a list of items based on a specified filtering criteria provided as
     a boolean lambda function.
@@ -555,7 +538,7 @@ def rosetta_filter(items, filter_func, item_name='item'):
         expression.
     :return: Filtered list.
     """
-    return [item for item in items if filter_func(locals()[item_name])]
+    return [item for item in (items or []) if filter_func(item)]
 
 
 def set_rosetta_attr(obj: Any, path: str, value: Any) -> None:
