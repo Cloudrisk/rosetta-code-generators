@@ -404,6 +404,9 @@ class PythonExpressionGenerator {
             RosettaEnumeration: {
                 '''«s.name»'''
             }
+            RosettaEnumValue: {
+                '''«s.name»'''
+            }
             RosettaCallableWithArgs: {
                 callableWithArgsCall(s, expr, iflvl, isLambda)
             }
@@ -415,7 +418,7 @@ class PythonExpressionGenerator {
             }
 
             default:
-                throw new UnsupportedOperationException("Unsupported callable type of " + s.class.simpleName)
+                throw new UnsupportedOperationException("Unsupported symbol reference for: " + s.class.simpleName)
         }
     }
 

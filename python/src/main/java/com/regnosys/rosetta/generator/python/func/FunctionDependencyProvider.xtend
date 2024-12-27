@@ -37,49 +37,53 @@ class FunctionDependencyProvider {
 
     Set<EObject> visited = new HashSet<EObject>();
 
+    var dependencies = null as Set<EObject>;    
     def Set<EObject> findDependencies(EObject object) {
         if (visited.contains(object)) {
             return newHashSet();
         }
-        var dependencies = null as Set<EObject>;
+        return generateDependencies (object);
+    }
+    
+    def Set<EObject> generateDependencies(EObject object) {
         switch object {
             RosettaBinaryOperation: {
-                dependencies = newHashSet(findDependencies(object.left) +
-                    findDependencies(object.right)
+                dependencies = newHashSet(generateDependencies(object.left) +
+                    generateDependencies(object.right)
                 )
             }
             RosettaConditionalExpression: {
                 dependencies = newHashSet(
-                    findDependencies(object.^if) + 
-                    findDependencies(object.ifthen) +
-                    findDependencies(object.elsethen))
+                    generateDependencies(object.^if) + 
+                    generateDependencies(object.ifthen) +
+                    generateDependencies(object.elsethen))
             }
             RosettaOnlyExistsExpression: {
                 dependencies = findDependenciesFromIterable(object.args)
             }
             RosettaFunctionalOperation: {
-                dependencies = newHashSet(findDependencies(object.argument) + findDependencies(object.function))
+                dependencies = newHashSet(generateDependencies(object.argument) + generateDependencies(object.function))
             }
             RosettaUnaryOperation: {
-                dependencies = findDependencies(object.argument)
+                dependencies = generateDependencies(object.argument)
             }
             RosettaFeatureCall:
-                dependencies = findDependencies(object.receiver)
+                dependencies = generateDependencies(object.receiver)
             RosettaSymbolReference: {
-                dependencies = newHashSet(findDependencies(object.symbol) + findDependenciesFromIterable(object.args))
+                dependencies = newHashSet(generateDependencies(object.symbol) + findDependenciesFromIterable(object.args))
             }
             Function, Data, RosettaEnumeration: {
                 dependencies = newHashSet(object)
             }
             InlineFunction: {
-                dependencies = findDependencies(object.body)
+                dependencies = generateDependencies(object.body)
             }
             ListLiteral: {
-                dependencies = newHashSet(object.elements.flatMap[findDependencies])
+                dependencies = newHashSet(object.elements.flatMap[generateDependencies])
             }
             RosettaConstructorExpression: {
                 val typeDependencies = (object.typeCall?.type !== null) ?  newHashSet(object.typeCall.type) : newHashSet()
-                val keyValuePairsDependencies = object.values.map[valuePair | findDependencies(valuePair.value)].flatten
+                val keyValuePairsDependencies = object.values.map[valuePair | generateDependencies(valuePair.value)].flatten
                 dependencies = newHashSet(typeDependencies + keyValuePairsDependencies)
             }
             RosettaExternalFunction,
@@ -91,7 +95,7 @@ class FunctionDependencyProvider {
                 dependencies = newHashSet()
             default:
                 if (object !== null)
-                    throw new IllegalArgumentException('''«object?.eClass?.name»: depedency checking for this type is not yet implemented.''')
+                    throw new IllegalArgumentException('''«object?.eClass?.name»: generating dependency in a function for this type is not yet implemented.''')
                 else
                     dependencies = newHashSet()
         }
@@ -102,7 +106,7 @@ class FunctionDependencyProvider {
     }
 
     def Set<EObject> findDependenciesFromIterable(Iterable<? extends EObject> objects) {
-        val allDependencies = objects.map[object | findDependencies(object)].flatten.toSet
+        val allDependencies = objects.map[object | generateDependencies(object)].flatten.toSet
         newHashSet(allDependencies)
     }
 
