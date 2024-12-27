@@ -482,7 +482,7 @@ class ModelObjectGeneratorTest {
     @rosetta_condition
     def condition_0_(self):
         item = self
-        return self.check_one_of_constraint('a0', 'a1', necessity=True)'''
+        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
         
         val expectedB = '''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description="")
@@ -500,7 +500,7 @@ class ModelObjectGeneratorTest {
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=False)
+        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
     @rosetta_condition
     def condition_2_SecondOneOrTwo(self):
@@ -731,7 +731,7 @@ class ModelObjectGeneratorTest {
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('field1', 'field2', necessity=True)'''
+        return rosetta_check_one_of(self, 'field1', 'field2', necessity=True)'''
         assertTrue(types.contains(expected))
     }
 
@@ -812,7 +812,7 @@ class ModelObjectGeneratorTest {
     @rosetta_condition
     def condition_0_(self):
         item = self
-        return self.check_one_of_constraint('a0', 'a1', necessity=True)'''
+        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
         
         val expectedB = '''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description="")
@@ -830,7 +830,7 @@ class ModelObjectGeneratorTest {
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=False)
+        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
     @rosetta_condition
     def condition_2_ReqOneOrTwo(self):
@@ -838,7 +838,7 @@ class ModelObjectGeneratorTest {
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return self.check_one_of_constraint('intValue1', 'intValue2', necessity=True)
+        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=True)
     
     @rosetta_condition
     def condition_3_SecondOneOrTwo(self):
