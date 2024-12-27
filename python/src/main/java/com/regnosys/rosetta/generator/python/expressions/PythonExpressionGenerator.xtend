@@ -404,7 +404,7 @@ class PythonExpressionGenerator {
             }
 
             default:
-                throw new UnsupportedOperationException("Unsupported symbor reference for: " + s.class.simpleName)
+                throw new UnsupportedOperationException("Unsupported symbol reference for: " + s.class.simpleName)
         }
     }
 

@@ -67,9 +67,6 @@ class  PythonFunctionGenerator {
         
         
         @replaceable
-        « IF function.output!==null && function.output.getTypeCall().getType().getName() == "number"»
-        @calculation_func
-        «ENDIF»
         def «function.name»«generatesInputs(function)»:
             «generateDescription(function)»
             «IF function.conditions.size()>0»    

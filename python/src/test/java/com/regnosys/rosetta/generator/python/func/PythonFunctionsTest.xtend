@@ -969,30 +969,29 @@ class PythonFunctionsTest {
         '''.generatePython
         
         val expected = 
-        '''
-        @replaceable
-        def DayCountFraction(interestRatePayout: InterestRatePayout, date: datetime.date) -> Decimal:
-            """
-            
-            Parameters 
-            ----------
-            interestRatePayout : InterestRatePayout
-            
-            date : date
-            
-            Returns
-            -------
-            a : number
-            
-            """
-            self = inspect.currentframe()
-            
-            
-            a = rosetta_resolve_attr(self, "a")
-            
-            
-            return a
-        '''
+        '''@replaceable
+def DayCountFraction(interestRatePayout: InterestRatePayout, date: datetime.date) -> Decimal:
+    """
+    
+    Parameters 
+    ----------
+    interestRatePayout : InterestRatePayout
+    
+    date : date
+    
+    Returns
+    -------
+    a : number
+    
+    """
+    self = inspect.currentframe()
+    
+    
+    a = rosetta_resolve_attr(self, "a")
+    
+    
+    return a'''
+
         assertTrue(python.toString.contains(expected))
     }
     
