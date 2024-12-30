@@ -1,4 +1,4 @@
-package com.regnosys.rosetta.generator.python.object
+package com.regnosys.rosetta.generator.python;
 
 import com.regnosys.rosetta.types.RAttribute
 import com.regnosys.rosetta.types.RType

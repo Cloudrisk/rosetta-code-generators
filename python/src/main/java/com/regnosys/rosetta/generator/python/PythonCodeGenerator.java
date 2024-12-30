@@ -2,13 +2,14 @@ package com.regnosys.rosetta.generator.python;
 
 import com.google.inject.Inject;
 import com.regnosys.rosetta.generator.external.AbstractExternalGenerator;
-import com.regnosys.rosetta.generator.python.enums.PythonEnumGenerator;
-import com.regnosys.rosetta.generator.python.func.PythonFunctionGenerator;
-import com.regnosys.rosetta.generator.python.object.PythonModelObjectGenerator;
+import com.regnosys.rosetta.generator.python.PythonEnumGenerator;
+import com.regnosys.rosetta.generator.python.PythonFunctionGenerator;
+import com.regnosys.rosetta.generator.python.PythonModelObjectGenerator;
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil;
 import com.regnosys.rosetta.generator.python.util.Util;
 import com.regnosys.rosetta.rosetta.RosettaEnumeration;
 import com.regnosys.rosetta.rosetta.RosettaMetaType;
+import com.regnosys.rosetta.rosetta.RosettaTypeAlias;
 import com.regnosys.rosetta.rosetta.RosettaModel;
 import com.regnosys.rosetta.rosetta.simple.Data;
 import com.regnosys.rosetta.rosetta.simple.Function;
@@ -62,6 +63,14 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
 
         List<Data> rosettaClasses = model.getElements().stream().filter(e -> e instanceof Data)
                 .map(Data.class::cast).collect(Collectors.toList());
+
+        List<RosettaTypeAlias> typeAliases = model.getElements().stream()
+                .filter(RosettaTypeAlias.class::isInstance).map(RosettaTypeAlias.class::cast)
+                .collect(Collectors.toList());
+
+        if (!typeAliases.isEmpty()) {
+            System.out.printf("PythonCodeGenerator::generate ... length of typeAliases: %d%n", typeAliases.size());
+        }
 
         List<RosettaMetaType> metaTypes = model.getElements().stream()
                 .filter(RosettaMetaType.class::isInstance).map(RosettaMetaType.class::cast)
@@ -125,7 +134,7 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
         }
         if (namespace != null) {
             result.put("pyproject.toml",
-                    PythonModelGeneratorUtil.createPYProjectTomlFile(namespace, cleanVersion));
+                PythonModelGeneratorUtil.createPYProjectTomlFile(namespace, cleanVersion));
         }
         return result;
     }

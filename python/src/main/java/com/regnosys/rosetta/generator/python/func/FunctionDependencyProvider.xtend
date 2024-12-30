@@ -1,4 +1,4 @@
-package com.regnosys.rosetta.generator.python.func;
+package com.regnosys.rosetta.generator.python;
 
 import com.regnosys.rosetta.rosetta.RosettaEnumValueReference
 import com.regnosys.rosetta.rosetta.RosettaEnumeration

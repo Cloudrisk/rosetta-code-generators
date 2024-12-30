@@ -1,1 +1,1 @@
-__all__ = ["config"]
+__all__ = ["dict_comp"]

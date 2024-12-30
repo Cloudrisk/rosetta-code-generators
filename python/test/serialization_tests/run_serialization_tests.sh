@@ -28,9 +28,9 @@ $PYEXE -m pip install test_helpers-0.0.0-py3-none-any.whl
 echo "**** Build and Install Generated Unit Tests ****"
 cd $MYPATH/$SERIALIZATIONTESTSDIR
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
-$PYEXE -m pip install python_data-0.0.0-py3-none-any.whl
+$PYEXE -m pip install python_*-0.0.0-py3-none-any.whl
 cd $MYPATH
 # run tests
 # $PYEXE -m pytest -p no:cacheprovider $MYPATH/runtime_tests $MYPATH/rosetta_tests 
-
-rm -rf .pytest
+rm $MYPATH/test_helpers/test_helpers-0.0.0-py3-none-any.whl
+#rm -rf .pytest

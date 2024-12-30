@@ -34,7 +34,6 @@ $PYEXE -m pip install "pydantic>=2.6.1,<2.10" || processError
 $PYEXE -m pip install jsonpickle || processError
 rm -rf build
 rm rosetta_runtime-*-py3-none-any.whl
-$PYEXE -m pip install -e . || processError
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
 rm -rf build .pybuild
 echo ""

@@ -1,8 +1,8 @@
-package com.regnosys.rosetta.generator.python.enums
+package com.regnosys.rosetta.generator.python;
 
 import com.google.inject.Inject
 import com.regnosys.rosetta.generator.java.enums.EnumHelper
-import com.regnosys.rosetta.generator.python.object.PythonModelObjectBoilerPlate
+import com.regnosys.rosetta.generator.python.PythonModelObjectBoilerPlate
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import com.regnosys.rosetta.rosetta.RosettaEnumeration
 import com.regnosys.rosetta.rosetta.RosettaModel

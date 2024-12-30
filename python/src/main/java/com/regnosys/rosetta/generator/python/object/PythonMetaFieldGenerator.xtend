@@ -1,4 +1,4 @@
-package com.regnosys.rosetta.generator.python.object
+package com.regnosys.rosetta.generator.python;
 
 import com.google.inject.Inject
 
@@ -12,7 +12,7 @@ import com.regnosys.rosetta.types.RObjectFactory
 import com.regnosys.rosetta.types.RChoiceType
 import com.regnosys.rosetta.types.RAttribute
 
-import static extension com.regnosys.rosetta.generator.python.object.PythonModelObjectBoilerPlate.*
+import static extension com.regnosys.rosetta.generator.python.PythonModelObjectBoilerPlate.*
 import static extension com.regnosys.rosetta.generator.python.util.PythonTranslator.*
 import static extension com.regnosys.rosetta.generator.util.IterableUtil.*
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil

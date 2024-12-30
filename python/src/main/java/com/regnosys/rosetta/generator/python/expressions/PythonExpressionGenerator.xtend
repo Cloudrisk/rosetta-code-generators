@@ -1,4 +1,4 @@
-package com.regnosys.rosetta.generator.python.expressions
+package com.regnosys.rosetta.generator.python;
 
 import com.regnosys.rosetta.generator.java.enums.EnumHelper
 import com.regnosys.rosetta.rosetta.RosettaCallableWithArgs

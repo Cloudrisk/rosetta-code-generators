@@ -1,7 +1,7 @@
-package com.regnosys.rosetta.generator.python.object
+package com.regnosys.rosetta.generator.python;
 
 import com.google.inject.Inject
-import com.regnosys.rosetta.generator.python.expressions.PythonExpressionGenerator
+import com.regnosys.rosetta.generator.python.PythonExpressionGenerator
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import com.regnosys.rosetta.rosetta.RosettaMetaType
 import com.regnosys.rosetta.rosetta.RosettaModel

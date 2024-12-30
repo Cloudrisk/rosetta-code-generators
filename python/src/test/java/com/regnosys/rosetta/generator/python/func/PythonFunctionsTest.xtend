@@ -1,4 +1,4 @@
-package com.regnosys.rosetta.generator.python.func
+package com.regnosys.rosetta.generator.python
 
 import com.google.inject.Inject
 import com.regnosys.rosetta.tests.RosettaInjectorProvider

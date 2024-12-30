@@ -1,4 +1,7 @@
 '''dict/list recursive comparison'''
+
+__all__ = ["dict_comp"]
+
 def dict_comp(d1, d2, prefix=''):
     '''compare recursively a dictionary/list'''
     if d1 == d2:
