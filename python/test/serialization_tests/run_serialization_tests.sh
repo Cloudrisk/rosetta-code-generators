@@ -21,9 +21,10 @@ $PYEXE -m pip install pytest
 echo "**** Install Runtime ****"
 $PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl --force-reinstall
 echo "**** Build and Install Helper ****"
-cd $MYPATH/test_helpers
+cd $MYPATH/test_helper
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
-$PYEXE -m pip install test_helpers-0.0.0-py3-none-any.whl
+$PYEXE -m pip install test_helper-0.0.0-py3-none-any.whl
+rm test_helper-0.0.0-py3-none-any.whl
 
 echo "**** Build and Install Generated Unit Tests ****"
 cd $MYPATH/$SERIALIZATIONTESTSDIR
