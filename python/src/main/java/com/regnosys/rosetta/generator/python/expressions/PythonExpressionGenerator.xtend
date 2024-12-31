@@ -179,11 +179,6 @@ class PythonExpressionGenerator {
         }
         return '''«blocks»'''
     }
-    def generateSwitchCasesFunc(List<String> funcs){
-    	if (!funcs.isEmpty()){
-           '''    «FOR arg : funcs»«arg»«ENDFOR»'''
-         }
-    }
 
     def String generateExpression(RosettaExpression expr, int iflvl, boolean isLambda) {
         switch (expr) {
