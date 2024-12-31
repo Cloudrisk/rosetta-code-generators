@@ -44,10 +44,8 @@ class PythonExpressionGeneratorTest {
         match rosetta_resolve_attr(self, "a"):
           case 1: return _then_1()
           case 2: return _then_2()
-          case _: return _then_default()
-            
-            '''
-            assertTrue(expected.contains("Unsupported expression type of SwitchOperationImpl"));
+          case _: return _then_default()'''
+            assertTrue(python.toString.contains(expected));
         }
 
     @Test
