@@ -46,9 +46,11 @@ Thumbs.db
 __pycache__
 .pydevenv/
 .pytest_cache/
+python_cdm.egg-info
 # project
 target/python/build/
-python_cdm.egg-info
 build/runtime/build
 rosetta_runtime.egg-info
-build/resources/rosetta/cdm
+.pydevenv
+python/.pydevproject
+python/.checkstyle
