@@ -28,3 +28,4 @@ json-schema/src/test/generated-sources/
 **/top_level.txt
 **/requires.txt
 **/build/**
+python/.checkstyle

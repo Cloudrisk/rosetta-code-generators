@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PythonCodeGenerator extends AbstractExternalGenerator {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PythonCodeGenerator.class);
 
     @Inject
@@ -44,11 +45,11 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
     public PythonCodeGenerator() {
         super("Python");
     }
-
+	
     @Override
     public Map<String, ? extends CharSequence> beforeAllGenerate(ResourceSet set,
             Collection<? extends RosettaModel> models, String version) {
-        subfolders = new ArrayList<String>();
+        subfolders = new ArrayList<>();
         previousNamespace = new AtomicReference<>("");
         namespace = null;
         return Collections.emptyMap();
@@ -84,11 +85,11 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
                 .filter(t -> Function.class.isInstance(t)).map(Function.class::cast)
                 .collect(Collectors.toList());
 
-        if (rosettaClasses.size() > 0 || metaTypes.size() > 0 || rosettaEnums.size() > 0 || rosettaFunctions.size() > 0) {
+        if (!rosettaClasses.isEmpty() || !metaTypes.isEmpty() || !rosettaEnums.isEmpty() || !rosettaFunctions.isEmpty()) {
             if (!subfolders.contains(model.getName())) {
                 subfolders.add(model.getName());
             }
-            if (rosettaFunctions.size() > 0 && !subfolders.contains(model.getName() + ".functions")) {
+            if (!rosettaFunctions.isEmpty() && !subfolders.contains(model.getName() + ".functions")) {
                 subfolders.add(model.getName() + ".functions");
             }
         }
@@ -134,7 +135,7 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
         }
         if (namespace != null) {
             result.put("pyproject.toml",
-                PythonModelGeneratorUtil.createPYProjectTomlFile(namespace, cleanVersion));
+                    PythonModelGeneratorUtil.createPYProjectTomlFile(namespace, cleanVersion));
         }
         return result;
     }
@@ -145,8 +146,9 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
         for (String subfolder : subfolders) {
             String[] parts = subfolder.split("\\.");
             if (parts.length > 0) {
-                if (!firstElements.contains(parts[0]))
+                if (!firstElements.contains(parts[0])) {
                     firstElements.add(parts[0]);
+                }
             }
         }
 
@@ -181,8 +183,7 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
                 for (int j = 1; j <= i; j++) {
                     keyBuilder.append(".").append(parts[j]);
                 }
-                String key = PythonModelGeneratorUtil.toPyFileName(keyBuilder.toString(),
-                        "__init__");
+                String key = PythonModelGeneratorUtil.toPyFileName(keyBuilder.toString(), "__init__");
                 result.putIfAbsent(key, " ");
             }
         }

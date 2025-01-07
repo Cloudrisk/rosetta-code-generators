@@ -4,14 +4,16 @@ import os
 import json
 import importlib
 import glob
+import argparse
 import pytest
 from pydantic import BaseModel
+from typing import Any, Dict
 from test_helper import dict_comp
+from rosetta.runtime.utils import BaseDataClass 
 
-JSON_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/data'
+JSON_DIR = '/Users/dls/projects/rune/rune-common/regnosys/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/extension'
 
-
-def create_object_from_dict(class_path: str, data: dict) -> BaseModel:
+def create_object_from_dict(class_path: str, data: Dict[str, Any]) -> BaseModel:
     """
     Create an object of the specified class from a dictionary.
     
@@ -20,26 +22,37 @@ def create_object_from_dict(class_path: str, data: dict) -> BaseModel:
     :return: An instance of the specified class.
     """
     # Import the module and get the class
-    class_name = class_path.rsplit('.')[-1]
-    module = importlib.import_module(class_path)
+    module_path, class_name = class_path.rsplit('.', 1)
+    module = importlib.import_module(module_path)
     cls = getattr(module, class_name)
-    
+
     # Ensure the class is a subclass of Pydantic's BaseModel
     if not issubclass(cls, BaseModel):
         raise TypeError(f"{class_name} is not a subclass of Pydantic BaseModel")
-    
+
     # Recursively create objects for nested dictionaries with '@type'
-    for key, value in data.items():
-        if isinstance(value, dict) and '@type' in value:
-            nested_class_path = value.pop('@type')
-            print ('key: ' + key + ' nested_class_path: ' + nested_class_path + '  value: ' + json.dumps(value))
-            data[key] = create_object_from_dict(nested_class_path, value)
-        elif isinstance(value, BaseModel):
-            # Convert Pydantic model instance to dictionary
-            data[key] = value.dict()
+    def process_nested_dict(d: Dict[str, Any]) -> Dict[str, Any]:
+        for key, value in d.items():
+            if isinstance(value, dict):
+                if '@type' in value:
+                    nested_class_path = value.pop('@type')
+                    d[key] = create_object_from_dict(nested_class_path, value)
+                else:
+                    # Recursively process the nested dictionary
+                    d[key] = process_nested_dict(value)
+            elif isinstance(value, BaseModel):
+                # Convert Pydantic model instance to dictionary
+                d[key] = value.dict()
+        return d
+
+    # Process the input data
+    processed_data = process_nested_dict(data)
+
+    # Remove the '@type' key if it exists at the top level
+    processed_data.pop('@type', None)
 
     # Create and return the object
-    return cls(**data)
+    return cls(**processed_data)
 
 def read_to_rune_from_string (json_str_in: str):
     '''generate a rune object from a string'''
@@ -48,10 +61,6 @@ def read_to_rune_from_string (json_str_in: str):
     new_obj_type = rune_dict.pop('@type')
     new_obj_model_version = rune_dict.pop('@version')
     new_obj = create_object_from_dict (new_obj_type, rune_dict)
-#    module = importlib.import_module(new_obj_type)
-#    cls_name = new_obj_type.split('.')[-1]
-#    cls = getattr(module, cls_name)
-#    new_obj = cls.model_validate_json(json.dumps(rune_dict))
     return {'obj_model': new_obj_model,
             'obj_type': new_obj_type,
             'obj_model_version': new_obj_model_version,
@@ -67,7 +76,6 @@ def write_to_string_from_rune (obj_out, obj_model_out, obj_type_out, obj_model_v
     return json.dumps(rune_dict)
 
 json_files = glob.glob(JSON_DIR + os.sep + '**/*.json', recursive = True)
-#inscope_files = ['choice-data.json']
 inscope_files = []
 
 @pytest.mark.parametrize("json_file", json_files)
@@ -78,6 +86,7 @@ def test_json_file(json_file):
         json_str = Path(os.path.join(JSON_DIR, json_file)).read_text(encoding='utf8')
         try:
             results = read_to_rune_from_string(json_str)
+            print(results)
             json_str_out = write_to_string_from_rune (results['obj'],
                                                       results['obj_model'],
                                                       results['obj_type'],
@@ -87,9 +96,9 @@ def test_json_file(json_file):
             assert dict_comp(dict_in, dict_out), f"failed dict comparison for {json_file_name}"
         except Exception as error_msg:
             print(error_msg)
-            assert(False)
+            assert False
     else:
-        assert(False), f"test not implemented for {json_file}"
+        assert False, f"test not implemented for {json_file}"
 
 def main():
     '''Run pytest programmatically'''
@@ -104,17 +113,39 @@ def process_files ():
         print('reading: ' + json_file_name + ' is in scope: ' + str(in_scope))
         if in_scope:
             json_str = Path(os.path.join(JSON_DIR, json_file)).read_text(encoding='utf8')
-            results = read_to_rune_from_string(json_str)
-            print(results['obj_model'])
-            print(results['obj_type'])
-            print(results['obj'])
-            json_str_out = write_to_string_from_rune (results['obj'],
-                                                    results['obj_model'],
-                                                    results['obj_type'],
-                                                    results['obj_model_version'])
-            print(json_str_out)
-    
+            try:
+                results = read_to_rune_from_string(json_str)
+                json_str_out = write_to_string_from_rune (results['obj'],
+                                                        results['obj_model'],
+                                                        results['obj_type'],
+                                                        results['obj_model_version'])
+                print(json_str_out)
+            except Exception as ex:
+                print('error processing file:', json_file, '\nexception\n', ex)
+
 if __name__ == "__main__":
-#    process_files()
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-t', '--test', help='Run Unit Tests', action="store_true")
+    parser.add_argument('-p', '--process', 
+                        help='Show Deserialized and Serialized Data', 
+                        action="store_true")
+    parser.add_argument('-x', '--execute', help='Execute Test On a Specific JSON')
+    args = parser.parse_args()
+    if args.test:
+        print('run tests')
+        main()
+    elif args.process:
+        print('process files')
+        process_files()
+    elif args.execute:
+        print('testing file: ', args.execute)
+        json_str = Path(os.path.join(JSON_DIR, args.execute)).read_text(encoding='utf8')
+        print('json_str:', json_str)
+        try:
+            rune = read_to_rune_from_string(json_str)
+            print (rune['obj'])
+        except Exception as ex:
+            print('error processing file:', args.execute, '\nexception\n', ex, 'n', json_str)
+    else:
+        parser.print_help()
 
