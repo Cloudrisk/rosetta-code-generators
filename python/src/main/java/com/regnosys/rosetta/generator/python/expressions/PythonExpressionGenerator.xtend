@@ -47,6 +47,7 @@ import com.regnosys.rosetta.rosetta.expression.ToEnumOperation
 import com.regnosys.rosetta.rosetta.expression.RosettaDeepFeatureCall
 import com.regnosys.rosetta.rosetta.expression.MinOperation
 import com.regnosys.rosetta.rosetta.expression.MaxOperation
+import com.regnosys.rosetta.rosetta.expression.SwitchOperation
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Condition
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -59,7 +60,7 @@ class PythonExpressionGenerator {
 
     public var List<String> importsFound
     public var if_cond_blocks = new ArrayList<String>()
-
+	public var switch_cond_blocks= new ArrayList<String>()
     def String generateConditions(Data cls) {
         var n_condition = 0;
         var res = '';
@@ -152,14 +153,20 @@ class PythonExpressionGenerator {
     }
 
     private def generateExpressionCondition(Condition c) {
-        if_cond_blocks = new ArrayList<String>()
+        if_cond_blocks = new ArrayList<String>()        
+        switch_cond_blocks= new ArrayList<String>()
         var expr = generateExpression(c.expression, 0, false)
         var blocks = ""
+        var switch_blocks=""
         if (!if_cond_blocks.isEmpty()) {
             blocks = '''    «FOR arg : if_cond_blocks»«arg»«ENDFOR»'''
         }
-        return '''«blocks»    return «expr»
+        if (!switch_cond_blocks.isEmpty()) {
+            switch_blocks = '''    «FOR arg : switch_cond_blocks»«arg»«ENDFOR»'''
+        }
+        if (switch_blocks.equals("")) return '''«blocks»    return «expr»
         '''
+        else return '''«switch_blocks»    «expr»'''
     }
 
     def generateExpressionThenElse(RosettaExpression expr, List<Integer> iflvl) {
@@ -360,6 +367,34 @@ class PythonExpressionGenerator {
             MaxOperation: {
                 val argument = generateExpression(expr.getArgument (), iflvl, isLambda);
                 return '''max(«argument»)''';
+            }
+            
+            SwitchOperation: {
+            	val attr= generateExpression(expr.argument,0,isLambda)
+            	var funcNames= new ArrayList<String>()
+            	for (thenExpr:expr.cases){
+            		val thenExprDef=generateExpression(thenExpr.getExpression(),iflvl + 1,isLambda)
+            		val funcName='''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
+            		funcNames.add(funcName)
+            		val block_then='''
+            		def «funcName»():
+            			return «thenExprDef»
+            		'''
+            		switch_cond_blocks.add(block_then)
+            	}
+            	val defaultExprDef= generateExpression(expr.getDefault(),0,isLambda)
+            	val defaultFuncName= '''_then_default'''
+            	funcNames.add(defaultFuncName)
+            	val block_default_then='''
+            		def «defaultFuncName»():
+            			return «defaultExprDef»
+            		'''
+            		switch_cond_blocks.add(block_default_then)
+            	'''match «attr»:
+      «FOR i : 0 ..< expr.cases.length»case «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»: return «funcNames.get(i)»()
+      «ENDFOR»case _: return «funcNames.get(funcNames.size-1)»()
+'''
+            	
             }
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
