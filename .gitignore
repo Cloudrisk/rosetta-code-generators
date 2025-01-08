@@ -22,3 +22,8 @@ python/.pydevproject
 json-schema/src/main/generated-sources/
 json-schema/src/test/generated-sources/
 .checkstyle
+python/test/serialization_tests/test_helper/src/test_helper.egg-info/dependency_links.txt
+python/test/serialization_tests/test_helper/src/test_helper.egg-info/PKG-INFO
+python/test/serialization_tests/test_helper/src/test_helper.egg-info/requires.txt
+python/test/serialization_tests/test_helper/src/test_helper.egg-info/SOURCES.txt
+python/test/serialization_tests/test_helper/src/test_helper.egg-info/top_level.txt
