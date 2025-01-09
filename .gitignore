@@ -1,3 +1,4 @@
+# Maven
 bin/
 target/
 *~
@@ -20,10 +21,4 @@ kotlin-feature.code-workspace
 json-schema/src/main/generated-sources/
 json-schema/src/test/generated-sources/
 **/.checkstyle
-**/dependency_links.txt
-**/PKG-INFO
-**/SOURCES.txt
-**/top_level.txt
-**/requires.txt
-**/build/**
 

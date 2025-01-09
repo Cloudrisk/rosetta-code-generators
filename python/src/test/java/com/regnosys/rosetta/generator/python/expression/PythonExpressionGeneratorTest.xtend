@@ -21,18 +21,32 @@ class PythonExpressionGeneratorTest {
     
     @Test
     def void testGenerateSwitch() {
-        try {
             val python = '''type FooTest:
             a int (1..1)
             condition Test:
                 a switch
                     1 then True,
                     2 then True,
-                    default False'''.generatePython()
-        } catch(Exception ex){
-            assertTrue(ex.getMessage.contains("Unsupported expression type of SwitchOperationImpl"));
+                    default False
+            '''.generatePython()
+            val expected = '''class FooTest(BaseDataClass):
+    a: int = Field(..., description="")
+    
+    @rosetta_condition
+    def condition_0_Test(self):
+        item = self
+        def _then_1():
+            return True
+        def _then_2():
+            return True
+        def _then_default():
+            return False
+        match rosetta_resolve_attr(self, "a"):
+            case 1: return _then_1()
+            case 2: return _then_2()
+            case _: return _then_default()'''
+            assertTrue(python.toString.contains(expected));
         }
-    }
 
     @Test
     def void testGenerateChoiceCondition() {
@@ -1079,4 +1093,3 @@ class PythonExpressionGeneratorTest {
         result
     }
 }
-    
