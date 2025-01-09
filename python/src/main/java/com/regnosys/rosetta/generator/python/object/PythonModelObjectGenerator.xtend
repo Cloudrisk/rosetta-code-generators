@@ -92,7 +92,7 @@ class PythonModelObjectGenerator {
         }
         val deepReferenceMap = new HashMap <String, ArrayList<String>>()
         val deepFeatures     = choiceType.findDeepFeatures
-        choiceType.allNonOverridenAttributes.toMap([it], [
+        choiceType.getAllAttributes().toMap([it], [
             val attrType = it.getRMetaAnnotatedType.getRType
             deepFeatures.toMap([it], [
                 var t = attrType
@@ -121,7 +121,7 @@ class PythonModelObjectGenerator {
                 val aliasList = new ArrayList<String>()
         
                 // Iterate over all non-overridden attributes
-                choiceType.allNonOverridenAttributes.forEach [ attribute |
+                choiceType.getAllAttributes().forEach [ attribute |
                     val attrType = attribute.getRMetaAnnotatedType.getRType
                     var t = attrType
 
@@ -228,11 +228,11 @@ class PythonModelObjectGenerator {
 
     private def createPythonFromAttribute(Data c, RAttribute ra) {
         var attString        = ""
-        var lowerCardinality = ra.cardinality.getMinBound
-        var upperCardinality = (!ra.cardinality.isUnboundedRight) ? ra.cardinality.getMax.get : -1 // set the default to -1 if unbounded
-        var upperCardString  = (ra.cardinality.isUnboundedRight) ? "None" : ra.cardinality.getMax.get.toString
+        var lowerCardinality = ra.cardinality.getMin()
+        var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get : -1 // set the default to -1 if unbounded
+        var upperCardString  = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString
         var fieldDefault      = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
-        if (ra.cardinality.isUnboundedRight || upperCardinality > 1) {
+        if (ra.cardinality.isMulti() || upperCardinality > 1) {
             // a list if the upper cardinality is unbounded or gt 1 
             attString       += "List[" + toPythonType(c, ra) + "]"
             fieldDefault  = '[]'
@@ -245,7 +245,7 @@ class PythonModelObjectGenerator {
         var attrName        = PythonTranslator.mangleName (ra.name)
         var needCardCheck   = !((lowerCardinality == 0 && upperCardinality == 1) || 
                                 (lowerCardinality == 1 && upperCardinality == 1) ||
-                                (lowerCardinality == 0 && ra.cardinality.isUnboundedRight))
+                                (lowerCardinality == 0 && ra.cardinality.isMulti()))
         val attrDesc        = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
         '''
             «attrName»: «attString» = Field(«fieldDefault», description="«attrDesc»")
