@@ -60,7 +60,7 @@ class PythonExpressionGenerator {
 
     public var List<String> importsFound
     public var if_cond_blocks = new ArrayList<String>()
-	public var switch_cond_blocks= new ArrayList<String>()
+    public var switch_cond_blocks= new ArrayList<String>()
     def String generateConditions(Data cls) {
         var n_condition = 0;
         var res = '';
@@ -370,31 +370,31 @@ class PythonExpressionGenerator {
             }
             
             SwitchOperation: {
-            	val attr= generateExpression(expr.argument,0,isLambda)
-            	var funcNames= new ArrayList<String>()
-            	for (thenExpr:expr.cases){
-            		val thenExprDef=generateExpression(thenExpr.getExpression(),iflvl + 1,isLambda)
-            		val funcName='''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
-            		funcNames.add(funcName)
-            		val block_then='''
-            		def «funcName»():
-            			return «thenExprDef»
-            		'''
-            		switch_cond_blocks.add(block_then)
-            	}
-            	val defaultExprDef= generateExpression(expr.getDefault(),0,isLambda)
-            	val defaultFuncName= '''_then_default'''
-            	funcNames.add(defaultFuncName)
-            	val block_default_then='''
-            		def «defaultFuncName»():
-            			return «defaultExprDef»
-            		'''
-            		switch_cond_blocks.add(block_default_then)
-            	'''match «attr»:
-      «FOR i : 0 ..< expr.cases.length»case «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»: return «funcNames.get(i)»()
-      «ENDFOR»case _: return «funcNames.get(funcNames.size-1)»()
+                val attr= generateExpression(expr.argument,0,isLambda)
+                var funcNames= new ArrayList<String>()
+                for (thenExpr:expr.cases){
+                    val thenExprDef=generateExpression(thenExpr.getExpression(),iflvl + 1,isLambda)
+                    val funcName='''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
+                    funcNames.add(funcName)
+                    val block_then='''
+                    def «funcName»():
+                        return «thenExprDef»
+                    '''
+                    switch_cond_blocks.add(block_then)
+                }
+                val defaultExprDef= generateExpression(expr.getDefault(),0,isLambda)
+                val defaultFuncName= '''_then_default'''
+                funcNames.add(defaultFuncName)
+                val block_default_then='''
+                    def «defaultFuncName»():
+                        return «defaultExprDef»
+                    '''
+                    switch_cond_blocks.add(block_default_then)
+                '''match «attr»:
+        «FOR i : 0 ..< expr.cases.length»case «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»: return «funcNames.get(i)»()
+        «ENDFOR»case _: return «funcNames.get(funcNames.size-1)»()
 '''
-            	
+                
             }
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
@@ -421,19 +421,19 @@ class PythonExpressionGenerator {
             }
             Attribute: {
                if (isLambda) {
-					var notInput = true
-					if (s.eContainer instanceof FunctionImpl) {
-					    var FunctionImpl c = s.eContainer as FunctionImpl
-					    for (inputatt : c.inputs) {
-					            if (inputatt.name.equals(s.name)) {
-					                notInput = false
-					            }
-					        }
-					    }
+                    var notInput = true
+                    if (s.eContainer instanceof FunctionImpl) {
+                        var FunctionImpl c = s.eContainer as FunctionImpl
+                        for (inputatt : c.inputs) {
+                                if (inputatt.name.equals(s.name)) {
+                                    notInput = false
+                                }
+                            }
+                        }
 
 
-    			if (notInput){'''rosetta_resolve_attr(item, "«s.name»")'''}
-    			else {'''rosetta_resolve_attr(self, "«s.name»")'''}}
+                if (notInput){'''rosetta_resolve_attr(item, "«s.name»")'''}
+                else {'''rosetta_resolve_attr(self, "«s.name»")'''}}
                 else {'''rosetta_resolve_attr(self, "«s.name»")'''}
             }
             RosettaEnumeration: {

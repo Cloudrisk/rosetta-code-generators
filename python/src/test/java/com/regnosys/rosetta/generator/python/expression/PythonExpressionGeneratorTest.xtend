@@ -36,15 +36,15 @@ class PythonExpressionGeneratorTest {
     def condition_0_Test(self):
         item = self
         def _then_1():
-          return True
+            return True
         def _then_2():
-          return True
+            return True
         def _then_default():
-          return False
+            return False
         match rosetta_resolve_attr(self, "a"):
-          case 1: return _then_1()
-          case 2: return _then_2()
-          case _: return _then_default()'''
+            case 1: return _then_1()
+            case 2: return _then_2()
+            case _: return _then_default()'''
             assertTrue(python.toString.contains(expected));
         }
 
