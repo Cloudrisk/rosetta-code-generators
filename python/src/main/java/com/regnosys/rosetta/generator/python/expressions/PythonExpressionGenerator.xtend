@@ -496,7 +496,7 @@ class PythonExpressionGenerator {
 
                 }
                 case ("join"): {
-                    '''join(«generateExpression(expr.left, iflvl, isLambda)», «generateExpression(expr.right, iflvl, isLambda)»)'''
+                    '''«generateExpression(expr.left, iflvl, isLambda)».join(«generateExpression(expr.right, iflvl, isLambda)»)'''
                 }
                 default: {
                     '''(«generateExpression(expr.left, iflvl, isLambda)» «expr.operator» «generateExpression(expr.right, iflvl, isLambda)»)'''
