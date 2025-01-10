@@ -7,12 +7,12 @@ import java.time.format.DateTimeFormatter
 
 class PythonModelGeneratorUtil {
 
-    static def fileComment(String version) '''
-        # This file is auto-generated from the ISDA Common Domain Model, do not edit.
-        # Version: «version»
+    static def fileComment(String version) {
+        return '''# This file is auto-generated from the Rune Python Generator, do not edit.
+    # Version: «version»
         
     '''
-
+    }
     static def comment(String definition) '''
         «IF definition !==null && !definition.isEmpty »
             # 

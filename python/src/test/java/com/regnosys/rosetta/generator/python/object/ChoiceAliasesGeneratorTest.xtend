@@ -20,20 +20,6 @@ class ChoiceAliasGeneratorTest {
 
     @Test
     def void testChoiceAliasGenerator() {
-/*
-            func Check1:
-                inputs:
-                    foo Foo (1..1)
-                output:
-                    result int (1..1)
-                set result:
-                    foo ->> deep1->attr 
-*/
-/*
-        choice Foo:
-            Bar1
-            Bar3
-*/
         val pythonCode = 
         '''
         type Bar1:
@@ -74,29 +60,6 @@ class ChoiceAliasGeneratorTest {
         type Deep1:
             attr int (1..1)
         '''.generatePython
-
-        /*
-        val classes = code.compileToClasses
-        val Check1 = classes.createFunc("Check1")
-        val fooBar1 = classes.createInstanceUsingBuilder("Foo", #{
-            "Bar1" -> classes.createInstanceUsingBuilder("Bar1", #{
-                "Deep1" -> classes.createInstanceUsingBuilder("Deep1", #{
-                    "attr" -> 42
-                })
-            })
-        })
-        assertEquals(42, Check1.invokeFunc(Integer, #[fooBar1]))
-        val fooBar3 = classes.createInstanceUsingBuilder("Foo", #{
-            "Bar3" -> classes.createInstanceUsingBuilder("Bar3", #{
-                "Bar2" -> classes.createInstanceUsingBuilder("Bar2", #{
-                    "Deep1" -> classes.createInstanceUsingBuilder("Deep1", #{
-                        "attr" -> -1
-                    })
-                })
-            })
-        })
-        assertEquals(-1, Check1.invokeFunc(Integer, #[fooBar3]))
-        */
     }
     def generatePython(CharSequence model) {
         val m = model.parseRosettaWithNoErrors

@@ -6,7 +6,6 @@ import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import com.regnosys.rosetta.generator.python.util.PythonTranslator
 import com.regnosys.rosetta.rosetta.RosettaEnumeration
 import com.regnosys.rosetta.rosetta.RosettaModel
-//import com.regnosys.rosetta.rosetta.RosettaEnumValue
 import com.regnosys.rosetta.rosetta.simple.AssignPathRoot
 import com.regnosys.rosetta.rosetta.simple.Attribute
 import com.regnosys.rosetta.rosetta.simple.Data
@@ -52,15 +51,6 @@ class PythonFunctionGenerator {
 
     private def generateFunctions(Function function, String version) {
         val dependencies = collectFunctionDependencies(function);
-        /*
-         *         @replaceable
-         *         « IF function.output!==null && function.output.getTypeCall().getType().getName() == "number"»
-         *         @calculation_func
-         *         «ENDIF»
-         *         « IF function.name.contains("Qualify") && function.output.getTypeCall().getType().getName() == "boolean"»
-         *         @qualification_func
-         *         «ENDIF»
-         */
         '''
             «generateImports(dependencies, function)»
             
@@ -307,11 +297,6 @@ class PythonFunctionGenerator {
         return result
     }
 
-    /*
-     * private def List<Operation> getNonAddOperations(Function function) {
-     *     return function.getOperations().filter[!isAdd()].toList()
-     * }
-     */
     private def generateSetOperation(AssignPathRoot root, Operation operation, Function function, String expression,
         List<String> setNames) {
         var result = ""

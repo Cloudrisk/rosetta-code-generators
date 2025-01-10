@@ -17,7 +17,7 @@ class PythonModelObjectBoilerPlate {
     }
 
     def toEnumAnnotationType(RType type) {
-        '''«type.name»'''
+        return '''«type.name»''';
     }
 
     def toType(RAttribute ra) {

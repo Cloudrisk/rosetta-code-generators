@@ -65,12 +65,10 @@ class PythonMetaFieldGenerator {
     
 
     private def generateFieldWithMeta(RType rt) {
-        return'''
-    class FieldWithMeta«rt.toMetaTypeName»:
-        «generateAttribute(rt)»
-        meta = MetaFields()
-        
-'''
+        return'''class FieldWithMeta«rt.toMetaTypeName»:
+    «generateAttribute(rt)»
+    meta = MetaFields()
+    '''
     }
 
     private def generateAttribute(RType rt) {
@@ -78,50 +76,44 @@ class PythonMetaFieldGenerator {
     }
 
     private def generateReferenceWithMeta(RType rt) {
-        return '''
-    class ReferenceWithMeta«rt.toMetaTypeName»:
-        value = «rt.name»()
-        globalReference = None
-        externalReference = None
-        address = Reference()
-        
-'''}
+        return '''class ReferenceWithMeta«rt.toMetaTypeName»:
+    value = «rt.name»()
+    globalReference = None
+    externalReference = None
+    address = Reference()
+    '''
+    }
 
     private def generateBasicReferenceWithMeta(RType rt) {
-        return '''
-    class BasicReferenceWithMeta«rt.toMetaTypeName»:
-        value = None
-        globalReference = None
-        externalReference = None
-        address = Reference()
-        
-'''}
+        return '''class BasicReferenceWithMeta«rt.toMetaTypeName»:
+    value = None
+    globalReference = None
+    externalReference = None
+    address = Reference()
+    '''
+    }
 
     private def genMetaFields(Iterable<RosettaMetaType> types, String version) {
-    return '''
-    class MetaFields:
-        «FOR type : types.distinctBy(t|t.name.toFirstLower) SEPARATOR '\n'»«type.name.toFirstLower» = None«ENDFOR»
-        globalKey = None
-        externalKey = None
-        location = []
+    return '''class MetaFields:
+    «FOR type : types.distinctBy(t|t.name.toFirstLower) SEPARATOR '\n'»«type.name.toFirstLower» = None«ENDFOR»
+    globalKey = None
+    externalKey = None
+    location = []
     
+class MetaAndTemplateFields:
+    «FOR type : types.distinctBy(t|t.name.toFirstLower) SEPARATOR '\n'»«type.name.toFirstLower» = None«ENDFOR»
+    globalKey = None
+    externalKey = None
+    templateGlobalReference = None
+    location = []
     
-    class MetaAndTemplateFields:
-        «FOR type : types.distinctBy(t|t.name.toFirstLower) SEPARATOR '\n'»«type.name.toFirstLower» = None«ENDFOR»
-        globalKey = None
-        externalKey = None
-        templateGlobalReference = None
-        location = []
+class Key:
+    scope = None
+    value = None
     
-    
-    class Key:
-        scope = None
-        value = None
-    
-    
-    class Reference:
-        scope = None
-        value = None
-        
-'''}
+class Reference:
+    scope = None
+    value = None
+    '''
+    }
 }

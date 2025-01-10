@@ -93,7 +93,6 @@ class PythonTranslator {
             return null
         var pythonType = toPythonBasicTypeInnerFunction(rt.name)
         if (pythonType === null)
-            // rosettaExpandedType.enumeration --> instanceof REnumType
             pythonType = (rt instanceof REnumType)
                 ? '''«rt.name.toFirstUpper»''' : rt.name.toFirstUpper
         return pythonType
