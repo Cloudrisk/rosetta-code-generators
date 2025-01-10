@@ -6,9 +6,7 @@ The Python package can both deserialize CDM into objects and serialize objects w
 
 The implementation follows the same approach as those completed for other languages such as C# in that it does not include the complete scope of functionality available in the Java implementation.
 
-The Python package supports CDM version XXX and requires Python version 3.9+.
-
-The code to create the Python package supports Rune DSL version 4.44.0 and Rune Bundle version 3.13.0.
+The Python package requires Python version 3.10+.
 
 ## License
 
