@@ -30,7 +30,6 @@ rm python_cdm-*.*.*-py3-none-any.whl
 $PYEXE -m pip install --upgrade pip || processError
 $PYEXE -m pip install "setuptools>=62.0" || processError
 $PYEXE -m pip install "pydantic>=2.6.1,<2.10" || processError
-$PYEXE -m pip install jsonpickle || processError
 $PYEXE -m pip install $ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl || processError
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
 rm -rf .pybuild
