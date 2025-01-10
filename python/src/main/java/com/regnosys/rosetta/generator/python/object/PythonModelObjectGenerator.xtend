@@ -33,16 +33,16 @@ class PythonModelObjectGenerator {
         if (basicType === null) {
             throw new Exception("Attribute type is null for " + ra.name + " for class " + c.name)
         }
-        
+
         var metaAnnotations = ra.RMetaAnnotatedType
         if (metaAnnotations !== null && metaAnnotations.hasMeta) {
             var helperClass = "Attribute";
-            var hasRef      = false;
-            var hasAddress  = false;
-            var hasMeta     = false;
+            var hasRef = false;
+            var hasAddress = false;
+            var hasMeta = false;
             for (RMetaAttribute meta : metaAnnotations.getMetaAttributes) {
                 val mname = meta.getName();
-                if (mname == "reference") { 
+                if (mname == "reference") {
                     hasRef = true;
                 } else if (mname == "address") {
                     hasAddress = true;
@@ -69,29 +69,28 @@ class PythonModelObjectGenerator {
         return basicType
     }
 
-    def Map<String, ? extends CharSequence> generate(
-        Iterable<Data> rosettaClasses,
-        Iterable<RosettaMetaType> metaTypes,
+    def Map<String, ? extends CharSequence> generate(Iterable<Data> rosettaClasses, Iterable<RosettaMetaType> metaTypes,
         String version) {
         val result = new HashMap
 
         for (Data type : rosettaClasses) {
-            val model      = type.eContainer as RosettaModel
-            val nameSpace  = Util::getNamespace (model)
+            val model = type.eContainer as RosettaModel
+            val nameSpace = Util::getNamespace(model)
             val pythonBody = type.generateBody(nameSpace, version).replaceTabsWithSpaces
             result.put(
-                PythonModelGeneratorUtil::toPyFileName(model.name, type.name), 
+                PythonModelGeneratorUtil::toPyFileName(model.name, type.name),
                 PythonModelGeneratorUtil::createImports(type.name) + pythonBody
             )
         }
         result;
     }
-    def Map<String, ArrayList<String>> generateChoiceAliases (RDataType choiceType) {
+
+    def Map<String, ArrayList<String>> generateChoiceAliases(RDataType choiceType) {
         if (!choiceType.isEligibleForDeepFeatureCall()) {
             return null
         }
-        val deepReferenceMap = new HashMap <String, ArrayList<String>>()
-        val deepFeatures     = choiceType.findDeepFeatures
+        val deepReferenceMap = new HashMap<String, ArrayList<String>>()
+        val deepFeatures = choiceType.findDeepFeatures
         choiceType.allNonOverridenAttributes.toMap([it], [
             val attrType = it.getRMetaAnnotatedType.getRType
             deepFeatures.toMap([it], [
@@ -107,7 +106,7 @@ class PythonModelObjectGenerator {
                             deepReference = new ArrayList<String>
                         }
                         // add the deep reference to the array and update the hashmap
-                        deepReference.add (it.name)
+                        deepReference.add(it.name)
                         deepReferenceMap.put(t.name, deepReference)
                         return true
                     }
@@ -116,10 +115,10 @@ class PythonModelObjectGenerator {
             ])
         ])
         val choiceAlias = deepFeatures.toMap(
-            [ deepFeature | '"' + deepFeature.name + '"' ], // Key extractor: use deepFeature name as the key
+            [deepFeature|'"' + deepFeature.name + '"'], // Key extractor: use deepFeature name as the key
             [ deepFeature | // Value extractor: create and populate the list of aliases
                 val aliasList = new ArrayList<String>()
-        
+
                 // Iterate over all non-overridden attributes
                 choiceType.allNonOverridenAttributes.forEach [ attribute |
                     val attrType = attribute.getRMetaAnnotatedType.getRType
@@ -128,26 +127,30 @@ class PythonModelObjectGenerator {
                     // Convert RChoiceType to RDataType if applicable
                     if (t instanceof RChoiceType) {
                         t = t.asRDataType
-                        
+
                     }
                     // Check if t is an instance of RDataType
                     if (t instanceof RDataType) {
                         // Add the new alias to the list.  Add a deep reference if necessary
-                        val deepReference = deepReferenceMap.get (t.name)
-                        val resolutionMethod = (deepReference !== null && deepReference.contains(deepFeature.name)) ? "rosetta_resolve_deep_attr" : "rosetta_resolve_attr"
-                        aliasList.add ('("' + attribute.name + '", ' + resolutionMethod + ')')
+                        val deepReference = deepReferenceMap.get(t.name)
+                        val resolutionMethod = (deepReference !== null &&
+                                deepReference.contains(
+                                    deepFeature.name)) ? "rosetta_resolve_deep_attr" : "rosetta_resolve_attr"
+                        aliasList.add('("' + attribute.name + '", ' + resolutionMethod + ')')
                     }
                 ]
                 // Return the populated list for this deepFeature
                 aliasList
             ]
         )
-        return (choiceAlias.isEmpty ()) ? null : choiceAlias
+        return (choiceAlias.isEmpty()) ? null : choiceAlias
     }
+
     def boolean checkBasicType(RAttribute ra) {
         val rosettaType = (ra !== null) ? ra.getRMetaAnnotatedType.getRType : null
-        return (rosettaType !== null && PythonTranslator::checkPythonType (rosettaType.toString()))
+        return (rosettaType !== null && PythonTranslator::checkPythonType(rosettaType.toString()))
     }
+
     /**
      * Generate the classes
      */
@@ -160,9 +163,6 @@ class PythonModelObjectGenerator {
         expressionGenerator.importsFound = this.importsFound;
         val classDefinition = generateClass(rosettaClass)
 
-//        val superNameFrom = (superType!==null) ? (superType.eContainer as RosettaModel).name + '.' + superType.name : null
-//        val superImport   = (superType!==null) ? superType.name : null
-
         return '''
             «IF superType!==null»from «(superType.eContainer as RosettaModel).name».«superType.name» import «superType.name»«ENDIF»
             
@@ -170,18 +170,18 @@ class PythonModelObjectGenerator {
             
             import «nameSpace» 
             «FOR importLine : importsFound SEPARATOR "\n"»«importLine»«ENDFOR»
-        '''      
+        '''
     }
 
     private def getImportsFromAttributes(Data rosettaClass) {
-        // expandedAttributes --> Data to RDataType (inject RObjectFactory use method called buildRDataType) --> getAllAttributes
-        // getOwnAttributes
-        val rdt     = rosettaClass.buildRDataType
+        val rdt = rosettaClass.buildRDataType
         // get all non-Meta attributes
-        val fa      = rdt.getOwnAttributes.filter [(it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")].filter[!checkBasicType(it)]
+        val fa = rdt.getOwnAttributes.filter [
+            (it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")
+        ].filter[!checkBasicType(it)]
         val imports = newArrayList
         for (attribute : fa) {
-        	var rt = attribute.getRMetaAnnotatedType.getRType
+            var rt = attribute.getRMetaAnnotatedType.getRType
             if (rt === null) {
                 throw new Exception("Attribute type is null for " + attribute.name + " for class " + rosettaClass.name)
             }
@@ -192,14 +192,15 @@ class PythonModelObjectGenerator {
         return imports.toSet.toList
     }
 
-    private def generateChoiceMapStrings (Map<String, ArrayList<String>> choiceAliases) {
-        var result = (choiceAliases === null) ? '' : choiceAliases.entrySet.map[e | e.key + ":" + e.value.toString].join(",")
+    private def generateChoiceMapStrings(Map<String, ArrayList<String>> choiceAliases) {
+        var result = (choiceAliases === null) ? '' : choiceAliases.entrySet.map[e|e.key + ":" + e.value.toString].
+                join(",")
         return result
     }
 
     private def generateClass(Data rosettaClass) {
-        val t = rosettaClass.buildRDataType // USAGE HERE!
-        val choiceAliases = generateChoiceAliases (t)
+        val t = rosettaClass.buildRDataType
+        val choiceAliases = generateChoiceAliases(t)
         return '''
             class «rosettaClass.name»«IF rosettaClass.superType === null»«ENDIF»«IF rosettaClass.superType !== null»(«rosettaClass.superType.name»):«ELSE»(BaseDataClass):«ENDIF»
                 «IF choiceAliases !== null»
@@ -217,36 +218,33 @@ class PythonModelObjectGenerator {
 
     private def generateAttributes(Data rosettaClass) {
         // get the attributes for this class
-        val attr           = rosettaClass.buildRDataType.getOwnAttributes
-        val attrSize       = attr.size()
+        val attr = rosettaClass.buildRDataType.getOwnAttributes
+        val attrSize = attr.size()
         val conditionsSize = rosettaClass.conditions.size()
         '''«IF attrSize === 0 && conditionsSize===0»pass«ELSE»«FOR attribute : attr SEPARATOR ""»«createPythonFromAttribute(rosettaClass, attribute)»«ENDFOR»«ENDIF»'''
     }
 
-    // expandedAttributes --> Data to RDataType (inject RObjectFactory use method called buildRDataType) --> getAllAttributes
-    // getOwnAttributes
-
     private def createPythonFromAttribute(Data c, RAttribute ra) {
-        var attString        = ""
+        var attString = ""
         var lowerCardinality = ra.cardinality.getMinBound
         var upperCardinality = (!ra.cardinality.isUnboundedRight) ? ra.cardinality.getMax.get : -1 // set the default to -1 if unbounded
-        var upperCardString  = (ra.cardinality.isUnboundedRight) ? "None" : ra.cardinality.getMax.get.toString
-        var fieldDefault      = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
+        var upperCardString = (ra.cardinality.isUnboundedRight) ? "None" : ra.cardinality.getMax.get.toString
+        var fieldDefault = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
         if (ra.cardinality.isUnboundedRight || upperCardinality > 1) {
             // a list if the upper cardinality is unbounded or gt 1 
-            attString       += "List[" + toPythonType(c, ra) + "]"
-            fieldDefault  = '[]'
+            attString += "List[" + toPythonType(c, ra) + "]"
+            fieldDefault = '[]'
         } else if (lowerCardinality == 0) { // edge case (0..0) will come here
-            // optional if lower cardin
+        // optional if lower cardin
             attString += "Optional[" + toPythonType(c, ra) + "]"
         } else {
             attString += toPythonType(c, ra) // cardinality (1..1)
         }
-        var attrName        = PythonTranslator.mangleName (ra.name)
-        var needCardCheck   = !((lowerCardinality == 0 && upperCardinality == 1) || 
-                                (lowerCardinality == 1 && upperCardinality == 1) ||
-                                (lowerCardinality == 0 && ra.cardinality.isUnboundedRight))
-        val attrDesc        = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
+        var attrName = PythonTranslator.mangleName(ra.name)
+        var needCardCheck = !((lowerCardinality == 0 && upperCardinality == 1) ||
+            (lowerCardinality == 1 && upperCardinality == 1) ||
+            (lowerCardinality == 0 && ra.cardinality.isUnboundedRight))
+        val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
         '''
             «attrName»: «attString» = Field(«fieldDefault», description="«attrDesc»")
             «IF ra.definition !== null»
@@ -262,6 +260,7 @@ class PythonModelObjectGenerator {
             «ENDIF»
         '''
     }
+
     def String definition(Data element) {
         element.definition
     }

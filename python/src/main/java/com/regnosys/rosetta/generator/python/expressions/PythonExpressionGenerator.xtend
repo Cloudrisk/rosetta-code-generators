@@ -60,7 +60,8 @@ class PythonExpressionGenerator {
 
     public var List<String> importsFound
     public var if_cond_blocks = new ArrayList<String>()
-    public var switch_cond_blocks= new ArrayList<String>()
+    public var switch_cond_blocks = new ArrayList<String>()
+
     def String generateConditions(Data cls) {
         var n_condition = 0;
         var res = '';
@@ -83,7 +84,7 @@ class PythonExpressionGenerator {
             res += generateExpressionCondition(cond)
             n_condition += 1;
         }
-        
+
         return res
     }
 
@@ -95,7 +96,7 @@ class PythonExpressionGenerator {
             res += generateExpressionCondition(cond)
             n_condition += 1;
         }
-        
+
         return res
     }
 
@@ -113,7 +114,7 @@ class PythonExpressionGenerator {
 
     private def generateConditionBoilerPlate(Condition cond, int n_condition) {
         '''
-
+            
             @rosetta_condition
             def condition_«n_condition»_«cond.name»(self):
                 «IF cond.definition!==null»
@@ -127,7 +128,7 @@ class PythonExpressionGenerator {
 
     private def generateFunctionConditionBoilerPlate(Condition cond, int n_condition, String condition_type) {
         '''
-
+            
             @rosetta_local_condition(«condition_type»)
             def condition_«n_condition»_«cond.name»(self):
                 «IF cond.definition!==null»
@@ -153,25 +154,27 @@ class PythonExpressionGenerator {
     }
 
     private def generateExpressionCondition(Condition c) {
-        if_cond_blocks = new ArrayList<String>()        
-        switch_cond_blocks= new ArrayList<String>()
+        if_cond_blocks = new ArrayList<String>()
+        switch_cond_blocks = new ArrayList<String>()
         var expr = generateExpression(c.expression, 0, false)
         var blocks = ""
-        var switch_blocks=""
+        var switch_blocks = ""
         if (!if_cond_blocks.isEmpty()) {
             blocks = '''    «FOR arg : if_cond_blocks»«arg»«ENDFOR»'''
         }
         if (!switch_cond_blocks.isEmpty()) {
             switch_blocks = '''    «FOR arg : switch_cond_blocks»«arg»«ENDFOR»'''
         }
-        if (switch_blocks.equals("")) return '''«blocks»    return «expr»
-        '''
-        else return '''«switch_blocks»    «expr»'''
+        if (switch_blocks.equals(""))
+            return '''«blocks»    return «expr»
+            '''
+        else
+            return '''«switch_blocks»    «expr»'''
     }
 
     def generateExpressionThenElse(RosettaExpression expr, List<Integer> iflvl) {
         if_cond_blocks = new ArrayList<String>()
-        generateExpression(expr, iflvl.get(0),false)
+        generateExpression(expr, iflvl.get(0), false)
         var blocks = ""
         if (!if_cond_blocks.isEmpty()) {
             iflvl.set(0, iflvl.get(0) + 1)
@@ -186,17 +189,18 @@ class PythonExpressionGenerator {
                 return '''rosetta_resolve_deep_attr(self, "«expr.feature.name»")'''
             }
             RosettaConditionalExpression: {
-                val ifexpr = generateExpression(expr.getIf(), iflvl + 1,isLambda)
+                val ifexpr = generateExpression(expr.getIf(), iflvl + 1, isLambda)
                 val ifthen = generateExpression(expr.ifthen, iflvl + 1, isLambda)
-                var elsethen = expr.elsethen !== null && expr.full ? generateExpression(expr.elsethen,
-                        iflvl + 1, isLambda) : 'True'
+                var elsethen = expr.elsethen !== null && expr.full
+                        ? generateExpression(expr.elsethen, iflvl + 1, isLambda)
+                        : 'True'
                 val if_blocks = '''
                     def _then_fn«iflvl»():
                         return «ifthen»
-
+                    
                     def _else_fn«iflvl»():
                         return «elsethen»
-
+                    
                 '''
                 if_cond_blocks.add(if_blocks)
 
@@ -219,7 +223,7 @@ class PythonExpressionGenerator {
                         addImportsFromConditions(symbol.name, model.name)
 
                         value
-                    }                    
+                    }
                     RosettaFeature: {
                         expr.feature.name
                     }
@@ -256,11 +260,7 @@ class PythonExpressionGenerator {
             }
             RosettaBooleanLiteral: {
                 val trimmedValue = expr.value.toString()
-                if (trimmedValue.equals("true")) {
-                    '''True'''
-                } else {
-                    '''False'''
-                }
+                return trimmedValue.equals("true") ? "True" : "False"
             }
             RosettaIntLiteral: {
                 '''«expr.value»'''
@@ -292,19 +292,19 @@ class PythonExpressionGenerator {
                 return '''set(«argument»)''';
             }
             SortOperation: {
-                val argument = generateExpression(expr.argument, iflvl,isLambda);
+                val argument = generateExpression(expr.argument, iflvl, isLambda);
                 return '''sorted(«argument»)''';
             }
             ThenOperation: {
                 val funcExpr = expr.function
-                val argExpr = generateExpression(expr.argument, iflvl , isLambda)
+                val argExpr = generateExpression(expr.argument, iflvl, isLambda)
                 val body = generateExpression(funcExpr.body, iflvl, true)
                 val funcParams = funcExpr.parameters.map[it.name].join(", ")
                 val lambdaFunction = if (funcParams.empty) {
-                    '''(lambda item: «body»)'''
-                } else {
-                    '''(lambda «funcParams»: «body»)'''
-                }
+                        '''(lambda item: «body»)'''
+                    } else {
+                        '''(lambda «funcParams»: «body»)'''
+                    }
                 return '''«lambdaFunction»(«argExpr»)'''
             }
             LastOperation: {
@@ -321,35 +321,35 @@ class PythonExpressionGenerator {
             }
             FilterOperation: {
                 val argument = generateExpression(expr.argument, iflvl, isLambda);
-                val filterExpression = generateExpression(expr.function.body, iflvl,true);
+                val filterExpression = generateExpression(expr.function.body, iflvl, true);
                 val filterCall = "rosetta_filter(" + argument + ", lambda item: " + filterExpression + ")";
                 return filterCall;
             }
             MapOperation: {
                 val inlineFunc = expr.function as InlineFunction;
                 val funcParameters = inlineFunc.parameters.map[it.name].join(", ");
-                val funcBody = generateExpression(inlineFunc.body, iflvl,true);
+                val funcBody = generateExpression(inlineFunc.body, iflvl, true);
                 val lambdaFunction = "lambda item: " + funcBody;
-                val argument = generateExpression(expr.argument, iflvl,isLambda);
+                val argument = generateExpression(expr.argument, iflvl, isLambda);
                 val pythonMapOperation = "list(map(" + lambdaFunction + ", " + argument + "))";
                 return pythonMapOperation;
             }
             AsKeyOperation: {
                 val argument = generateExpression(expr.argument, iflvl, isLambda)
-                return '''{«argument»: True}''' 
+                return '''{«argument»: True}'''
             }
             FlattenOperation: {
                 val nestedListExpr = generateExpression(expr.argument, iflvl, isLambda)
                 return '''flatten_list(«nestedListExpr»)'''
             }
             RosettaConstructorExpression: {
-                val type = expr.typeCall?.type?.name 
-                val keyValuePairs = expr.values 
+                val type = expr.typeCall?.type?.name
+                val keyValuePairs = expr.values
                 val pythonConstructor = if (type !== null) {
-                    '''«type»(«FOR pair : keyValuePairs SEPARATOR ', '»«pair.key.name»=«generateExpression(pair.value, iflvl, isLambda)»«ENDFOR»)'''
-                } else {
-                    '''{«FOR pair : keyValuePairs SEPARATOR ', '»'«pair.key.name»': «generateExpression(pair.value, iflvl, isLambda)»«ENDFOR»}'''
-                }
+                        '''«type»(«FOR pair : keyValuePairs SEPARATOR ', '»«pair.key.name»=«generateExpression(pair.value, iflvl, isLambda)»«ENDFOR»)'''
+                    } else {
+                        '''{«FOR pair : keyValuePairs SEPARATOR ', '»'«pair.key.name»': «generateExpression(pair.value, iflvl, isLambda)»«ENDFOR»}'''
+                    }
                 return pythonConstructor
             }
             ToStringOperation: {
@@ -361,40 +361,39 @@ class PythonExpressionGenerator {
                 return '''«expr.enumeration.name»(«argument»)''';
             }
             MinOperation: {
-                val argument = generateExpression(expr.getArgument (), iflvl,isLambda);
+                val argument = generateExpression(expr.getArgument(), iflvl, isLambda);
                 return '''min(«argument»)''';
             }
             MaxOperation: {
-                val argument = generateExpression(expr.getArgument (), iflvl, isLambda);
+                val argument = generateExpression(expr.getArgument(), iflvl, isLambda);
                 return '''max(«argument»)''';
             }
-            
             SwitchOperation: {
-                val attr= generateExpression(expr.argument,0,isLambda)
-                var funcNames= new ArrayList<String>()
-                for (thenExpr:expr.cases){
-                    val thenExprDef=generateExpression(thenExpr.getExpression(),iflvl + 1,isLambda)
-                    val funcName='''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
+                val attr = generateExpression(expr.argument, 0, isLambda)
+                var funcNames = new ArrayList<String>()
+                for (thenExpr : expr.cases) {
+                    val thenExprDef = generateExpression(thenExpr.getExpression(), iflvl + 1, isLambda)
+                    val funcName = '''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
                     funcNames.add(funcName)
-                    val block_then='''
-                    def «funcName»():
-                        return «thenExprDef»
+                    val block_then = '''
+                        def «funcName»():
+                            return «thenExprDef»
                     '''
                     switch_cond_blocks.add(block_then)
                 }
-                val defaultExprDef= generateExpression(expr.getDefault(),0,isLambda)
-                val defaultFuncName= '''_then_default'''
+                val defaultExprDef = generateExpression(expr.getDefault(), 0, isLambda)
+                val defaultFuncName = '''_then_default'''
                 funcNames.add(defaultFuncName)
-                val block_default_then='''
+                val block_default_then = '''
                     def «defaultFuncName»():
                         return «defaultExprDef»
-                    '''
-                    switch_cond_blocks.add(block_default_then)
+                '''
+                switch_cond_blocks.add(block_default_then)
                 '''match «attr»:
         «FOR i : 0 ..< expr.cases.length»case «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»: return «funcNames.get(i)»()
         «ENDFOR»case _: return «funcNames.get(funcNames.size-1)»()
 '''
-                
+
             }
             default:
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
@@ -420,21 +419,25 @@ class PythonExpressionGenerator {
                 '''«s.name»'''
             }
             Attribute: {
-               if (isLambda) {
+                if (isLambda) {
                     var notInput = true
                     if (s.eContainer instanceof FunctionImpl) {
                         var FunctionImpl c = s.eContainer as FunctionImpl
                         for (inputatt : c.inputs) {
-                                if (inputatt.name.equals(s.name)) {
-                                    notInput = false
-                                }
+                            if (inputatt.name.equals(s.name)) {
+                                notInput = false
                             }
                         }
+                    }
 
-
-                if (notInput){'''rosetta_resolve_attr(item, "«s.name»")'''}
-                else {'''rosetta_resolve_attr(self, "«s.name»")'''}}
-                else {'''rosetta_resolve_attr(self, "«s.name»")'''}
+                    if (notInput) {
+                        '''rosetta_resolve_attr(item, "«s.name»")'''
+                    } else {
+                        '''rosetta_resolve_attr(self, "«s.name»")'''
+                    }
+                } else {
+                    '''rosetta_resolve_attr(self, "«s.name»")'''
+                }
             }
             RosettaEnumeration: {
                 '''«s.name»'''
@@ -445,19 +448,19 @@ class PythonExpressionGenerator {
             RosettaCallableWithArgs: {
                 callableWithArgsCall(s, expr, iflvl, isLambda)
             }
-            ShortcutDeclaration:{
+            ShortcutDeclaration: {
                 '''rosetta_resolve_attr(self, "«s.name»")'''
             }
-            ClosureParameter:{
+            ClosureParameter: {
                 '''rosetta_resolve_attr(self, "«s.name»")'''
             }
-
             default:
                 throw new UnsupportedOperationException("Unsupported symbol reference for: " + s.class.simpleName)
         }
     }
 
-    def String callableWithArgsCall(RosettaCallableWithArgs s, RosettaSymbolReference expr, int iflvl, boolean isLambda) {
+    def String callableWithArgsCall(RosettaCallableWithArgs s, RosettaSymbolReference expr, int iflvl,
+        boolean isLambda) {
         if (s instanceof FunctionImpl)
             addImportsFromConditions(s.getName(), (s.eContainer as RosettaModel).name + "." + "functions")
         else
@@ -504,7 +507,7 @@ class PythonExpressionGenerator {
 
     def addImportsFromConditions(String variable, String namespace) {
         val import = '''from «namespace».«variable» import «variable»'''
-        if(importsFound!==null){
+        if (importsFound !== null) {
             if (!importsFound.contains(import)) {
                 importsFound.add(import)
             }
