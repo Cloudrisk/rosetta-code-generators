@@ -19,6 +19,7 @@
         <artifactId>finos</artifactId>
         <version>5</version>
     </parent>
+
     <groupId>com.regnosys.rosetta.code-generators</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
