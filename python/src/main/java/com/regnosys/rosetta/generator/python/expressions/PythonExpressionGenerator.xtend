@@ -395,8 +395,9 @@ class PythonExpressionGenerator {
 '''
 
             }
-            default:
+            default:{
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
+            }
         }
     }
 

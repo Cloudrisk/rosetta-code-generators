@@ -21,6 +21,9 @@ import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import com.regnosys.rosetta.rosetta.simple.ShortcutDeclaration
+import com.regnosys.rosetta.rosetta.simple.Condition
+import org.eclipse.emf.common.util.EList
 
 class PythonFunctionGenerator {
 
@@ -205,8 +208,8 @@ class PythonFunctionGenerator {
             «FOR shortcut : function.shortcuts»
                 «expressionGenerator.generateExpressionThenElse(shortcut.expression, levelList)»
             «ENDFOR»
-            «FOR opeartion : function.operations»
-                «expressionGenerator.generateExpressionThenElse(opeartion.expression, levelList)»
+            «FOR operation : function.operations»
+                «expressionGenerator.generateExpressionThenElse(operation.expression, levelList)»
             «ENDFOR»
         '''
     }

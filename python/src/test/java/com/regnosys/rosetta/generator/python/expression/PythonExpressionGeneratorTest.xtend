@@ -45,7 +45,6 @@ class PythonExpressionGeneratorTest {
             case 1: return _then_1()
             case 2: return _then_2()
             case _: return _then_default()'''
-            println('---- testGenerateSwitch ... expected\n'+expected+'\n'+python)
             assertTrue(python.toString.contains(expected));
         }
 
