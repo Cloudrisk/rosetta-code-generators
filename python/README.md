@@ -1,9 +1,7 @@
-# ISDA CDM Python Implementation
+# Rune Python Generator
 
 This repository contains both a Python CDM implementation and the code to generate the package from Regnosys' [Rune](https://github.com/finos/rune-dsl) specifications.  
  
-The Python package can both deserialize CDM into objects and serialize objects with a caveat.  Ingestion of CDM flattens any use of metadata abstraction and, as a result, serialized CDM will not match a source which makes use of metadata objects.
-
 The implementation follows the same approach as those completed for other languages such as C# in that it does not include the complete scope of functionality available in the Java implementation.
 
 The Python package requires Python version 3.10+.
