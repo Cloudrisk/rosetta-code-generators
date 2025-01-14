@@ -22,7 +22,7 @@ fi
 ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ROSETTARUNTIMEDIR=$MYPATH/"../src/main/resources/runtime"
-PYTHONSOURCEDIR=$MYPATH/"../target/python"
+PYTHONSOURCEDIR=$MYPATH/"../target/python-cdm"
 cd $PYTHONSOURCEDIR
 $PYEXE -m venv --clear .pybuild || processError
 source .pybuild/$ACDIR/activate || processError

@@ -6,6 +6,7 @@ import com.regnosys.rosetta.generator.python.enums.PythonEnumGenerator;
 import com.regnosys.rosetta.generator.python.func.PythonFunctionGenerator;
 import com.regnosys.rosetta.generator.python.object.PythonModelObjectGenerator;
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil;
+import com.regnosys.rosetta.rosetta.RosettaTypeAlias;
 import com.regnosys.rosetta.generator.python.util.Util;
 import com.regnosys.rosetta.rosetta.RosettaEnumeration;
 import com.regnosys.rosetta.rosetta.RosettaMetaType;
@@ -63,6 +64,14 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
                 .filter(RosettaMetaType.class::isInstance)
                 .map(RosettaMetaType.class::cast)
                 .collect(Collectors.toList());
+
+        List<RosettaTypeAlias> typeAliases = model.getElements().stream()
+                .filter(RosettaTypeAlias.class::isInstance).map(RosettaTypeAlias.class::cast)
+                .collect(Collectors.toList());
+
+        if (!typeAliases.isEmpty()) {
+            System.out.printf("PythonCodeGenerator::generate ... length of typeAliases: %d%n", typeAliases.size());
+        }
 
         List<RosettaEnumeration> rosettaEnums = model.getElements().stream()
                 .filter(RosettaEnumeration.class::isInstance)

@@ -17,7 +17,7 @@
     <properties>
         <!-- used by PythonFilesGeneratorTest::generatePython to generate python from a rosetta source --> 
         <cdm.rosetta.source.path>[Path to Rosetta]</cdm.rosetta.source.path>
-        <cdm.python.output.path>target/python</cdm.python.output.path>
+        <cdm.python.output.path>target/python-cdm</cdm.python.output.path>
         <unit.test.rosetta.source.path>build/resources/rosetta/python_unit_tests</unit.test.rosetta.source.path>
         <unit.test.python.output.path>target/python_unit_tests</unit.test.python.output.path>
     </properties>
