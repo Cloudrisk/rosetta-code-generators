@@ -20,6 +20,8 @@
         <cdm.python.output.path>target/python-cdm</cdm.python.output.path>
         <unit.test.rosetta.source.path>build/resources/rosetta/python_unit_tests</unit.test.rosetta.source.path>
         <unit.test.python.output.path>target/python_unit_tests</unit.test.python.output.path>
+        <serialization.test.rosetta.source.path>../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test</serialization.test.rosetta.source.path>
+        <serialization.test.python.output.path>target/serialization_unit_tests</serialization.test.python.output.path>
     </properties>
     <build>
         <plugins>
