@@ -19,3 +19,4 @@ kotlin-feature.code-workspace
 json-schema/src/main/generated-sources/
 json-schema/src/test/generated-sources/
 **/.checkstyle
+python/build/resources/serialization/rune-serializer-round-trip

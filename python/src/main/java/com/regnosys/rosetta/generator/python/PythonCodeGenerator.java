@@ -6,7 +6,10 @@ import com.regnosys.rosetta.generator.python.enums.PythonEnumGenerator;
 import com.regnosys.rosetta.generator.python.func.PythonFunctionGenerator;
 import com.regnosys.rosetta.generator.python.object.PythonModelObjectGenerator;
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil;
+import com.regnosys.rosetta.generator.python.typealias.PythonTypeAliasGenerator;
 import com.regnosys.rosetta.rosetta.RosettaTypeAlias;
+import com.regnosys.rosetta.rosetta.TypeCallArgument;
+
 import com.regnosys.rosetta.generator.python.util.Util;
 import com.regnosys.rosetta.rosetta.RosettaEnumeration;
 import com.regnosys.rosetta.rosetta.RosettaMetaType;
@@ -31,6 +34,8 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
     private PythonFunctionGenerator funcGenerator;
     @Inject
     private PythonEnumGenerator enumGenerator;
+    @Inject
+    private PythonTypeAliasGenerator typeAliasGenerator;
 
     private List<String> subfolders;
     private AtomicReference<String> previousNamespace;
@@ -66,12 +71,9 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
                 .collect(Collectors.toList());
 
         List<RosettaTypeAlias> typeAliases = model.getElements().stream()
-                .filter(RosettaTypeAlias.class::isInstance).map(RosettaTypeAlias.class::cast)
+                .filter(RosettaTypeAlias.class::isInstance)
+                .map(RosettaTypeAlias.class::cast)
                 .collect(Collectors.toList());
-
-        if (!typeAliases.isEmpty()) {
-            System.out.printf("PythonCodeGenerator::generate ... length of typeAliases: %d%n", typeAliases.size());
-        }
 
         List<RosettaEnumeration> rosettaEnums = model.getElements().stream()
                 .filter(RosettaEnumeration.class::isInstance)
@@ -95,6 +97,7 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
             LOGGER.debug("Processing module: {}", model.getName());
         }
 
+        result.putAll(typeAliasGenerator.generate(typeAliases, cleanVersion));
         result.putAll(pojoGenerator.generate(rosettaClasses, metaTypes, cleanVersion));
         result.putAll(enumGenerator.generate(rosettaEnums, cleanVersion));
         result.putAll(funcGenerator.generate(rosettaFunctions, cleanVersion));
