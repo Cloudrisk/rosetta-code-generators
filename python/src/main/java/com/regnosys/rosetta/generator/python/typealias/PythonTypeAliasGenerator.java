@@ -16,10 +16,14 @@ import com.regnosys.rosetta.utils.DeepFeatureCallUtil;
 import com.regnosys.rosetta.rosetta.simple.Data;
 import com.regnosys.rosetta.generator.python.util.PythonTranslator;
 import com.regnosys.rosetta.generator.python.util.Util;
+import com.regnosys.rosetta.rosetta.expression.RosettaExpression;
+import com.regnosys.rosetta.rosetta.expression.RosettaIntLiteral;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+
+import org.eclipse.emf.common.util.EList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +38,19 @@ public class PythonTypeAliasGenerator {
         for (RosettaTypeAlias rta : rtas) {
     		System.out.println("..... rta: " + rta.toString() + 
     				" getTypeCall: " + rta.getTypeCall().getType());
+    		if (rta.getName().equals("ParameterisedNumberType")) {
+        		EList<TypeCallArgument> arg = rta.getTypeCall().getArguments();
+        		System.out.println("..... ParameterisedNumberType ... first arg: " + arg.getFirst() + " 2nd: " + arg.getLast());
+    		}
     		for (TypeCallArgument tca : rta.getTypeCall().getArguments()) {
+    			RosettaExpression re = (RosettaExpression) tca.getValue();
+    			if (re instanceof RosettaIntLiteral) {
+        			System.out.println ("..... RosettaIntLiteral ... value: " + ((RosettaIntLiteral) re).getValue());
+    			}
     			System.out.println ("..... tca: " + tca.getParameter() + " value: " + tca.getValue());
+    			System.out.println ("..... class: " + re.getClass());
     		}
     	}
         return result;
     }
 }
-
-
