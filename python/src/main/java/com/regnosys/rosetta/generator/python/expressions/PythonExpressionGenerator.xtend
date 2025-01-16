@@ -55,6 +55,9 @@ import com.regnosys.rosetta.rosetta.simple.ShortcutDeclaration
 import com.regnosys.rosetta.rosetta.simple.impl.FunctionImpl
 import java.util.ArrayList
 import java.util.List
+import com.regnosys.rosetta.rosetta.expression.SwitchCaseGuard
+import com.regnosys.rosetta.rosetta.simple.ChoiceOption
+import com.regnosys.rosetta.rosetta.RosettaSymbol
 
 class PythonExpressionGenerator {
 
@@ -182,7 +185,20 @@ class PythonExpressionGenerator {
         }
         return '''«blocks»'''
     }
-
+    
+    def getGuard(SwitchCaseGuard caseGuard, boolean isLambda){
+    	if (caseGuard.getSymbolGuard!==null){
+    		return caseGuard.getSymbolGuard.getName()    	
+		}
+    	else if (caseGuard.getEnumGuard!==null){
+    		return generateExpression(caseGuard.getEnumGuard as RosettaExpression,0,isLambda)
+    	}
+    	else if (caseGuard.getChoiceOptionGuard!==null){
+    		return caseGuard.getSymbolGuard.getName()   
+    	}
+    }
+    
+   
     def String generateExpression(RosettaExpression expr, int iflvl, boolean isLambda) {
         switch (expr) {
             RosettaDeepFeatureCall: {
@@ -370,10 +386,13 @@ class PythonExpressionGenerator {
             }
             SwitchOperation: {
                 val attr = generateExpression(expr.argument, 0, isLambda)
+                //functions for each then case
                 var funcNames = new ArrayList<String>()
+                var funcCounter=0
                 for (thenExpr : expr.cases) {
                     val thenExprDef = generateExpression(thenExpr.getExpression(), iflvl + 1, isLambda)
-                    val funcName = '''_then_«generateExpression(thenExpr.getGuard().getLiteralGuard(),0,isLambda)»'''
+                    val funcName = '''_then_«funcCounter»'''
+                    funcCounter += 1
                     funcNames.add(funcName)
                     val block_then = '''
                         def «funcName»():
@@ -381,6 +400,7 @@ class PythonExpressionGenerator {
                     '''
                     switch_cond_blocks.add(block_then)
                 }
+                //default case
                 val defaultExprDef = generateExpression(expr.getDefault(), 0, isLambda)
                 val defaultFuncName = '''_then_default'''
                 funcNames.add(defaultFuncName)
@@ -389,12 +409,27 @@ class PythonExpressionGenerator {
                         return «defaultExprDef»
                 '''
                 switch_cond_blocks.add(block_default_then)
-                '''match «attr»:
-        «FOR i : 0 ..< expr.cases.length»case «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»: return «funcNames.get(i)»()
-        «ENDFOR»case _: return «funcNames.get(funcNames.size-1)»()
-'''
-
+                
+                '''switchAttribute= «attr»
+                «FOR i : 0 ..< expr.cases.length»
+                	«IF expr.cases.get(i).getGuard().getLiteralGuard() !== null»
+		                «IF i===0»    if (switchAttribute == «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»):
+		                        return «funcNames.get(i)»()
+		                «ELSE»    elif (switchAttribute == «generateExpression(expr.cases.get(i).getGuard().getLiteralGuard(),0,isLambda)»):
+		                        return «funcNames.get(i)»()
+	                	«ENDIF»
+                	«ELSE»
+			            «IF i===0»    if isinstance(switchAttribute, «getGuard(expr.cases.get(i).getGuard(),isLambda)») or isinstance (switchAttribute.«getGuard(expr.cases.get(i).getGuard(),isLambda)»,«getGuard(expr.cases.get(i).getGuard(),isLambda)»):
+			                    return «funcNames.get(i)»()
+			            «ELSE»    elif isinstance(switchAttribute,«getGuard(expr.cases.get(i).getGuard(),isLambda)») or isinstance (switchAttribute.«getGuard(expr.cases.get(i).getGuard(),isLambda)»,«getGuard(expr.cases.get(i).getGuard(),isLambda)»):
+			                    return «funcNames.get(i)»()
+			            «ENDIF»
+                	«ENDIF»
+                «ENDFOR»
+    else : return «funcNames.get(funcNames.size-1)»()
+                '''
             }
+            
             default:{
                 throw new UnsupportedOperationException("Unsupported expression type of " + expr?.class?.simpleName)
             }

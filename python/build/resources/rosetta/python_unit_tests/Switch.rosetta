@@ -8,3 +8,26 @@ type SwitchTest:
 			2 then True,
 			3 then True,
 			default False
+			
+choice TestCriteria: <"Test choice class">
+                AllCriteria <"">
+                AnyCriteria <"">
+                NegativeCriteria <"">
+            
+type AllCriteria: <"">
+    allCriteria int (0..*)
+
+type AnyCriteria: <"">
+    anyCriteria int (0..*)
+
+type NegativeCriteria: <"">
+    negativeCriteria int (0..*)
+    
+type SwitchChoiceGuardTest:
+	inputCriteria TestCriteria (1..1)
+	condition ChoiceGuardTest:
+        inputCriteria switch
+		    AllCriteria then True,
+		    AnyCriteria then True,
+		    NegativeCriteria then True,
+		    default False
