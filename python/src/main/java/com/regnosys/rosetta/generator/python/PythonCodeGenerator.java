@@ -97,7 +97,26 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
             LOGGER.debug("Processing module: {}", model.getName());
         }
 
-        result.putAll(typeAliasGenerator.generate(typeAliases, cleanVersion));
+        if (!typeAliases.isEmpty()) {
+            Map<String, HashMap<String, Object>> ta = typeAliasGenerator.generate(typeAliases, cleanVersion);
+            for (Map.Entry<String, HashMap<String, Object>> outerEntry : ta.entrySet()) {
+                String outerKey = outerEntry.getKey();
+                HashMap<String, Object> innerMap = outerEntry.getValue();
+
+                // Print the outer key
+                System.out.print(outerKey + ": ");
+
+                // Iterate over the inner map and print each key-value pair
+                for (Map.Entry<String, Object> innerEntry : innerMap.entrySet()) {
+                    String innerKey = innerEntry.getKey();
+                    Object innerValue = innerEntry.getValue();
+                    System.out.print(innerKey + "=" + innerValue + " ");
+                }
+
+                // Move to the next line after printing all inner entries for an outer key
+                System.out.println();
+            }
+        }
         result.putAll(pojoGenerator.generate(rosettaClasses, metaTypes, cleanVersion));
         result.putAll(enumGenerator.generate(rosettaEnums, cleanVersion));
         result.putAll(funcGenerator.generate(rosettaFunctions, cleanVersion));
