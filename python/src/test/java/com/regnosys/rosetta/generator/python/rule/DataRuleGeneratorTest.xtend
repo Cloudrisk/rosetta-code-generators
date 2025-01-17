@@ -431,7 +431,7 @@ class DataRuleGeneratorTest {
     }
 
     @Test
-    def void shouldCheckConditionWithInheritedAttribute() {
+    def void checkConditionWithInheritedAttribute() {
         val python = '''
             type Foo:
                 x string (0..1)
@@ -470,8 +470,8 @@ class DataRuleGeneratorTest {
                 return rosetta_attr_exists(rosetta_resolve_attr(self, "y"))
         '''
 
-        assertTrue(python.toString.contains(expectedFoo))
-        assertTrue(python.toString.contains(expectedBar))
+        assertTrue(python.toString.contains(expectedFoo), 'expected\n' + expectedFoo + '\npython\n' + python)
+        assertTrue(python.toString.contains(expectedBar), 'expected\n' + expectedBar + '\npython\n' + python)
     }
 
     @Test
