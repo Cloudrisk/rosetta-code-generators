@@ -8,7 +8,6 @@ import com.regnosys.rosetta.generator.python.object.PythonModelObjectGenerator;
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil;
 import com.regnosys.rosetta.generator.python.typealias.PythonTypeAliasGenerator;
 import com.regnosys.rosetta.rosetta.RosettaTypeAlias;
-import com.regnosys.rosetta.rosetta.TypeCallArgument;
 
 import com.regnosys.rosetta.generator.python.util.Util;
 import com.regnosys.rosetta.rosetta.RosettaEnumeration;
@@ -70,7 +69,7 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
                 .map(RosettaMetaType.class::cast)
                 .collect(Collectors.toList());
 
-        List<RosettaTypeAlias> typeAliases = model.getElements().stream()
+        List<RosettaTypeAlias> typeAliasesRaw = model.getElements().stream()
                 .filter(RosettaTypeAlias.class::isInstance)
                 .map(RosettaTypeAlias.class::cast)
                 .collect(Collectors.toList());
@@ -97,27 +96,27 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
             LOGGER.debug("Processing module: {}", model.getName());
         }
 
-        if (!typeAliases.isEmpty()) {
-            Map<String, HashMap<String, Object>> ta = typeAliasGenerator.generate(typeAliases, cleanVersion);
-            for (Map.Entry<String, HashMap<String, Object>> outerEntry : ta.entrySet()) {
-                String outerKey = outerEntry.getKey();
-                HashMap<String, Object> innerMap = outerEntry.getValue();
+        Map<String, HashMap<String, Object>> typeAliases = typeAliasGenerator.generate(typeAliasesRaw, cleanVersion);
+        for (Map.Entry<String, HashMap<String, Object>> outerEntry : typeAliases.entrySet()) {
+            String outerKey = outerEntry.getKey();
+            HashMap<String, Object> innerMap = outerEntry.getValue();
 
-                // Print the outer key
-                System.out.print(outerKey + ": ");
+            // Print the outer key
+            System.out.print(outerKey + ": ");
 
-                // Iterate over the inner map and print each key-value pair
-                for (Map.Entry<String, Object> innerEntry : innerMap.entrySet()) {
-                    String innerKey = innerEntry.getKey();
-                    Object innerValue = innerEntry.getValue();
-                    System.out.print(innerKey + "=" + innerValue + " ");
-                }
-
-                // Move to the next line after printing all inner entries for an outer key
-                System.out.println();
+            // Iterate over the inner map and print each key-value pair
+            for (Map.Entry<String, Object> innerEntry : innerMap.entrySet()) {
+                String innerKey = innerEntry.getKey();
+                Object innerValue = innerEntry.getValue();
+                System.out.print(innerKey + "=" + innerValue + " ");
             }
+
+            // Move to the next line after printing all inner entries for an outer key
+            System.out.println();
         }
-        result.putAll(pojoGenerator.generate(rosettaClasses, metaTypes, cleanVersion));
+        result.putAll(pojoGenerator.generate(rosettaClasses, 
+        		metaTypes, 
+        		cleanVersion));
         result.putAll(enumGenerator.generate(rosettaEnums, cleanVersion));
         result.putAll(funcGenerator.generate(rosettaFunctions, cleanVersion));
 
@@ -125,8 +124,9 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
     }
 
     @Override
-    public Map<String, ? extends CharSequence> afterAllGenerate(ResourceSet set,
-                                                                Collection<? extends RosettaModel> models, String version) {
+    public Map<String, ? extends CharSequence> afterAllGenerate(ResourceSet set, 
+    		Collection<? extends RosettaModel> models, 
+    		String version) {
         String cleanVersion = cleanVersion(version);
         Map<String, CharSequence> result = new HashMap<>();
 

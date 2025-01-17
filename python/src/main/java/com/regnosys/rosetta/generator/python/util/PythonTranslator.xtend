@@ -6,7 +6,6 @@ import com.regnosys.rosetta.types.REnumType
 import com.regnosys.rosetta.types.RAttribute
 import java.util.Arrays
 
-// ExpandedType --> RDataType
 class PythonTranslator {
     static private def String toPythonBasicTypeInnerFunction(String rosettaType) {
         // inner private function to convert from Rosetta type to Python type

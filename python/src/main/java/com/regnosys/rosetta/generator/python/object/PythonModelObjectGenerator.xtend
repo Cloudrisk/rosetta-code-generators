@@ -3,32 +3,60 @@ package com.regnosys.rosetta.generator.python.object
 import com.google.inject.Inject
 import com.regnosys.rosetta.generator.python.expressions.PythonExpressionGenerator
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
-import com.regnosys.rosetta.rosetta.RosettaMetaType
-import com.regnosys.rosetta.rosetta.RosettaModel
-import com.regnosys.rosetta.types.RObjectFactory
-import com.regnosys.rosetta.types.RDataType
-import com.regnosys.rosetta.types.RChoiceType
-import com.regnosys.rosetta.types.RAttribute
-import com.regnosys.rosetta.types.RMetaAttribute
-import com.regnosys.rosetta.utils.DeepFeatureCallUtil
-import com.regnosys.rosetta.rosetta.simple.Data
 import com.regnosys.rosetta.generator.python.util.PythonTranslator
 import com.regnosys.rosetta.generator.python.util.Util
+import com.regnosys.rosetta.rosetta.RosettaMetaType
+import com.regnosys.rosetta.rosetta.RosettaModel
+import com.regnosys.rosetta.rosetta.simple.Data
+import com.regnosys.rosetta.types.RAliasType
+import com.regnosys.rosetta.types.RAttribute
+import com.regnosys.rosetta.types.RChoiceType
+import com.regnosys.rosetta.types.RDataType
+import com.regnosys.rosetta.types.RMetaAttribute
+import com.regnosys.rosetta.types.RObjectFactory
+import com.regnosys.rosetta.types.builtin.RNumberType
+import com.regnosys.rosetta.types.builtin.RStringType
+import com.regnosys.rosetta.utils.DeepFeatureCallUtil
+import java.util.ArrayList
 import java.util.HashMap
 import java.util.List
-import java.util.ArrayList
 import java.util.Map
+import org.eclipse.xtend2.lib.StringConcatenation
+import com.regnosys.rosetta.types.TypeSystem
 
+/*
+ * Generate Python from Rune Types
+ */
 class PythonModelObjectGenerator {
 
     @Inject extension RObjectFactory
     @Inject extension DeepFeatureCallUtil
     @Inject extension PythonModelObjectBoilerPlate
+    @Inject 
+    TypeSystem typeSystem;
+    
     @Inject PythonExpressionGenerator expressionGenerator;
 
     var List<String> importsFound = newArrayList
 
-    static def toPythonType(Data c, RAttribute ra) throws Exception {
+    def Map<String, ? extends CharSequence> generate(Iterable<Data> rosettaClasses,
+    		Iterable<RosettaMetaType> metaTypes,
+    		String version) {
+        val result = new HashMap
+
+        for (Data type : rosettaClasses) {
+            val model = type.eContainer as RosettaModel
+            val nameSpace = Util::getNamespace(model)
+            val pythonBody = type.generateBody(nameSpace, version).replaceTabsWithSpaces
+            result.put(
+                PythonModelGeneratorUtil::toPyFileName(model.name, type.name),
+                PythonModelGeneratorUtil::createImports(type.name) + pythonBody
+            )
+        }
+        result;
+    }
+
+    def String toPythonType(Data c, RAttribute ra) throws Exception {
         var basicType = PythonTranslator::toPythonType(ra);
         if (basicType === null) {
             throw new Exception("Attribute type is null for " + ra.name + " for class " + c.name)
@@ -67,22 +95,6 @@ class PythonModelObjectGenerator {
             basicType = helperClass + " | " + basicType;
         }
         return basicType
-    }
-
-    def Map<String, ? extends CharSequence> generate(Iterable<Data> rosettaClasses, Iterable<RosettaMetaType> metaTypes,
-        String version) {
-        val result = new HashMap
-
-        for (Data type : rosettaClasses) {
-            val model = type.eContainer as RosettaModel
-            val nameSpace = Util::getNamespace(model)
-            val pythonBody = type.generateBody(nameSpace, version).replaceTabsWithSpaces
-            result.put(
-                PythonModelGeneratorUtil::toPyFileName(model.name, type.name),
-                PythonModelGeneratorUtil::createImports(type.name) + pythonBody
-            )
-        }
-        result;
     }
 
     def Map<String, ArrayList<String>> generateChoiceAliases(RDataType choiceType) {
@@ -152,7 +164,7 @@ class PythonModelObjectGenerator {
     }
 
     /**
-     * Generate the classes
+     * Generate the body of the class
      */
     private def generateBody(Data rosettaClass, String nameSpace, String version) {
         var superType = rosettaClass.superType
@@ -211,42 +223,96 @@ class PythonModelObjectGenerator {
                     «rosettaClass.definition»
                     """
                 «ENDIF»
-                «generateAttributes(rosettaClass)»
+                «generateAllAttributes(rosettaClass)»
                 «expressionGenerator.generateConditions(rosettaClass)»
         '''
     }
 
-    private def generateAttributes(Data rosettaClass) {
-        // get the attributes for this class
-        val attr = rosettaClass.buildRDataType.getOwnAttributes
-        val attrSize = attr.size()
-        val conditionsSize = rosettaClass.conditions.size()
-        '''«IF attrSize === 0 && conditionsSize===0»pass«ELSE»«FOR attribute : attr SEPARATOR ""»«createPythonFromAttribute(rosettaClass, attribute)»«ENDFOR»«ENDIF»'''
+    private def CharSequence generateAllAttributes(Data rosettaClass) {
+        // generate all the attributes for this class
+        // TODO: add aliases here
+        val allAttributes = rosettaClass.buildRDataType.getOwnAttributes
+        if (allAttributes.size() === 0 && rosettaClass.conditions.size() === 0) {
+        	return "pass";
+        }
+      	var _builder = new StringConcatenation();
+        var firstElement = true;
+        for (RAttribute attribute : allAttributes) {
+        	if (firstElement) {
+        		firstElement = false;
+        	} else {
+	            _builder.appendImmediate("", "");
+	        }
+          	_builder.append(generateAttribute(rosettaClass, attribute));
+        }
+		return _builder;      	
     }
 
-    private def createPythonFromAttribute(Data c, RAttribute ra) {
-        var attString = ""
-        var lowerCardinality = ra.cardinality.getMin
-        var upperCardinality = (!ra.cardinality.isMulti) ? ra.cardinality.getMax.get : -1 // set the default to -1 if unbounded
-        var upperCardString = (ra.cardinality.isMulti) ? "None" : ra.cardinality.getMax.get.toString
-        var fieldDefault = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
-        if (ra.cardinality.isMulti || upperCardinality > 1) {
-            // a list if the upper cardinality is unbounded or gt 1 
-            attString += "List[" + toPythonType(c, ra) + "]"
-            fieldDefault = '[]'
-        } else if (lowerCardinality == 0) { // edge case (0..0) will come here
-        // optional if lower cardin
-            attString += "Optional[" + toPythonType(c, ra) + "]"
-        } else {
-            attString += toPythonType(c, ra) // cardinality (1..1)
+    private def generateAttribute(Data rosettaClass, RAttribute ra) {
+		/*
+		 * translate the attribute to its representation in Python
+		 */
+        // TODO: use builder and remove block quotes
+        var attString    = ""
+        val attrRMAT     = ra.getRMetaAnnotatedType();
+        var attrRT       = attrRMAT.getRType(); 
+		// TODO: depending on how meta is handled the function toPythonType could be removed or made to use the stripped alias
+        var attrTypeName = toPythonType(rosettaClass, ra);
+        // strip out the alias if there is one.  
+        // if so, align the attribute type name to the to the underlying type
+        if (attrRT instanceof RAliasType) {
+			attrRT = typeSystem.stripFromTypeAliases(attrRT);
+			// because this is an alias, reset the attribute type name
+			attrTypeName = PythonTranslator::toPythonType(attrRT);
         }
-        var attrName = PythonTranslator.mangleName(ra.name)
-        var needCardCheck = !((lowerCardinality == 0 && upperCardinality == 1) ||
+		// process the cardinality of the attribute 
+		// ... it is a list if it is multi or the upper bound is greater than 1 
+		// ... it is optional if it is equal to 0
+		// otherwise it is required
+        var lowerCardinality = ra.cardinality.getMin();
+        var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get () : -1 // set the default to -1 if unbounded
+        var upperCardString  = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
+        var fieldDefault     = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
+		if (ra.cardinality.isMulti || upperCardinality > 1) { 
+        	// is a list
+            attString += "List[" + attrTypeName + "]"
+            fieldDefault = '[]'
+        } else if (lowerCardinality == 0) { 
+        	// is optional
+            attString += "Optional[" + attrTypeName + "]"
+        } else {
+            // is required
+            attString += attrTypeName
+        }
+        var needCardCheck = !(
+        	(lowerCardinality == 0 && upperCardinality == 1) ||
             (lowerCardinality == 1 && upperCardinality == 1) ||
             (lowerCardinality == 0 && ra.cardinality.isMulti))
+        var attrName = PythonTranslator.mangleName(ra.name) // mangle the attribute name if it is a python keyword
         val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
+		val attrProp = new HashMap<String, String>();
+		// get parameters if there are any (applies to string and number)
+		if (attrRT instanceof RStringType) {
+			attrRT.getPattern().ifPresent [ value | attrProp.put ("pattern", '"' + '^r' + value.toString() + '*$"')];
+        	attrRT.getInterval().getMin().ifPresent [value | attrProp.put ("min_length", value.toString())]
+        	attrRT.getInterval().getMax().ifPresent [value | attrProp.put ("max_length", value.toString())]
+		} else if (attrRT instanceof RNumberType) {
+			// TODO: determine whether there's an issue with letting integers pass through this mechanism
+			attrRT.getDigits().ifPresent [ value | attrProp.put ("max_digits", value.toString())];
+			attrRT.getFractionalDigits().ifPresent [ value | attrProp.put ("decimal_places", value.toString())];
+        	attrRT.getInterval().getMin().ifPresent [value | attrProp.put ("ge", value.toPlainString())]
+        	attrRT.getInterval().getMax().ifPresent [value | attrProp.put ("le", value.toPlainString())]
+        }
+		var attrPropAsString = "";
+		for (attrPropEntry : attrProp.entrySet()) {
+			attrPropAsString += (", " + attrPropEntry.key + "=" + attrPropEntry.value); 
+		}  
+        if (attrRMAT.hasMeta()) {
+        	println ('------ generateAttribute ... has Meta ... attrType.getMeta: ' + attrRMAT.getMetaAttributes())
+        }
+//		TODO: meta
         '''
-            «attrName»: «attString» = Field(«fieldDefault», description="«attrDesc»")
+            «attrName»: «attString» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
             «IF ra.definition !== null»
                 """
                 «ra.definition»
