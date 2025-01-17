@@ -186,15 +186,15 @@ class PythonExpressionGenerator {
         return '''«blocks»'''
     }
     
-    def getGuard(SwitchCaseGuard caseGuard, boolean isLambda){
+    def getGuardExpression(SwitchCaseGuard caseGuard, boolean isLambda){
     	if (caseGuard.getSymbolGuard!==null){
-    		return caseGuard.getSymbolGuard.getName()    	
+    		return '''rosetta_resolve_attr(switchAttribute,"«caseGuard.getSymbolGuard.getName()»")'''    	
 		}
     	else if (caseGuard.getEnumGuard!==null){
     		return generateExpression(caseGuard.getEnumGuard as RosettaExpression,0,isLambda)
     	}
     	else if (caseGuard.getChoiceOptionGuard!==null){
-    		return caseGuard.getSymbolGuard.getName()   
+    		return '''rosetta_resolve_attr(switchAttribute,"«caseGuard.getSymbolGuard.getName()»")'''   
     	}
     }
     
@@ -419,9 +419,9 @@ class PythonExpressionGenerator {
 		                        return «funcNames.get(i)»()
 	                	«ENDIF»
                 	«ELSE»
-			            «IF i===0»    if isinstance(switchAttribute, «getGuard(expr.cases.get(i).getGuard(),isLambda)») or isinstance (switchAttribute.«getGuard(expr.cases.get(i).getGuard(),isLambda)»,«getGuard(expr.cases.get(i).getGuard(),isLambda)»):
+			            «IF i===0»    if «getGuardExpression(expr.cases.get(i).getGuard(),isLambda)»:
 			                    return «funcNames.get(i)»()
-			            «ELSE»    elif isinstance(switchAttribute,«getGuard(expr.cases.get(i).getGuard(),isLambda)») or isinstance (switchAttribute.«getGuard(expr.cases.get(i).getGuard(),isLambda)»,«getGuard(expr.cases.get(i).getGuard(),isLambda)»):
+			            «ELSE»    elif «getGuardExpression(expr.cases.get(i).getGuard(),isLambda)»:
 			                    return «funcNames.get(i)»()
 			            «ENDIF»
                 	«ENDIF»
