@@ -32,16 +32,14 @@ class PythonModelObjectGenerator {
     @Inject extension RObjectFactory
     @Inject extension DeepFeatureCallUtil
     @Inject extension PythonModelObjectBoilerPlate
-    @Inject 
-    TypeSystem typeSystem;
-    
+    @Inject TypeSystem typeSystem;
+
     @Inject PythonExpressionGenerator expressionGenerator;
 
     var List<String> importsFound = newArrayList
 
-    def Map<String, ? extends CharSequence> generate(Iterable<Data> rosettaClasses,
-    		Iterable<RosettaMetaType> metaTypes,
-    		String version) {
+    def Map<String, ? extends CharSequence> generate(Iterable<Data> rosettaClasses, Iterable<RosettaMetaType> metaTypes,
+        String version) {
         val result = new HashMap
 
         for (Data type : rosettaClasses) {
@@ -62,42 +60,45 @@ class PythonModelObjectGenerator {
             throw new Exception("Attribute type is null for " + ra.name + " for class " + c.name)
         }
 
-        var metaAnnotations = ra.RMetaAnnotatedType
-        if (metaAnnotations !== null && metaAnnotations.hasMeta) {
-            var helperClass = "Attribute";
-            var hasRef = false;
-            var hasAddress = false;
-            var hasMeta = false;
-            for (RMetaAttribute meta : metaAnnotations.getMetaAttributes) {
-                val mname = meta.getName();
-                if (mname == "reference") {
-                    hasRef = true;
-                } else if (mname == "address") {
-                    hasAddress = true;
-                } else if (mname == "key" || mname == "id" || mname == "scheme" || mname == "location") {
-                    hasMeta = true;
-                } else {
-                    helperClass += "---" + mname + "---";
-                }
-            }
-            if (hasMeta) {
-                helperClass += "WithMeta";
-            }
-            if (hasAddress) {
-                helperClass += "WithAddress";
-            }
-            if (hasRef) {
-                helperClass += "WithReference";
-            }
-            if (hasMeta || hasAddress) {
-                helperClass += "[" + basicType + "]";
-            }
-            basicType = helperClass + " | " + basicType;
-        }
+        /*         var metaAnnotations = ra.RMetaAnnotatedType
+         *         if (metaAnnotations !== null && metaAnnotations.hasMeta) {
+         *             var helperClass = "Attribute";
+         *             var hasRef = false;
+         *             var hasAddress = false;
+         *             var hasMeta = false;
+         *             for (RMetaAttribute meta : metaAnnotations.getMetaAttributes) {
+         *                 val mname = meta.getName();
+         *                 if (mname == "reference") {
+         *                     hasRef = true;
+         *                 } else if (mname == "address") {
+         *                     hasAddress = true;
+         *                 } else if (mname == "key" || mname == "id" || mname == "scheme" || mname == "location") {
+         *                     hasMeta = true;
+         *                 } else {
+         *                     helperClass += "---" + mname + "---";
+         *                 }
+         *             }
+         *             if (hasMeta) {
+         *                 helperClass += "WithMeta";
+         *             }
+         *             if (hasAddress) {
+         *                 helperClass += "WithAddress";
+         *             }
+         *             if (hasRef) {
+         *                 helperClass += "WithReference";
+         *             }
+         *             if (hasMeta || hasAddress) {
+         *                 helperClass += "[" + basicType + "]";
+         *             }
+         *             basicType = helperClass + " | " + basicType;
+         }*/
         return basicType
     }
 
     def Map<String, ArrayList<String>> generateChoiceAliases(RDataType choiceType) {
+        // 
+        // generate aliases from choice type (needed for deep path)
+        //
         if (!choiceType.isEligibleForDeepFeatureCall()) {
             return null
         }
@@ -112,12 +113,12 @@ class PythonModelObjectGenerator {
                 }
                 if (t instanceof RDataType) {
                     if (t.findDeepFeatureMap.containsKey(it.name)) {
-                        // look for element in hashmap and create one if none found
+                        // look for element in hash map and create one if none found
                         var deepReference = deepReferenceMap.get(t.name)
                         if (deepReference === null) {
                             deepReference = new ArrayList<String>
                         }
-                        // add the deep reference to the array and update the hashmap
+                        // add the deep reference to the array and update the hash map
                         deepReference.add(it.name)
                         deepReferenceMap.put(t.name, deepReference)
                         return true
@@ -145,9 +146,8 @@ class PythonModelObjectGenerator {
                     if (t instanceof RDataType) {
                         // Add the new alias to the list.  Add a deep reference if necessary
                         val deepReference = deepReferenceMap.get(t.name)
-                        val resolutionMethod = (deepReference !== null &&
-                                deepReference.contains(
-                                    deepFeature.name)) ? "rosetta_resolve_deep_attr" : "rosetta_resolve_attr"
+                        val resolutionMethod = (deepReference !== null && deepReference.contains(
+                                deepFeature.name)) ? "rosetta_resolve_deep_attr" : "rosetta_resolve_attr"
                         aliasList.add('("' + attribute.name + '", ' + resolutionMethod + ')')
                     }
                 ]
@@ -229,99 +229,109 @@ class PythonModelObjectGenerator {
     }
 
     private def CharSequence generateAllAttributes(Data rosettaClass) {
-        // generate all the attributes for this class
-        // TODO: add aliases here
+        // generate Python for all the attributes for this class
         val allAttributes = rosettaClass.buildRDataType.getOwnAttributes
         if (allAttributes.size() === 0 && rosettaClass.conditions.size() === 0) {
-        	return "pass";
+            return "pass";
         }
-      	var _builder = new StringConcatenation();
+        var _builder = new StringConcatenation();
         var firstElement = true;
         for (RAttribute attribute : allAttributes) {
-        	if (firstElement) {
-        		firstElement = false;
-        	} else {
-	            _builder.appendImmediate("", "");
-	        }
-          	_builder.append(generateAttribute(rosettaClass, attribute));
+            if (firstElement) {
+                firstElement = false;
+            } else {
+                _builder.appendImmediate("", "");
+            }
+            _builder.append(generateAttribute(rosettaClass, attribute));
         }
-		return _builder;      	
+        return _builder;
     }
 
     private def generateAttribute(Data rosettaClass, RAttribute ra) {
-		/*
-		 * translate the attribute to its representation in Python
-		 */
+        /*
+         * translate the attribute to its representation in Python
+         */
         // TODO: use builder and remove block quotes
-        var attString    = ""
-        val attrRMAT     = ra.getRMetaAnnotatedType();
-        var attrRT       = attrRMAT.getRType(); 
-		// TODO: depending on how meta is handled the function toPythonType could be removed or made to use the stripped alias
+        var attrString = ""
+        val attrRMAT = ra.getRMetaAnnotatedType();
+        var attrRT = attrRMAT.getRType();
+        // TODO: depending on how meta is handled the function toPythonType could be removed or made to use the stripped alias
         var attrTypeName = toPythonType(rosettaClass, ra);
         // strip out the alias if there is one.  
         // if so, align the attribute type name to the to the underlying type
         if (attrRT instanceof RAliasType) {
-			attrRT = typeSystem.stripFromTypeAliases(attrRT);
-			// because this is an alias, reset the attribute type name
-			attrTypeName = PythonTranslator::toPythonType(attrRT);
+            attrRT = typeSystem.stripFromTypeAliases(attrRT);
+            // because this is an alias, reset the attribute type name
+            attrTypeName = PythonTranslator::toPythonType(attrRT);
         }
         var attrName = PythonTranslator.mangleName(ra.name) // mangle the attribute name if it is a python keyword
         val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
-		val attrProp = new HashMap<String, String>();
-		// get parameters if there are any (applies to string and number)
-		if (attrRT instanceof RStringType) {
-			// TODO: there seems to be a default for strings to have min_length = 0 
-			attrRT.getPattern().ifPresent [ value | attrProp.put ("pattern", '"' + '^r' + value.toString() + '*$"')];
-        	attrRT.getInterval().getMin().ifPresent [value | 
-        		if (value > 0) {
-	        		attrProp.put ("min_length", value.toString())
-        		}
-        		]
-        	attrRT.getInterval().getMax().ifPresent [value | attrProp.put ("max_length", value.toString())]
-		} else if (attrRT instanceof RNumberType) {
-			// TODO: determine whether there's an issue with letting integers pass through this mechanism
-			if (!attrRT.isInteger()) {
-				attrRT.getDigits().ifPresent [ value | attrProp.put ("max_digits", value.toString())];
-				attrRT.getFractionalDigits().ifPresent [ value | attrProp.put ("decimal_places", value.toString())];
-	        	attrRT.getInterval().getMin().ifPresent [value | attrProp.put ("ge", value.toPlainString())]
-	        	attrRT.getInterval().getMax().ifPresent [value | attrProp.put ("le", value.toPlainString())]
-			} else {
-				attrTypeName = 'int';
-			}
+        val attrProp = new HashMap<String, String>();
+        // get the properties / parameters if there are any (applies to string and number)
+        if (attrRT instanceof RStringType) {
+            // TODO: there seems to be a default for strings to have min_length = 0 
+            attrRT.getPattern().ifPresent[value|attrProp.put("pattern", '"' + '^r' + value.toString() + '*$"')];
+            attrRT.getInterval().getMin().ifPresent [ value |
+                if (value > 0) {
+                    attrProp.put("min_length", value.toString())
+                }
+            ]
+            attrRT.getInterval().getMax().ifPresent[value|attrProp.put("max_length", value.toString())]
+        } else if (attrRT instanceof RNumberType) {
+            // TODO: determine whether there's an issue with letting integers pass through this mechanism
+            if (!attrRT.isInteger()) {
+                attrRT.getDigits().ifPresent[value|attrProp.put("max_digits", value.toString())];
+                attrRT.getFractionalDigits().ifPresent[value|attrProp.put("decimal_places", value.toString())];
+                attrRT.getInterval().getMin().ifPresent[value|attrProp.put("ge", value.toPlainString())]
+                attrRT.getInterval().getMax().ifPresent[value|attrProp.put("le", value.toPlainString())]
+            } else {
+                attrTypeName = 'int';
+            }
         }
-		// process the cardinality of the attribute 
-		// ... it is a list if it is multi or the upper bound is greater than 1 
-		// ... it is optional if it is equal to 0
-		// otherwise it is required
+        var attrPropAsString = "";
+        for (attrPropEntry : attrProp.entrySet()) {
+            attrPropAsString += (", " + attrPropEntry.key + "=" + attrPropEntry.value);
+        }
+        // process the cardinality of the attribute 
+        // ... it is a list if it is multi or the upper bound is greater than 1 
+        // ... it is optional if it is equal to 0
+        // otherwise it is required
         var lowerCardinality = ra.cardinality.getMin();
-        var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get () : -1 // set the default to -1 if unbounded
-        var upperCardString  = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
-        var fieldDefault     = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
-		if (ra.cardinality.isMulti || upperCardinality > 1) { 
-        	// is a list
-            attString += "List[" + attrTypeName + "]"
+        var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get() : -1 // set the default to -1 if unbounded
+        var upperCardString = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
+        var fieldDefault = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
+        var metaPrefix = "";
+        var metaSuffix = "";
+        var hasMeta = attrRMAT.hasMeta();
+        if (hasMeta) {
+            for (ma : attrRMAT.getMetaAttributes()) {
+                // TODO: handle all meta types
+                if (ma.getName().equals("reference")) {
+                    metaPrefix = "Annotated[";
+                    metaSuffix = ", " + attrTypeName + "=.serializer(), " + attrTypeName + ".validator(('@ref', ''))]";
+                } else if (ma.getName().equals("id")) {
+                    metaPrefix = "Annotated[";
+                    metaSuffix = ", " + attrTypeName + "=.serializer(), " + attrTypeName + ".validator(('@key', ''))]";
+                }
+            }
+        }
+
+        if (ra.cardinality.isMulti || upperCardinality > 1) {
+            // is a list
+            attrString += "List[" + metaPrefix + attrTypeName + "]" + metaSuffix;
             fieldDefault = '[]'
-        } else if (lowerCardinality == 0) { 
-        	// is optional
-            attString += "Optional[" + attrTypeName + "]"
+        } else if (lowerCardinality == 0) {
+            // is optional
+            attrString += "Optional[" + metaPrefix + attrTypeName + metaSuffix + "]"
         } else {
             // is required
-            attString += attrTypeName
+            attrString += metaPrefix + attrTypeName + metaSuffix;
         }
         var needCardCheck = !(
-        	(lowerCardinality == 0 && upperCardinality == 1) ||
-            (lowerCardinality == 1 && upperCardinality == 1) ||
+            (lowerCardinality == 0 && upperCardinality == 1) || (lowerCardinality == 1 && upperCardinality == 1) ||
             (lowerCardinality == 0 && ra.cardinality.isMulti))
-		var attrPropAsString = "";
-		for (attrPropEntry : attrProp.entrySet()) {
-			attrPropAsString += (", " + attrPropEntry.key + "=" + attrPropEntry.value); 
-		}  
-        if (attrRMAT.hasMeta()) {
-        	println ('------ generateAttribute ... has Meta ... attrType.getMeta: ' + attrRMAT.getMetaAttributes())
-        }
-//		TODO: meta
         '''
-            «attrName»: «attString» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
+            «attrName»: «attrString» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
             «IF ra.definition !== null»
                 """
                 «ra.definition»
