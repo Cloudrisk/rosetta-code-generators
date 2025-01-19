@@ -114,12 +114,12 @@ class PythonTranslator {
         return (pythonType === null) ? rosettaType.toFirstUpper : pythonType
     }
 
-    static def boolean checkBasicType(Attribute rosettaAttributeType) {
+    static def boolean isPythonBasicType(Attribute rosettaAttributeType) {
         return (rosettaAttributeType !== null &&
             toPythonBasicTypeInnerFunction(rosettaAttributeType.getTypeCall.type.name) !== null)
     }
 
-    static def boolean checkBasicType(String rosettaType) {
+    static def boolean isPythonBasicType(String rosettaType) {
         return (rosettaType !== null && toPythonBasicTypeInnerFunction(rosettaType) !== null)
     }
 

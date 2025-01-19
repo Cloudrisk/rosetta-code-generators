@@ -158,7 +158,7 @@ class PythonModelObjectGenerator {
         return (choiceAlias.isEmpty()) ? null : choiceAlias
     }
 
-    def boolean checkBasicType(RAttribute ra) {
+    def boolean isPythonBasicType(RAttribute ra) {
         val rosettaType = (ra !== null) ? ra.getRMetaAnnotatedType.getRType : null
         return (rosettaType !== null && PythonTranslator::checkPythonType(rosettaType.toString()))
     }
@@ -190,7 +190,7 @@ class PythonModelObjectGenerator {
         // get all non-Meta attributes
         val fa = rdt.getOwnAttributes.filter [
             (it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")
-        ].filter[!checkBasicType(it)]
+        ].filter[!isPythonBasicType(it)]
         val imports = newArrayList
         for (attribute : fa) {
             var rt = attribute.getRMetaAnnotatedType.getRType
@@ -253,37 +253,36 @@ class PythonModelObjectGenerator {
          */
         // TODO: use builder and remove block quotes
         var attrString = ""
-        val attrRMAT = ra.getRMetaAnnotatedType();
-        var attrRT = attrRMAT.getRType();
+        val attrRMAT   = ra.getRMetaAnnotatedType();
+        var attrRType  = attrRMAT.getRType();
         // TODO: depending on how meta is handled the function toPythonType could be removed or made to use the stripped alias
         var attrTypeName = toPythonType(rosettaClass, ra);
-        // strip out the alias if there is one.  
-        // if so, align the attribute type name to the to the underlying type
-        if (attrRT instanceof RAliasType) {
-            attrRT = typeSystem.stripFromTypeAliases(attrRT);
+        // strip out the alias if there is one and align the attribute type name to the to the underlying type
+        if (attrRType instanceof RAliasType) {
+            attrRType = typeSystem.stripFromTypeAliases(attrRType);
             // because this is an alias, reset the attribute type name
-            attrTypeName = PythonTranslator::toPythonType(attrRT);
+            attrTypeName = PythonTranslator::toPythonType(attrRType);
         }
-        var attrName = PythonTranslator.mangleName(ra.name) // mangle the attribute name if it is a python keyword
+        var attrName = PythonTranslator.mangleName(ra.name) // mangle the attribute name if it is a Python keyword
         val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
-        val attrProp = new HashMap<String, String>();
         // get the properties / parameters if there are any (applies to string and number)
-        if (attrRT instanceof RStringType) {
+        val attrProp = new HashMap<String, String>();
+        if (attrRType instanceof RStringType) {
             // TODO: there seems to be a default for strings to have min_length = 0 
-            attrRT.getPattern().ifPresent[value|attrProp.put("pattern", '"' + '^r' + value.toString() + '*$"')];
-            attrRT.getInterval().getMin().ifPresent [ value |
+            attrRType.getPattern().ifPresent[value|attrProp.put("pattern", '"' + '^r' + value.toString() + '*$"')];
+            attrRType.getInterval().getMin().ifPresent [ value |
                 if (value > 0) {
                     attrProp.put("min_length", value.toString())
                 }
             ]
-            attrRT.getInterval().getMax().ifPresent[value|attrProp.put("max_length", value.toString())]
-        } else if (attrRT instanceof RNumberType) {
+            attrRType.getInterval().getMax().ifPresent[value|attrProp.put("max_length", value.toString())]
+        } else if (attrRType instanceof RNumberType) {
             // TODO: determine whether there's an issue with letting integers pass through this mechanism
-            if (!attrRT.isInteger()) {
-                attrRT.getDigits().ifPresent[value|attrProp.put("max_digits", value.toString())];
-                attrRT.getFractionalDigits().ifPresent[value|attrProp.put("decimal_places", value.toString())];
-                attrRT.getInterval().getMin().ifPresent[value|attrProp.put("ge", value.toPlainString())]
-                attrRT.getInterval().getMax().ifPresent[value|attrProp.put("le", value.toPlainString())]
+            if (!attrRType.isInteger()) {
+                attrRType.getDigits().ifPresent[value|attrProp.put("max_digits", value.toString())];
+                attrRType.getFractionalDigits().ifPresent[value|attrProp.put("decimal_places", value.toString())];
+                attrRType.getInterval().getMin().ifPresent[value|attrProp.put("ge", value.toPlainString())]
+                attrRType.getInterval().getMax().ifPresent[value|attrProp.put("le", value.toPlainString())]
             } else {
                 attrTypeName = 'int';
             }
@@ -300,33 +299,46 @@ class PythonModelObjectGenerator {
         var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get() : -1 // set the default to -1 if unbounded
         var upperCardString = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
         var fieldDefault = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
-        var metaPrefix = "";
-        var metaSuffix = "";
-        var hasMeta = attrRMAT.hasMeta();
-        if (hasMeta) {
-            for (ma : attrRMAT.getMetaAttributes()) {
-                // TODO: handle all meta types
-                if (ma.getName().equals("reference")) {
-                    metaPrefix = "Annotated[";
-                    metaSuffix = ", " + attrTypeName + "=.serializer(), " + attrTypeName + ".validator(('@ref', ''))]";
-                } else if (ma.getName().equals("id")) {
-                    metaPrefix = "Annotated[";
-                    metaSuffix = ", " + attrTypeName + "=.serializer(), " + attrTypeName + ".validator(('@key', ''))]";
-                }
-            }
-        }
-
+		var cardinalityPrefix = "";
+		var cardinalitySuffix = "";
         if (ra.cardinality.isMulti || upperCardinality > 1) {
             // is a list
-            attrString += "List[" + metaPrefix + attrTypeName + "]" + metaSuffix;
+        	cardinalityPrefix = "List[";
+        	cardinalitySuffix = "]"
             fieldDefault = '[]'
         } else if (lowerCardinality == 0) {
             // is optional
-            attrString += "Optional[" + metaPrefix + attrTypeName + metaSuffix + "]"
-        } else {
-            // is required
-            attrString += metaPrefix + attrTypeName + metaSuffix;
+        	cardinalityPrefix = "Optional[";
+        	cardinalitySuffix = "]"
+        } 
+		// process meta data
+        var metaPrefix = "";
+        var metaSuffix = "";
+        if (attrRMAT.hasMeta()) {
+			val validators = new ArrayList<String>()
+            for (ma : attrRMAT.getMetaAttributes()) {
+                // TODO: handle all meta types
+                if (ma.getName().equals("reference")) {
+                    validators.add("@ref");
+                } else if (ma.getName().equals("id")) {
+                    validators.add("@key");
+                } else if (ma.getName().equals("scheme")) {
+                    validators.add("@scheme");
+                } else {
+                	println ('---- unprocessed meta ... name: ' + ma.getName())
+                }
+            }
+            if (!validators.isEmpty()) {
+                metaPrefix = "Annotated[";
+                metaSuffix = ", " + attrTypeName + "=.serializer(), " + attrTypeName + ".validator(";
+                for (validator : validators) {
+                	metaSuffix += "'" + validator + "', ";
+                }
+                metaSuffix += "'')]"
+                }
         }
+		attrString += cardinalityPrefix + metaPrefix + attrTypeName + metaSuffix + cardinalitySuffix;
+
         var needCardCheck = !(
             (lowerCardinality == 0 && upperCardinality == 1) || (lowerCardinality == 1 && upperCardinality == 1) ||
             (lowerCardinality == 0 && ra.cardinality.isMulti))

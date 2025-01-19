@@ -741,11 +741,11 @@ definition">
     A number used primarily for work-related calls. Includes home office numbers used primarily for work purposes.
     """'''
 
-        assertTrue(python.toString.contains(expectedTestType1))
-        assertTrue(python.toString.contains(expectedTestType2))
-        assertTrue(python.toString.contains(expectedTestType3))
-        assertTrue(python.toString.contains(expectedTestType4))
-        assertTrue(python.toString.contains(expectedTestType5))
+        assertTrue(python.toString.contains(expectedTestType1), "expectedTestType1\n" + expectedTestType1 + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedTestType2), "expectedTestType2\n" + expectedTestType2 + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedTestType3), "expectedTestType3\n" + expectedTestType3 + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedTestType4), "expectedTestType4\n" + expectedTestType4 + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedTestType5), "expectedTestType5\n" + expectedTestType5 + "\npython\n" + python)
     }
     
     @Test
