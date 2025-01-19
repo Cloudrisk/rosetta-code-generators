@@ -59,39 +59,6 @@ class PythonModelObjectGenerator {
         if (basicType === null) {
             throw new Exception("Attribute type is null for " + ra.name + " for class " + c.name)
         }
-
-        /*         var metaAnnotations = ra.RMetaAnnotatedType
-         *         if (metaAnnotations !== null && metaAnnotations.hasMeta) {
-         *             var helperClass = "Attribute";
-         *             var hasRef = false;
-         *             var hasAddress = false;
-         *             var hasMeta = false;
-         *             for (RMetaAttribute meta : metaAnnotations.getMetaAttributes) {
-         *                 val mname = meta.getName();
-         *                 if (mname == "reference") {
-         *                     hasRef = true;
-         *                 } else if (mname == "address") {
-         *                     hasAddress = true;
-         *                 } else if (mname == "key" || mname == "id" || mname == "scheme" || mname == "location") {
-         *                     hasMeta = true;
-         *                 } else {
-         *                     helperClass += "---" + mname + "---";
-         *                 }
-         *             }
-         *             if (hasMeta) {
-         *                 helperClass += "WithMeta";
-         *             }
-         *             if (hasAddress) {
-         *                 helperClass += "WithAddress";
-         *             }
-         *             if (hasRef) {
-         *                 helperClass += "WithReference";
-         *             }
-         *             if (hasMeta || hasAddress) {
-         *                 helperClass += "[" + basicType + "]";
-         *             }
-         *             basicType = helperClass + " | " + basicType;
-         }*/
         return basicType
     }
 
@@ -252,16 +219,20 @@ class PythonModelObjectGenerator {
          * translate the attribute to its representation in Python
          */
         // TODO: use builder and remove block quotes
-        var attrString = ""
+//        var attrString = ""
         val attrRMAT   = ra.getRMetaAnnotatedType();
         var attrRType  = attrRMAT.getRType();
-        // TODO: depending on how meta is handled the function toPythonType could be removed or made to use the stripped alias
-        var attrTypeName = toPythonType(rosettaClass, ra);
+        // TODO: confirm refactoring of type properly handles enums
+        var attrTypeName = null as String;
         // strip out the alias if there is one and align the attribute type name to the to the underlying type
         if (attrRType instanceof RAliasType) {
             attrRType = typeSystem.stripFromTypeAliases(attrRType);
-            // because this is an alias, reset the attribute type name
-            attrTypeName = PythonTranslator::toPythonType(attrRType);
+            attrTypeName = PythonTranslator::toPythonType(attrRType); // alias must be of underlying type number or string
+        } else {
+            attrTypeName = PythonTranslator::toPythonType(ra);
+        }
+        if (attrTypeName === null) {
+            throw new Exception("Attribute type is null for " + ra.name + " in class " + rosettaClass.name);
         }
         var attrName = PythonTranslator.mangleName(ra.name) // mangle the attribute name if it is a Python keyword
         val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
@@ -271,7 +242,7 @@ class PythonModelObjectGenerator {
             // TODO: there seems to be a default for strings to have min_length = 0 
             attrRType.getPattern().ifPresent[value|attrProp.put("pattern", '"' + '^r' + value.toString() + '*$"')];
             attrRType.getInterval().getMin().ifPresent [ value |
-                if (value > 0) {
+                if (value > 0) { 
                     attrProp.put("min_length", value.toString())
                 }
             ]
@@ -283,7 +254,7 @@ class PythonModelObjectGenerator {
                 attrRType.getFractionalDigits().ifPresent[value|attrProp.put("decimal_places", value.toString())];
                 attrRType.getInterval().getMin().ifPresent[value|attrProp.put("ge", value.toPlainString())]
                 attrRType.getInterval().getMax().ifPresent[value|attrProp.put("le", value.toPlainString())]
-            } else {
+            } else { 
                 attrTypeName = 'int';
             }
         }
@@ -297,7 +268,7 @@ class PythonModelObjectGenerator {
         // otherwise it is required
         var lowerCardinality = ra.cardinality.getMin();
         var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get() : -1 // set the default to -1 if unbounded
-        var upperCardString = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
+        var upperCardString  = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
         var fieldDefault = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
 		var cardinalityPrefix = "";
 		var cardinalitySuffix = "";
@@ -335,15 +306,15 @@ class PythonModelObjectGenerator {
                 	metaSuffix += "'" + validator + "', ";
                 }
                 metaSuffix += "'')]"
-                }
+            }
         }
-		attrString += cardinalityPrefix + metaPrefix + attrTypeName + metaSuffix + cardinalitySuffix;
+//		attrString += cardinalityPrefix + metaPrefix + attrTypeName + metaSuffix + cardinalitySuffix;
 
         var needCardCheck = !(
             (lowerCardinality == 0 && upperCardinality == 1) || (lowerCardinality == 1 && upperCardinality == 1) ||
             (lowerCardinality == 0 && ra.cardinality.isMulti))
         '''
-            «attrName»: «attrString» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
+            «attrName»: «cardinalityPrefix»«metaPrefix»«attrTypeName»«metaSuffix»«cardinalitySuffix» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
             «IF ra.definition !== null»
                 """
                 «ra.definition»
