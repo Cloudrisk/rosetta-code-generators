@@ -54,17 +54,9 @@ class PythonModelObjectGenerator {
         result;
     }
 
-    def String toPythonType(Data c, RAttribute ra) throws Exception {
-        var basicType = PythonTranslator::toPythonType(ra);
-        if (basicType === null) {
-            throw new Exception("Attribute type is null for " + ra.name + " for class " + c.name)
-        }
-        return basicType
-    }
-
     def Map<String, ArrayList<String>> generateChoiceAliases(RDataType choiceType) {
         // 
-        // generate aliases from choice type (needed for deep path)
+        // generate aliases for choice types (needed for deep path)
         //
         if (!choiceType.isEligibleForDeepFeatureCall()) {
             return null
@@ -125,11 +117,6 @@ class PythonModelObjectGenerator {
         return (choiceAlias.isEmpty()) ? null : choiceAlias
     }
 
-    def boolean isPythonBasicType(RAttribute ra) {
-        val rosettaType = (ra !== null) ? ra.getRMetaAnnotatedType.getRType : null
-        return (rosettaType !== null && PythonTranslator::checkPythonType(rosettaType.toString()))
-    }
-
     /**
      * Generate the body of the class
      */
@@ -157,14 +144,14 @@ class PythonModelObjectGenerator {
         // get all non-Meta attributes
         val fa = rdt.getOwnAttributes.filter [
             (it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")
-        ].filter[!isPythonBasicType(it)]
+        ].filter[!PythonTranslator::isRosettaTypeSupported(it)]
         val imports = newArrayList
         for (attribute : fa) {
             var rt = attribute.getRMetaAnnotatedType.getRType
             if (rt === null) {
                 throw new Exception("Attribute type is null for " + attribute.name + " for class " + rosettaClass.name)
             }
-            if (!PythonTranslator::isSupportedBasicRosettaType(rt.getName())) { // need imports for derived types
+            if (!PythonTranslator::isRosettaTypeSupported(rt.getName())) { // need imports for derived types
                 imports.add('''import «rt.getQualifiedName»''')
             }
         }
@@ -178,8 +165,13 @@ class PythonModelObjectGenerator {
     }
 
     private def generateClass(Data rosettaClass) {
-        val t = rosettaClass.buildRDataType
-        val choiceAliases = generateChoiceAliases(t)
+        // generate Python from rosettaClass
+        // ... first generate choice aliases
+        // ... then add class definition
+        // ... then add all attributes
+        // ... then add any conditions
+        val rdt = rosettaClass.buildRDataType
+        val choiceAliases = generateChoiceAliases(rdt)
         return '''
             class «rosettaClass.name»«IF rosettaClass.superType === null»«ENDIF»«IF rosettaClass.superType !== null»(«rosettaClass.superType.name»):«ELSE»(BaseDataClass):«ENDIF»
                 «IF choiceAliases !== null»
@@ -196,11 +188,13 @@ class PythonModelObjectGenerator {
     }
 
     private def CharSequence generateAllAttributes(Data rosettaClass) {
-        // generate Python for all the attributes for this class
+        // generate Python for all the attributes in this class
         val allAttributes = rosettaClass.buildRDataType.getOwnAttributes
+		// it is an empty class if there are no attribute and no conditions
         if (allAttributes.size() === 0 && rosettaClass.conditions.size() === 0) {
             return "pass";
         }
+        // add each attribute
         var _builder = new StringConcatenation();
         var firstElement = true;
         for (RAttribute attribute : allAttributes) {
@@ -219,7 +213,6 @@ class PythonModelObjectGenerator {
          * translate the attribute to its representation in Python
          */
         // TODO: use builder and remove block quotes
-//        var attrString = ""
         val attrRMAT   = ra.getRMetaAnnotatedType();
         var attrRType  = attrRMAT.getRType();
         // TODO: confirm refactoring of type properly handles enums
@@ -231,6 +224,7 @@ class PythonModelObjectGenerator {
         } else {
             attrTypeName = PythonTranslator::toPythonType(ra);
         }
+        // an empty attribute name is cause for an exception
         if (attrTypeName === null) {
             throw new Exception("Attribute type is null for " + ra.name + " in class " + rosettaClass.name);
         }
@@ -308,16 +302,15 @@ class PythonModelObjectGenerator {
                 metaSuffix += "'')]"
             }
         }
-//		attrString += cardinalityPrefix + metaPrefix + attrTypeName + metaSuffix + cardinalitySuffix;
-
+        var definition = ra.definition;
         var needCardCheck = !(
             (lowerCardinality == 0 && upperCardinality == 1) || (lowerCardinality == 1 && upperCardinality == 1) ||
             (lowerCardinality == 0 && ra.cardinality.isMulti))
         '''
             «attrName»: «cardinalityPrefix»«metaPrefix»«attrTypeName»«metaSuffix»«cardinalitySuffix» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
-            «IF ra.definition !== null»
+            «IF definition !== null»
                 """
-                «ra.definition»
+                «definition»
                 """
             «ENDIF»
             «IF needCardCheck»
@@ -327,9 +320,5 @@ class PythonModelObjectGenerator {
                 
             «ENDIF»
         '''
-    }
-
-    def String definition(Data element) {
-        element.definition
     }
 }

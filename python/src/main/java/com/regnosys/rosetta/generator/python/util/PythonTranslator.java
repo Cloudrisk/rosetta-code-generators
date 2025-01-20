@@ -5,6 +5,8 @@ import java.util.Set;
 
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
+import com.regnosys.rosetta.rosetta.RosettaType;
+import com.regnosys.rosetta.rosetta.TypeCall;
 import com.regnosys.rosetta.rosetta.simple.Attribute;
 import com.regnosys.rosetta.types.RAttribute;
 import com.regnosys.rosetta.types.REnumType;
@@ -132,19 +134,18 @@ public class PythonTranslator {
         return (pythonType == null) ? StringExtensions.toFirstUpper(rosettaType) : pythonType;
     }
 
-    public static boolean isPythonBasicType(Attribute rosettaAttributeType) {
-        return (rosettaAttributeType != null && toPythonBasicTypeInnerFunction(rosettaAttributeType.getTypeCall().getType().getName()) != null);
-    }
-
-    public static boolean isPythonBasicType(String rosettaType) {
-        return (rosettaType != null && toPythonBasicTypeInnerFunction(rosettaType) != null);
-    }
-
-    public static boolean isSupportedBasicRosettaType(String rt) {
+    public static boolean isRosettaTypeSupported(String rt) {
         return (toPythonBasicTypeInnerFunction(rt) != null);
     }
+    public static boolean isRosettaTypeSupported(RAttribute ra) {
 
-    public static boolean checkPythonType(final String pythonType) {
+    	if (ra == null) {
+            return false;
+        }
+        RType rt = (ra != null) ? ra.getRMetaAnnotatedType().getRType() : null;
+        return (rt != null) ? isRosettaTypeSupported(rt.getName()) : false;
+    }
+    public static boolean isPythonBasicType(final String pythonType) {
         // Check if the given type is in the set of Python types
         return PYTHON_TYPES.contains(pythonType);
     }
