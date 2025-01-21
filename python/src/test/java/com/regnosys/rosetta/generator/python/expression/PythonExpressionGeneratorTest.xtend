@@ -386,7 +386,7 @@ class PythonExpressionGeneratorTest {
     """
     Test count operation condition
     """
-    aValue: List[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
+    aValue: list[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
     """
     Test A type aValue
     """
@@ -412,11 +412,11 @@ class PythonExpressionGeneratorTest {
     """
     Test type
     """
-    field1: List[int] = Field([], description="Test int field 1")
+    field1: list[int] = Field([], description="Test int field 1")
     """
     Test int field 1
     """
-    field2: List[int] = Field([], description="Test int field 2")
+    field2: list[int] = Field([], description="Test int field 2")
     """
     Test int field 2
     """'''
@@ -484,7 +484,7 @@ class PythonExpressionGeneratorTest {
     """
     Test distinct operation condition
     """
-    aValue: List[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
+    aValue: list[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
     """
     Test A type aValue
     """
@@ -517,11 +517,11 @@ class PythonExpressionGeneratorTest {
                 """
                 Test type
                 """
-                field1: List[int] = Field([], description="Test int field 1")
+                field1: list[int] = Field([], description="Test int field 1")
                 """
                 Test int field 1
                 """
-                field2: List[int] = Field([], description="Test int field 2")
+                field2: list[int] = Field([], description="Test int field 2")
                 """
                 Test int field 2
                 """'''
@@ -576,7 +576,7 @@ class PythonExpressionGeneratorTest {
                 """
                 Test int field 1
                 """
-                field2: List[int] = Field([], description="Test int field 2")
+                field2: list[int] = Field([], description="Test int field 2")
                 """
                 Test int field 2
                 """
@@ -610,7 +610,7 @@ class PythonExpressionGeneratorTest {
                 """
                 Test filter operation condition
                 """
-                bValue: List[com.rosetta.test.model.B.B] = Field([], description="Test B type bValue")
+                bValue: list[com.rosetta.test.model.B.B] = Field([], description="Test B type bValue")
                 """
                 Test B type bValue
                 """
@@ -638,11 +638,11 @@ class PythonExpressionGeneratorTest {
                 """
                 Test type
                 """
-                field1: List[int] = Field([], description="Test int field 1")
+                field1: list[int] = Field([], description="Test int field 1")
                 """
                 Test int field 1
                 """
-                cValue: List[com.rosetta.test.model.C.C] = Field([], description="Test C type cValue")
+                cValue: list[com.rosetta.test.model.C.C] = Field([], description="Test C type cValue")
                 """
                 Test C type cValue
                 """
@@ -652,11 +652,11 @@ class PythonExpressionGeneratorTest {
                 """
                 Test type B
                 """
-                field2: List[int] = Field([], description="Test int field 2")
+                field2: list[int] = Field([], description="Test int field 2")
                 """
                 Test int field 2
                 """
-                aValue: List[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
+                aValue: list[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
                 """
                 Test A type aValue
                 """

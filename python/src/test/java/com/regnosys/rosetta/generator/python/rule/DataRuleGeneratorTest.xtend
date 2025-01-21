@@ -420,7 +420,7 @@ class DataRuleGeneratorTest {
         '''.generatePython
         
         val expected = '''class CondTest(BaseDataClass):
-    multiAttr: List[Decimal] = Field([], description="")
+    multiAttr: list[Decimal] = Field([], description="")
     
     @rosetta_condition
     def condition_0_(self):

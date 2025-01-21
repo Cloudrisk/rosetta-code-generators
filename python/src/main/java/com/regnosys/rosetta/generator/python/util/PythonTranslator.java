@@ -5,8 +5,6 @@ import java.util.Set;
 
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 
-import com.regnosys.rosetta.rosetta.RosettaType;
-import com.regnosys.rosetta.rosetta.TypeCall;
 import com.regnosys.rosetta.rosetta.simple.Attribute;
 import com.regnosys.rosetta.types.RAttribute;
 import com.regnosys.rosetta.types.REnumType;
@@ -72,7 +70,7 @@ public class PythonTranslator {
         return attrib;
     }
     
-    static private String toPythonBasicTypeInnerFunction(String rosettaType) {
+    private static String toPythonBasicTypeInnerFunction(String rosettaType) {
         // inner private function to convert from Rosetta type to Python type
         // returns null if no matching type
         switch (rosettaType) {
@@ -99,6 +97,28 @@ public class PythonTranslator {
         }
     }
 
+    public static String getAttributeTypeWithMeta (String attributeType) {
+        // inner private function to convert from Rosetta type to Python type
+        // returns null if no matching type
+        switch (attributeType) {
+            case "str":
+                return "StringWithMeta";
+            case "datetime.time":
+                return "TimeWithMeta";
+            case "datetime.date":
+                return "DateWithMeta";
+            case "datetime.datetime":
+                return "DateTimeWithMeta";
+            case "Decimal":
+                return "DecimalWithMeta";
+            case "bool":
+                return "BoolWithMeta";
+            case "int":
+                return "IntWithMeta";
+            default:
+                return attributeType;
+        }
+    }
     public static String toPythonBasicType(String rosettaType) {
         String pythonType = toPythonBasicTypeInnerFunction(rosettaType);
         return (pythonType == null) ? rosettaType : pythonType;

@@ -134,7 +134,7 @@ definition">
     """
     Test optional string
     """
-    testTypeValue3: List[str] = Field([], description="Test string list")
+    testTypeValue3: list[str] = Field([], description="Test string list")
     """
     Test string list
     """
@@ -147,7 +147,7 @@ definition">
     Optional test enum
     """'''
         val expectedTestType2 ='''class TestType2(BaseDataClass):
-    testType2Value1: List[Decimal] = Field([], description="Test number list")
+    testType2Value1: list[Decimal] = Field([], description="Test number list")
     """
     Test number list
     """
@@ -641,7 +641,7 @@ definition">
     """
     A class to specify a legal entity, with a required name and an optional entity identifier (such as the LEI).
     """
-    entityId: List[AttributeWithMeta[str] | str] = Field([], description="A legal entity identifier (e.g. RED entity code).")
+    entityId: list[AttributeWithMeta[str] | str] = Field([], description="A legal entity identifier (e.g. RED entity code).")
     """
     A legal entity identifier (e.g. RED entity code).
     """
@@ -838,7 +838,7 @@ definition">
     """
     Test number
     """
-    TestType2Value2: List[datetime.date] = Field([], description="Test date")
+    TestType2Value2: list[datetime.date] = Field([], description="Test date")
     """
     Test date
     """
@@ -848,7 +848,7 @@ definition">
     """
     Test string
     """
-    TestType4Value2: List[int] = Field([], description="Test int")
+    TestType4Value2: list[int] = Field([], description="Test int")
     """
     Test int
     """
@@ -1342,7 +1342,7 @@ definition">
     """
     Test number field 3
     """
-    field4: List[Decimal] = Field([], description="Test number field 4")
+    field4: list[Decimal] = Field([], description="Test number field 4")
     """
     Test number field 4
     """
@@ -1388,7 +1388,7 @@ definition">
     """
     Test number field 3
     """
-    field4: List[Decimal] = Field([], description="Test number field 4")
+    field4: list[Decimal] = Field([], description="Test number field 4")
     """
     Test number field 4
     """
@@ -1439,7 +1439,7 @@ definition">
     """
     Test number field 3
     """
-    field4: List[Decimal] = Field([], description="Test number field 4")
+    field4: list[Decimal] = Field([], description="Test number field 4")
     """
     Test number field 4
     """

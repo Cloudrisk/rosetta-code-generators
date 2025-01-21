@@ -6,6 +6,7 @@ import com.regnosys.rosetta.generator.python.enums.PythonEnumGenerator;
 import com.regnosys.rosetta.generator.python.func.PythonFunctionGenerator;
 import com.regnosys.rosetta.generator.python.object.PythonModelObjectGenerator;
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil;
+import com.regnosys.rosetta.generator.python.object.PythonMetaDataProcessor;
 
 import com.regnosys.rosetta.generator.python.util.Util;
 import com.regnosys.rosetta.rosetta.RosettaEnumeration;
@@ -25,13 +26,11 @@ import java.util.stream.Collectors;
 public class PythonCodeGenerator extends AbstractExternalGenerator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PythonCodeGenerator.class);
 
-	@Inject
-	private PythonModelObjectGenerator pojoGenerator;
-	@Inject
-	private PythonFunctionGenerator funcGenerator;
-	@Inject
-	private PythonEnumGenerator enumGenerator;
-
+	@Inject private PythonModelObjectGenerator pojoGenerator;
+	@Inject private PythonFunctionGenerator funcGenerator;
+	@Inject private PythonEnumGenerator enumGenerator;
+	@Inject private PythonMetaDataProcessor metaDataProcessor;
+	
 	private List<String> subfolders;
 	private AtomicReference<String> previousNamespace;
 	private String namespace;
@@ -58,7 +57,15 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
 		List<Data> rosettaClasses = model.getElements().stream().filter(Data.class::isInstance).map(Data.class::cast)
 				.collect(Collectors.toList());
 
-		List<RosettaMetaType> metaTypes = model.getElements().stream().filter(RosettaMetaType.class::isInstance)
+		Map<String, String> metaDataKeys = metaDataProcessor.getMetaDataKeys(rosettaClasses);
+		
+        for (Map.Entry<String, String> entry : metaDataKeys.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            System.out.println("----- PythonCodeGenerator::generate ... metadata source ... Key: " + key + ", Value: " + value);
+        }
+
+        List<RosettaMetaType> metaTypes = model.getElements().stream().filter(RosettaMetaType.class::isInstance)
 				.map(RosettaMetaType.class::cast).collect(Collectors.toList());
 
 		List<RosettaEnumeration> rosettaEnums = model.getElements().stream()

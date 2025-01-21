@@ -43,7 +43,7 @@ class PythonModelGeneratorUtil {
             # pylint: disable=wildcard-import, wrong-import-order, missing-class-docstring
             # pylint: disable=missing-module-docstring
             from __future__ import annotations
-            from typing import List, Optional
+            from typing import Optional
             import datetime
             import inspect
             from decimal import Decimal

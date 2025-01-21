@@ -66,7 +66,7 @@ class PythonExceptionsTest {
             TestType2Value2 date (0..*) <"Test date">
             '''.generatePython
         } catch(Exception ex){
-            assertTrue(ex.getMessage.contains("SuperType is null"))
+            assertTrue(ex.getMessage.contains("The class superType exists but its name is null for"))
         }      
     }
     

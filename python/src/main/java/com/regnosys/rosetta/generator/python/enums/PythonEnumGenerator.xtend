@@ -1,8 +1,6 @@
 package com.regnosys.rosetta.generator.python.enums
 
-import com.google.inject.Inject
 import com.regnosys.rosetta.generator.java.enums.EnumHelper
-import com.regnosys.rosetta.generator.python.object.PythonModelObjectBoilerPlate
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import com.regnosys.rosetta.rosetta.RosettaEnumeration
 import com.regnosys.rosetta.rosetta.RosettaModel
@@ -12,14 +10,12 @@ import java.util.Map
 
 class PythonEnumGenerator {
 
-    @Inject extension PythonModelObjectBoilerPlate
-
     def Map<String, ? extends CharSequence> generate(Iterable<RosettaEnumeration> rosettaEnums, String version) {
         val result = new HashMap
         for (RosettaEnumeration enum : rosettaEnums) {
             val tr = enum.eContainer as RosettaModel
             val namespace = tr.name
-            val enums = enum.generateEnums(version).replaceTabsWithSpaces
+            val enums = enum.generateEnums(version).toString.replace('\t', '  ')
 
             val all = '''
                 # pylint: disable=missing-module-docstring, invalid-name, line-too-long
