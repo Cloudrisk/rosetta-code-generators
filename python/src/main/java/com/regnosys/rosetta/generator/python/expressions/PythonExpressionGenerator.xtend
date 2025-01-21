@@ -58,6 +58,7 @@ import java.util.List
 import com.regnosys.rosetta.rosetta.expression.SwitchCaseGuard
 import com.regnosys.rosetta.rosetta.simple.ChoiceOption
 import com.regnosys.rosetta.rosetta.RosettaSymbol
+import com.regnosys.rosetta.rosetta.simple.impl.AttributeImpl
 
 class PythonExpressionGenerator {
 
@@ -186,16 +187,16 @@ class PythonExpressionGenerator {
         return '''«blocks»'''
     }
     
-    def getGuardExpression(SwitchCaseGuard caseGuard, boolean isLambda){
-    	if (caseGuard.getSymbolGuard!==null){
-    		return '''rosetta_resolve_attr(switchAttribute,"«caseGuard.getSymbolGuard.getName()»")'''    	
-		}
-    	else if (caseGuard.getEnumGuard!==null){
-    		return generateExpression(caseGuard.getEnumGuard as RosettaExpression,0,isLambda)
+    def getGuardExpression(SwitchCaseGuard caseGuard, boolean isLambda, String enumName){
+    	if (caseGuard.getEnumGuard!==null){
+    		return '''switchAttribute == «enumName».«caseGuard.getEnumGuard.getName()»'''
     	}
     	else if (caseGuard.getChoiceOptionGuard!==null){
-    		return '''rosetta_resolve_attr(switchAttribute,"«caseGuard.getSymbolGuard.getName()»")'''   
+    		return '''rosetta_resolve_attr(switchAttribute,"«caseGuard.getChoiceOptionGuard.getName()»")'''   
     	}
+    	else if (caseGuard.getSymbolGuard!==null){
+    		return '''rosetta_resolve_attr(switchAttribute,"«caseGuard.getSymbolGuard.getName()»")'''    	
+		}
     }
     
    
@@ -387,6 +388,14 @@ class PythonExpressionGenerator {
             SwitchOperation: {
                 val attr = generateExpression(expr.argument, 0, isLambda)
                 //functions for each then case
+                val arg= expr.argument as RosettaSymbolReference
+                val argSymbol=arg.symbol
+                var enumName=""
+                if (argSymbol instanceof Attribute){
+                	if (argSymbol.typeCall.type instanceof RosettaEnumeration){
+                		enumName=argSymbol.typeCall.type.name
+                	}
+                }
                 var funcNames = new ArrayList<String>()
                 var funcCounter=0
                 for (thenExpr : expr.cases) {
@@ -419,9 +428,9 @@ class PythonExpressionGenerator {
 		                        return «funcNames.get(i)»()
 	                	«ENDIF»
                 	«ELSE»
-			            «IF i===0»    if «getGuardExpression(expr.cases.get(i).getGuard(),isLambda)»:
+			            «IF i===0»    if «getGuardExpression(expr.cases.get(i).getGuard(),isLambda,enumName)»:
 			                    return «funcNames.get(i)»()
-			            «ELSE»    elif «getGuardExpression(expr.cases.get(i).getGuard(),isLambda)»:
+			            «ELSE»    elif «getGuardExpression(expr.cases.get(i).getGuard(),isLambda,enumName)»:
 			                    return «funcNames.get(i)»()
 			            «ENDIF»
                 	«ENDIF»
