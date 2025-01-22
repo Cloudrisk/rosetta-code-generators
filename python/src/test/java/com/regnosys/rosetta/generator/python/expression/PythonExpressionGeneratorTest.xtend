@@ -60,15 +60,15 @@ class PythonExpressionGeneratorTest {
     """
     Test choice condition.
     """
-    field1: Optional[str] = Field(None, description="Test string field 1")
+    field1: Optional[str] = Field(None, description='Test string field 1')
     """
     Test string field 1
     """
-    field2: Optional[str] = Field(None, description="Test string field 2")
+    field2: Optional[str] = Field(None, description='Test string field 2')
     """
     Test string field 2
     """
-    field3: Optional[str] = Field(None, description="Test string field 3")
+    field3: Optional[str] = Field(None, description='Test string field 3')
     """
     Test string field 3
     """
@@ -93,7 +93,7 @@ class PythonExpressionGeneratorTest {
     """
     Test one-of condition.
     """
-    field1: Optional[str] = Field(None, description="Test string field 1")
+    field1: Optional[str] = Field(None, description='Test string field 1')
     """
     Test string field 1
     """
@@ -119,11 +119,11 @@ class PythonExpressionGeneratorTest {
     """
     Test if-then condition.
     """
-    field1: Optional[str] = Field(None, description="Test string field 1")
+    field1: Optional[str] = Field(None, description='Test string field 1')
     """
     Test string field 1
     """
-    field2: Optional[Decimal] = Field(None, description="Test number field 2")
+    field2: Optional[Decimal] = Field(None, description='Test number field 2')
     """
     Test number field 2
     """
@@ -160,11 +160,11 @@ class PythonExpressionGeneratorTest {
     """
     Test if-then-else condition.
     """
-    field1: Optional[str] = Field(None, description="Test string field 1")
+    field1: Optional[str] = Field(None, description='Test string field 1')
     """
     Test string field 1
     """
-    field2: Optional[Decimal] = Field(None, description="Test number field 2")
+    field2: Optional[Decimal] = Field(None, description='Test number field 2')
     """
     Test number field 2
     """
@@ -199,11 +199,11 @@ class PythonExpressionGeneratorTest {
     """
     Test boolean condition.
     """
-    field1: bool = Field(..., description="Test booelan field 1")
+    field1: bool = Field(..., description='Test booelan field 1')
     """
     Test booelan field 1
     """
-    field2: Optional[Decimal] = Field(None, description="Test number field 2")
+    field2: Optional[Decimal] = Field(None, description='Test number field 2')
     """
     Test number field 2
     """
@@ -238,11 +238,11 @@ class PythonExpressionGeneratorTest {
     """
     Test absent condition.
     """
-    field1: bool = Field(..., description="Test booelan field 1")
+    field1: bool = Field(..., description='Test booelan field 1')
     """
     Test booelan field 1
     """
-    field2: Optional[Decimal] = Field(None, description="Test number field 2")
+    field2: Optional[Decimal] = Field(None, description='Test number field 2')
     """
     Test number field 2
     """
@@ -293,11 +293,11 @@ class PythonExpressionGeneratorTest {
     """
     Test only-element condition.
     """
-    field1: Optional[com.rosetta.test.model.TestEnum.TestEnum] = Field(None, description="Test enum field 1")
+    field1: Optional[com.rosetta.test.model.TestEnum.TestEnum] = Field(None, description='Test enum field 1')
     """
     Test enum field 1
     """
-    field2: Optional[Decimal] = Field(None, description="Test number field 2")
+    field2: Optional[Decimal] = Field(None, description='Test number field 2')
     """
     Test number field 2
     """
@@ -336,7 +336,7 @@ class PythonExpressionGeneratorTest {
     """
     Test only exists condition
     """
-    aValue: com.rosetta.test.model.A.A = Field(..., description="Test A type aValue")
+    aValue: com.rosetta.test.model.A.A = Field(..., description='Test A type aValue')
     """
     Test A type aValue
     """
@@ -358,7 +358,7 @@ class PythonExpressionGeneratorTest {
     """
     Test type
     """
-    field1: Optional[Decimal] = Field(None, description="Test number field 1")
+    field1: Optional[Decimal] = Field(None, description='Test number field 1')
     """
     Test number field 1
     """'''
@@ -371,7 +371,7 @@ class PythonExpressionGeneratorTest {
     def void testGenerateCountCondition(){
         val python = '''type A: <"Test type">
             field1 int (0..*) <"Test int field 1">
-            field2 int (0..*) <"Test int field 2">
+            field2 int (1..*) <"Test int field 2">
 
             type Test: <"Test count operation condition">
                 aValue A (1..*) <"Test A type aValue">
@@ -386,14 +386,10 @@ class PythonExpressionGeneratorTest {
     """
     Test count operation condition
     """
-    aValue: list[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
+    aValue: list[com.rosetta.test.model.A.A] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """
-    @rosetta_condition
-    def cardinality_aValue(self):
-        return check_cardinality(self.aValue, 1, None)
-    
     
     @rosetta_condition
     def condition_0_TestCond(self):
@@ -412,17 +408,17 @@ class PythonExpressionGeneratorTest {
     """
     Test type
     """
-    field1: list[int] = Field([], description="Test int field 1", min_length=1)
+    field1: Optional[int] = Field(None, description='Test int field 1')
     """
     Test int field 1
     """
-    field2: list[int] = Field([], description="Test int field 2", min_length=1)
+    field2: list[int] = Field([], description='Test int field 2', min_length=1)
     """
     Test int field 2
     """'''
 
-        assertTrue(python.toString.contains(expected))
-        assertTrue(python.toString.contains(expectedA))
+        assertTrue(python.toString.contains(expected), "\n" + "expected" + "\n" + expected + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedA), "\n" + "expectedA" + "\n" + expectedA + "\npython\n" + python)
     }
     
     @Test
@@ -439,11 +435,11 @@ class PythonExpressionGeneratorTest {
     """
     Test any operation condition
     """
-    field1: str = Field(..., description="Test string field1")
+    field1: str = Field(..., description='Test string field1')
     """
     Test string field1
     """
-    field2: str = Field(..., description="Test boolean field2")
+    field2: str = Field(..., description='Test boolean field2')
     """
     Test boolean field2
     """
@@ -468,8 +464,8 @@ class PythonExpressionGeneratorTest {
     @Test
     def void testGenerateDistinctCondition(){
         val python = '''type A: <"Test type">
-            field1 int (0..*) <"Test int field 1">
-            field2 int (0..*) <"Test int field 2">
+            field1 int (1..*) <"Test int field 1">
+            field2 int (1..*) <"Test int field 2">
                     
             type Test: <"Test distinct operation condition">
             aValue A (1..*) <"Test A type aValue">
@@ -484,15 +480,11 @@ class PythonExpressionGeneratorTest {
     """
     Test distinct operation condition
     """
-    aValue: list[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
+    aValue: list[com.rosetta.test.model.A.A] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """
-    @rosetta_condition
-    def cardinality_aValue(self):
-        return check_cardinality(self.aValue, 1, None)
-    
-    field3: Decimal = Field(..., description="Test number field 3")
+    field3: Decimal = Field(..., description='Test number field 3')
     """
     Test number field 3
     """
@@ -509,52 +501,49 @@ class PythonExpressionGeneratorTest {
         def _else_fn0():
             return all_elements(rosetta_resolve_attr(self, "field3"), "=", 1)
         
-        return if_cond_fn(all_elements(rosetta_count(set(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field1"))), "=", 1), _then_fn0, _else_fn0)
-            '''
+        return if_cond_fn(all_elements(rosetta_count(set(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "field1"))), "=", 1), _then_fn0, _else_fn0)'''
             
-            val expectedClassA=  '''
-            class A(BaseDataClass):
-                """
-                Test type
-                """
-                field1: list[int] = Field([], description="Test int field 1")
-                """
-                Test int field 1
-                """
-                field2: list[int] = Field([], description="Test int field 2")
-                """
-                Test int field 2
-                """'''
+            val expectedClassA=  '''class A(BaseDataClass):
+    """
+    Test type
+    """
+    field1: list[int] = Field([], description='Test int field 1', min_length=1)
+    """
+    Test int field 1
+    """
+    field2: list[int] = Field([], description='Test int field 2', min_length=1)
+    """
+    Test int field 2
+    """'''
 
-            assertTrue(python.toString.contains(expected))
-            assertTrue(python.toString.contains(expectedClassA))
+            assertTrue(python.toString.contains(expected), "\n" + "expected" + "\n" + expected + "\npython\n" + python)
+            assertTrue(python.toString.contains(expectedClassA), "\n" + "expectedClassA" + "\n" + expectedClassA + "\npython\n" + python)
     }
     def void testGenerateFlattenCondition(){
         val python = '''
-              type C: <"Test type C">
+            type C: <"Test type C">
                 field4 int (1..1) <"Test int field 4">
-                  field5 int (0..*) <"Test int field 5">
-              type A: <"Test type">
-                  field1 int (0..*) <"Test int field 1">
-                  cValue C (0..*) <"Test C type cValue">
-              type B: <"Test type B">
-                  field2 int (0..*) <"Test int field 2">
-                  aValue A (0..*) <"Test A type aValue">
-               type Test: <"Test filter operation condition">
-                bValue B (0..*) <"Test B type bValue">
+                field5 int (1..*) <"Test int field 5">
+            type A: <"Test type">
+                field1 int (1..*) <"Test int field 1">
+                cValue C (1..*) <"Test C type cValue">
+            type B: <"Test type B">
+                field2 int (1..*) <"Test int field 2">
+                aValue A (1..*) <"Test A type aValue">
+            type Test: <"Test filter operation condition">
+                bValue B (1..*) <"Test B type bValue">
                 field6 boolean (0..1) <"Test boolean type field6">
                 
-                condition TestCond: <"Test condition">
-                    if bValue->field2 exists
-                    then bValue flatten
-                  '''.generatePython 
+            condition TestCond: <"Test condition">
+                if bValue->field2 exists
+                    then bValue flatten'''.generatePython 
                   
             val expected= '''
             class Test(BaseDataClass):
                 """
                 Test filter operation condition
                 """
-                aValue: com.rosetta.test.model.A.A = Field(..., description="Test A type aValue")
+                aValue: com.rosetta.test.model.A.A = Field(..., description='Test A type aValue')
                 """
                 Test A type aValue
                 """
@@ -572,11 +561,11 @@ class PythonExpressionGeneratorTest {
                 """
                 Test type
                 """
-                field1: bool = Field(..., description="Test int field 1")
+                field1: bool = Field(..., description='Test int field 1')
                 """
                 Test int field 1
                 """
-                field2: list[int] = Field([], description="Test int field 2")
+                field2: list[int] = Field([], description='Test int field 2', min_length=1)
                 """
                 Test int field 2
                 """
@@ -588,102 +577,94 @@ class PythonExpressionGeneratorTest {
     @Test
     def void testGenerateBinContainsCondition(){
         val python = '''
-              enum C: <"Test type C">
+            enum C: <"Test type C">
                 field4 <"Test enum field 4">
-                  field5 <"Test enum field 5">
-              type A: <"Test type">
-                  field1 int (0..*) <"Test int field 1">
-                  cValue C (0..*) <"Test C type cValue">
-              type B: <"Test type B">
-                  field2 int (0..*) <"Test int field 2">
-                  aValue A (0..*) <"Test A type aValue">
-               type Test: <"Test filter operation condition">
-                bValue B (0..*) <"Test B type bValue">
+                field5 <"Test enum field 5">
+            type A: <"Test type">
+                field1 int (1..*) <"Test int field 1">
+                cValue C (1..*) <"Test C type cValue">
+            type B: <"Test type B">
+                field2 int (1..*) <"Test int field 2">
+                aValue A (1..*) <"Test A type aValue">
+            type Test: <"Test filter operation condition">
+                bValue B (1..*) <"Test B type bValue">
                 field3 boolean (0..1) <"Test bool type field3">
                 condition TestCond: <"Test condition">
                     if field3=True
                     then bValue->aValue->cValue contains C->field4
-                  '''.generatePython 
+                '''.generatePython 
                   
-            val expected= '''
-            class Test(BaseDataClass):
-                """
-                Test filter operation condition
-                """
-                bValue: list[com.rosetta.test.model.B.B] = Field([], description="Test B type bValue")
-                """
-                Test B type bValue
-                """
-                field3: Optional[bool] = Field(None, description="Test bool type field3")
-                """
-                Test bool type field3
-                """
-                
-                @rosetta_condition
-                def condition_0_TestCond(self):
-                    """
-                    Test condition
-                    """
-                    item = self
-                    def _then_fn0():
-                        return contains(rosetta_resolve_attr(rosetta_resolve_attr(rosetta_resolve_attr(self, "bValue"), "aValue"), "cValue"), rosetta_resolve_attr(C, "FIELD_4"))
-                    
-                    def _else_fn0():
-                        return True
-                    
-                    return if_cond_fn(all_elements(rosetta_resolve_attr(self, "field3"), "=", True), _then_fn0, _else_fn0)
-            '''
-            val expectedClassA='''
-            class A(BaseDataClass):
-                """
-                Test type
-                """
-                field1: list[int] = Field([], description="Test int field 1")
-                """
-                Test int field 1
-                """
-                cValue: list[com.rosetta.test.model.C.C] = Field([], description="Test C type cValue")
-                """
-                Test C type cValue
-                """
-            '''
-            val expectedClassB='''
-            class B(BaseDataClass):
-                """
-                Test type B
-                """
-                field2: list[int] = Field([], description="Test int field 2")
-                """
-                Test int field 2
-                """
-                aValue: list[com.rosetta.test.model.A.A] = Field([], description="Test A type aValue")
-                """
-                Test A type aValue
-                """
-            '''
+            val expectedClassC='''class C(Enum):
+    """
+    Test type C
+    """
+    FIELD_4 = "field4"
+    """
+    Test enum field 4
+    """
+    FIELD_5 = "field5"
+    """
+    Test enum field 5
+    """'''
+            val expectedClassA='''class A(BaseDataClass):
+    """
+    Test type
+    """
+    field1: list[int] = Field([], description='Test int field 1', min_length=1)
+    """
+    Test int field 1
+    """
+    cValue: list[com.rosetta.test.model.C.C] = Field([], description='Test C type cValue', min_length=1)
+    """
+    Test C type cValue
+    """'''
+
+            val expectedClassB='''class B(BaseDataClass):
+    """
+    Test type B
+    """
+    field2: list[int] = Field([], description='Test int field 2', min_length=1)
+    """
+    Test int field 2
+    """
+    aValue: list[com.rosetta.test.model.A.A] = Field([], description='Test A type aValue', min_length=1)
+    """
+    Test A type aValue
+    """'''
+            val expected= '''class Test(BaseDataClass):
+    """
+    Test filter operation condition
+    """
+    bValue: list[com.rosetta.test.model.B.B] = Field([], description='Test B type bValue', min_length=1)
+    """
+    Test B type bValue
+    """
+    field3: Optional[bool] = Field(None, description='Test bool type field3')
+    """
+    Test bool type field3
+    """
+    
+    @rosetta_condition
+    def condition_0_TestCond(self):
+        """
+        Test condition
+        """
+        item = self
+        def _then_fn0():
+            return contains(rosetta_resolve_attr(rosetta_resolve_attr(rosetta_resolve_attr(self, "bValue"), "aValue"), "cValue"), rosetta_resolve_attr(C, "FIELD_4"))
+        
+        def _else_fn0():
+            return True
+        
+        return if_cond_fn(all_elements(rosetta_resolve_attr(self, "field3"), "=", True), _then_fn0, _else_fn0)'''
             
-            val expectedClassC='''
-            class C(Enum):
-                """
-                Test type C
-                """
-                FIELD_4 = "field4"
-                """
-                Test enum field 4
-                """
-                FIELD_5 = "field5"
-                """
-                Test enum field 5
-                """
-            '''
-            
-           assertTrue(python.toString.contains(expected))
-           assertTrue(python.toString.contains(expectedClassA))
-           assertTrue(python.toString.contains(expectedClassB))    
-           assertTrue(python.toString.contains(expectedClassC))             
+           assertTrue(python.toString.contains(expectedClassA), "\n" + "expectedClassA" + expectedClassA + "\npython\n" + python)
+           assertTrue(python.toString.contains(expectedClassB), "\n" + "expectedClassB" + expectedClassB + "\npython\n" + python)
+           assertTrue(python.toString.contains(expectedClassC), "\n" + "expectedClassC" + expectedClassC + "\npython\n" + python)
+           assertTrue(python.toString.contains(expected), "\n" + "expected" + expected + "\npython\n" + python)
     }
     
-       @Test
+    @Test
     def void testGenerateBinDisjointCondition(){
         val python = '''
               type Test: <"Test disjoint binary expression condition">
@@ -701,15 +682,15 @@ class PythonExpressionGeneratorTest {
                 """
                 Test disjoint binary expression condition
                 """
-                field1: str = Field(..., description="Test string field1")
+                field1: str = Field(..., description='Test string field1')
                 """
                 Test string field1
                 """
-                field2: str = Field(..., description="Test string field2")
+                field2: str = Field(..., description='Test string field2')
                 """
                 Test string field2
                 """
-                field3: bool = Field(..., description="Test boolean field3")
+                field3: bool = Field(..., description='Test boolean field3')
                 """
                 Test boolean field3
                 """

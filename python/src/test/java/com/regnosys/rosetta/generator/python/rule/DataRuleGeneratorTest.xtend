@@ -413,14 +413,14 @@ class DataRuleGeneratorTest {
     def void conditionCount() {
         val python = '''
             type CondTest:
-                multiAttr number (0..*)
+                multiAttr number (1..*)
     
                 condition:
                     multiAttr count >= 0
         '''.generatePython
         
         val expected = '''class CondTest(BaseDataClass):
-    multiAttr: list[Decimal] = Field([], description='')
+    multiAttr: list[Decimal] = Field([], description='', min_length=1)
     
     @rosetta_condition
     def condition_0_(self):
