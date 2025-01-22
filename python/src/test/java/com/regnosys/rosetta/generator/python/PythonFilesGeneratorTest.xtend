@@ -148,26 +148,25 @@ class PythonFilesGeneratorTest {
     }
 
     @Test
-    def void generatePythonAndCompareToExpected() {
+    def void testGeneratedSyntax() {
         try {
-            LOGGER.info('PythonFilesGeneratorTest::generatePythonAndCompareToExpected ... start')
+            LOGGER.info('PythonFilesGeneratorTest::testGeneratedSyntax ... start')
     
             // Retrieve properties
-            val sourcePath = utils.getProperty('unittest.code.generator.source.path')
-            val targetPath = utils.getProperty('unittest.code.generator.target.path')
-            val expectedPath = utils.getProperty('unittest.code.generator.expected.path')
-    
+            val sourcePath = utils.getProperty('unittest.generated.syntax.source.path')
             // Check if properties exist
             if (sourcePath === null || sourcePath.isEmpty) {
-                LOGGER.error("Property 'unittest.codegenerator.source.path' does not exist or is empty")
+                LOGGER.error("Property 'unittest.generated.syntax.source.path' does not exist or is empty")
                 return
             }
+            val targetPath = utils.getProperty('unittest.generated.syntax.target.path')
             if (targetPath === null || targetPath.isEmpty) {
-                LOGGER.error("Property 'unittest.codegenerator.targetpath' does not exist or is empty")
+                LOGGER.error("Property 'unittest.generated.syntax.targetpath' does not exist or is empty")
                 return
             }
+            val expectedPath = utils.getProperty('unittest.generated.syntax.expected.path')
             if (expectedPath === null || expectedPath.isEmpty) {
-                LOGGER.error("Property 'unittest.codegenerator.expected.path' does not exist or is empty")
+                LOGGER.error("Property 'unittest.generated.syntax.expected.path' does not exist or is empty")
                 return
             }
     

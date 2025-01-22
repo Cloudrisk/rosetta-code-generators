@@ -20,9 +20,9 @@
         <cdm.python.output.path>target/python-cdm</cdm.python.output.path>
         <unittest.rosetta.source.path>build/resources/rosetta/python_unit_tests</unittest.rosetta.source.path>
         <unittest.python.output.path>target/python_unit_tests</unittest.python.output.path>
-        <unittest.code.generator.source.path>build/resources/generated_code_unit_tests/rosetta</unittest.code.generator.source.path>
-        <unittest.code.generator.target.path>target/generated_code_unit_tests</unittest.code.generator.target.path>
-        <unittest.code.generator.expected.path>build/resources/generated_code_unit_tests/expected</unittest.code.generator.expected.path>
+        <unittest.generated.syntax.source.path>build/resources/generated_syntax_tests/rosetta</unittest.generated.syntax.source.path>
+        <unittest.generated.syntax.target.path>target/generated_syntax_tests</unittest.generated.syntax.target.path>
+        <unittest.generated.syntax.expected.path>build/resources/generated_syntax_tests/expected</unittest.generated.syntax.expected.path>
         <serialization.test.rosetta.source.path>../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test</serialization.test.rosetta.source.path>
         <serialization.test.python.output.path>target/serialization_unit_tests</serialization.test.python.output.path>
     </properties>

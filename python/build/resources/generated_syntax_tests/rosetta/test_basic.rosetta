@@ -1,4 +1,4 @@
-namespace test.generated_code.basic : <"generate Python unit tests from Rosetta.">
+namespace test.generated_syntax.basic : <"generate Python unit tests from Rosetta.">
 
 typeAlias ParameterisedNumberType:
     number(digits: 18, fractionalDigits: 2)
