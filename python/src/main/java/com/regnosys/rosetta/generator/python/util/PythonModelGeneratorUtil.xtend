@@ -48,11 +48,10 @@ class PythonModelGeneratorUtil {
             import inspect
             from decimal import Decimal
             from pydantic import Field
-            from rosetta.runtime.utils import (
-                BaseDataClass, rosetta_condition, rosetta_resolve_attr, rosetta_resolve_deep_attr
-            )
-            from rosetta.runtime.utils import *
-            
+            from rune.runtime.base_data_class import BaseDataClass
+            from rune.runtime.metadata import *
+            from rune.runtime.utils import *
+            from rune.runtime.conditions import *
             __all__ = [«"'"+name+"'"»]
             
         '''
@@ -68,8 +67,10 @@ class PythonModelGeneratorUtil {
             import datetime
             import inspect
             from decimal import Decimal
-            from rosetta.runtime.utils import *
-            from rosetta.runtime.func_proxy import replaceable, create_module_attr_guardian
+            from rune.runtime.base_data_class import BaseDataClass
+            from rune.runtime.metadata import *
+            from rune.runtime.utils import *
+            from rune.runtime.conditions import *
         '''
         imports
     }
@@ -92,16 +93,20 @@ class PythonModelGeneratorUtil {
 
     static def String createVersionFile(String version) {
         val versionComma = version.replace('.', ',')
-        return "version = (" + versionComma + ",0)\n" + "version_str = '" + version + "-0'\n" +
-            "__version__ = '" + version + "'\n" + "__build_time__ = '" +
-            LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "'"
+        return "version = (" + versionComma + ",0)\n" + 
+                           "version_str = '" + version + "-0'\n" +
+                           "__version__ = '" + version + "'\n" + 
+                           "__build_time__ = '" + LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "'"
     }
 
     static def String createPYProjectTomlFile(String namespace, String version) {
-        return '[build-system]\n' + "requires = [\"setuptools>=62.0\"]\n" +
-            "build-backend = \"setuptools.build_meta\"\n\n" + "[project]\n" + "name = \"python-" + namespace + "\"\n" +
-            "version = \"" + version + "\"\n" + "requires-python = \">= 3.10\"\n" + "dependencies = [\n" +
-            "   \"pydantic>=2.6.1,<2.10\",\n" + "   \"rosetta.runtime==2.1.0\"\n" + "]\n" +
-            "[tool.setuptools.packages.find]\n" + "where = [\"src\"]"
+        return '[build-system]\n' + 
+                "requires = [\"setuptools>=62.0\"]\n" +
+                "build-backend = \"setuptools.build_meta\"\n\n" + 
+                "[project]\n" + 
+                "name = \"python-" + namespace + "\"\n" +
+                "version = \"" + version + "\"\n" + 
+                "requires-python = \">= 3.11\"\n" + 
+                "dependencies = [\n" + "   \"pydantic>=2.10.3\",\n" + "   \"rune.runtime>=1.0.0,<1.1.0\"\n" + "]\n" + "[tool.setuptools.packages.find]\n" + "where = [\"src\"]"
     }
 }

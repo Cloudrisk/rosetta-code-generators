@@ -13,14 +13,12 @@ ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') 
 $PYEXE -m venv --clear $MYPATH/.pytest
 source $MYPATH/.pytest/$ACDIR/activate
 
+RUNTIMENEW="/Users/dls/projects/rune/rune-python-runtime"
 ROSETTARUNTIMEDIR="../src/main/resources/runtime"
 PYTHONCDMDIR="../target/python"
-PYTHONUNITTESTDIR="../target/python_unit_tests"
-echo "**** Install Dependencies ****"
-$PYEXE -m pip install "pydantic>=2.6.1,<2.10"
-$PYEXE -m pip install pytest
+PYTHONUNITTESTDIR="../target/python/unit_tests"
 echo "**** Install Runtime ****"
-$PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl --force-reinstall
+$PYEXE -m pip install $RUNTIMENEW/rune.runtime*-py3-*.whl --force-reinstall
 echo "**** Build and Install Generated Unit Tests ****"
 cd $MYPATH/$PYTHONUNITTESTDIR
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
@@ -28,6 +26,8 @@ $PYEXE -m pip install python_rosetta_dsl-0.0.0-py3-none-any.whl
 cd $MYPATH
 
 # run tests
-$PYEXE -m pytest -p no:cacheprovider $MYPATH/runtime_tests $MYPATH/rosetta_tests 
+echo "**** Install pytest ****"
+$PYEXE -m pip install pytest
+$PYEXE -m pytest -p no:cacheprovider $MYPATH/rosetta_tests 
 
 rm -rf .pytest

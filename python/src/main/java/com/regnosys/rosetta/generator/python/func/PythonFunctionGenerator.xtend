@@ -21,10 +21,12 @@ import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+// TODO: function support
+/*
 import com.regnosys.rosetta.rosetta.simple.ShortcutDeclaration
 import com.regnosys.rosetta.rosetta.simple.Condition
 import org.eclipse.emf.common.util.EList
-
+ */
 class PythonFunctionGenerator {
 
     static final Logger LOGGER = LoggerFactory.getLogger(PythonFunctionGenerator);
@@ -108,7 +110,7 @@ class PythonFunctionGenerator {
         if (output !== null) {
             '''
                 «IF function.operations.size==0 && function.getShortcuts().size==0»
-                    «output.name» = rosetta_resolve_attr(self, "«output.name»")
+                    «output.name» = rune_resolve_attr(self, "«output.name»")
                 «ENDIF»
                 
                 «generatePostConditions(function)»
@@ -294,7 +296,7 @@ class PythonFunctionGenerator {
             if (operation == function.getOperations().head) {
                 result = '''«root.name» = «expression»'''
             } else {
-                result = '''«root.name».add_rosetta_attr(«fullPath», «expression»)'''
+                result = '''«root.name».add_rune_attr(«fullPath», «expression»)'''
             }
         }
         return result
@@ -309,10 +311,10 @@ class PythonFunctionGenerator {
             result = '''«attributeRoot.name» =  «expression»'''
         } else {
             if (!setNames.contains(attributeRoot.name)) {
-                result = '''«attributeRoot.name» = _get_rosetta_object('«attributeRoot.typeCall.type.name»', «getNextPathElementName(operation.path)», «buildObject(expression, operation.path)»)'''
+                result = '''«attributeRoot.name» = _get_rune_object('«attributeRoot.typeCall.type.name»', «getNextPathElementName(operation.path)», «buildObject(expression, operation.path)»)'''
                 setNames.add(attributeRoot.name)
             } else {
-                result = '''«attributeRoot.name» = set_rosetta_attr(rosetta_resolve_attr(self, '«attributeRoot.name»'), «generateAttributesPath(operation.path)», «expression»)'''
+                result = '''«attributeRoot.name» = set_rune_attr(rune_resolve_attr(self, '«attributeRoot.name»'), «generateAttributesPath(operation.path)», «expression»)'''
             }
         }
         return result
@@ -347,7 +349,7 @@ class PythonFunctionGenerator {
         }
 
         val attribute = path.getAttribute();
-        return '''_get_rosetta_object('«attribute.typeCall.type.name»', «getNextPathElementName(path.next)», «buildObject(expression, path.next)»)'''
+        return '''_get_rune_object('«attribute.typeCall.type.name»', «getNextPathElementName(path.next)», «buildObject(expression, path.next)»)'''
     }
 
     private def String generateFullPath(Iterable<Attribute> attrs, String root) {
@@ -358,10 +360,10 @@ class PythonFunctionGenerator {
         val attr = attrs.head
         val remainingAttrs = attrs.tail.toList
 
-        val nextPath = if (remainingAttrs.isEmpty) '''rosetta_resolve_attr(self, «root»)''' else generateFullPath(
+        val nextPath = if (remainingAttrs.isEmpty) '''rune_resolve_attr(self, «root»)''' else generateFullPath(
                 remainingAttrs, root)
 
-        return '''rosetta_resolve_attr(«nextPath», '«attr.name»')'''
+        return '''rune_resolve_attr(«nextPath», '«attr.name»')'''
     }
 
     private def getReversedAttributes(Segment segment) {

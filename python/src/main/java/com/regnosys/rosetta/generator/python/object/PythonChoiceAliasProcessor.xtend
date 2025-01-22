@@ -68,7 +68,7 @@ class PythonChoiceAliasProcessor {
                         // Add the new alias to the list.  Add a deep reference if necessary
                         val deepReference = deepReferenceMap.get(t.name)
                         val resolutionMethod = (deepReference !== null && deepReference.contains(
-                                deepFeature.name)) ? "rosetta_resolve_deep_attr" : "rosetta_resolve_attr"
+                                deepFeature.name)) ? "rune_resolve_deep_attr" : "rune_resolve_attr"
                         aliasList.add('("' + attribute.name + '", ' + resolutionMethod + ')')
                     }
                 ]

@@ -468,36 +468,36 @@ class ModelObjectGeneratorTest {
     a0: Optional[int] = Field(None, description='')
     a1: Optional[int] = Field(None, description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_(self):
         item = self
-        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
+        return rune_check_one_of(self, 'a0', 'a1', necessity=True)'''
         
         val expectedB = '''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description='')
     intValue2: Optional[int] = Field(None, description='')
     aValue: com.rosetta.test.model.A.A = Field(..., description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_Rule(self):
         item = self
-        return all_elements(rosetta_resolve_attr(self, "intValue1"), "<", 100)
+        return rune_all_elements(rune_resolve_attr(self, "intValue1"), "<", 100)
     
-    @rosetta_condition
+    @rune_condition
     def condition_1_OneOrTwo(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
+        return rune_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
-    @rosetta_condition
+    @rune_condition
     def condition_2_SecondOneOrTwo(self):
         """
         FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
         """
         item = self
-        return ((rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and (not rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))))'''
+        return ((rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "aValue"), "a0")) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and rune_attr_exists(rune_resolve_attr(self, "intValue1")))) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and (not rune_attr_exists(rune_resolve_attr(self, "intValue1")))))'''
 
         assertTrue(python.toString.contains(expectedA), "expectedA\n" + expectedA + "\npython\n" + python)
         assertTrue(python.toString.contains(expectedB), "expectedB\n" + expectedB + "\npython\n" + python)
@@ -707,13 +707,13 @@ class ModelObjectGeneratorTest {
     Test number field 4
     """
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_BusinessCentersChoice(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'field1', 'field2', necessity=True)'''
+        return rune_check_one_of(self, 'field1', 'field2', necessity=True)'''
         assertTrue(types.contains(expected))
     }
 
@@ -750,19 +750,19 @@ class ModelObjectGeneratorTest {
     Test number field 4
     """
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_BusinessCentersChoice(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
         def _then_fn0():
-            return all_elements(rosetta_resolve_attr(self, "field3"), ">", 0)
+            return rune_all_elements(rune_resolve_attr(self, "field3"), ">", 0)
         
         def _else_fn0():
             return True
         
-        return if_cond_fn(rosetta_attr_exists(rosetta_resolve_attr(self, "field1")), _then_fn0, _else_fn0)'''
+        return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "field1")), _then_fn0, _else_fn0)'''
         assertTrue(python.toString.contains(expected), "expected\n:" + expected + "\npython\n" + python)
     }
 
@@ -791,44 +791,44 @@ class ModelObjectGeneratorTest {
     a0: Optional[int] = Field(None, description='')
     a1: Optional[int] = Field(None, description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_(self):
         item = self
-        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
+        return rune_check_one_of(self, 'a0', 'a1', necessity=True)'''
         
         val expectedB = '''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description='')
     intValue2: Optional[int] = Field(None, description='')
     aValue: com.rosetta.test.model.A.A = Field(..., description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_Rule(self):
         item = self
-        return all_elements(rosetta_resolve_attr(self, "intValue1"), "<", 100)
+        return rune_all_elements(rune_resolve_attr(self, "intValue1"), "<", 100)
     
-    @rosetta_condition
+    @rune_condition
     def condition_1_OneOrTwo(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
+        return rune_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
-    @rosetta_condition
+    @rune_condition
     def condition_2_ReqOneOrTwo(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=True)
+        return rune_check_one_of(self, 'intValue1', 'intValue2', necessity=True)
     
-    @rosetta_condition
+    @rune_condition
     def condition_3_SecondOneOrTwo(self):
         """
         FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
         """
         item = self
-        return ((rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and (not rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))))'''
+        return ((rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "aValue"), "a0")) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and rune_attr_exists(rune_resolve_attr(self, "intValue1")))) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and (not rune_attr_exists(rune_resolve_attr(self, "intValue1")))))'''
 
         assertTrue(python.toString.contains(expectedA))
         assertTrue(python.toString.contains(expectedB))

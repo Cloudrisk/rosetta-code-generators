@@ -9,11 +9,10 @@ import datetime
 import inspect
 from decimal import Decimal
 from pydantic import Field
-from rosetta.runtime.utils import (
-    BaseDataClass, rosetta_condition, rosetta_resolve_attr, rosetta_resolve_deep_attr
-)
-from rosetta.runtime.utils import *
-
+from rune.runtime.base_data_class import BaseDataClass
+from rune.runtime.metadata import *
+from rune.runtime.utils import *
+from rune.runtime.conditions import *
 __all__ = ['A']
 
 

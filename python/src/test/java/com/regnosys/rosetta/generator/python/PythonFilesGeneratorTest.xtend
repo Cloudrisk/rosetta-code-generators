@@ -64,7 +64,7 @@ class PythonFilesGeneratorTest {
         }
     }
 
-    @Disabled("generatePythonUnitTests")
+//    @Disabled("generatePythonUnitTests")
     @Test
     def void generatePythonUnitTests() {
         try {
@@ -176,6 +176,7 @@ class PythonFilesGeneratorTest {
             // Verify generated code against expected code
             var generatedFiles = utils.getFileListWithRecursion(targetPath, 'py');
     
+            // TODO: keep testing if one file fails
             for (generatedFile : generatedFiles) {
                 val fileName = generatedFile.getFileName.toString
                 if (fileName != "__init__.py" && fileName != "version.py") {

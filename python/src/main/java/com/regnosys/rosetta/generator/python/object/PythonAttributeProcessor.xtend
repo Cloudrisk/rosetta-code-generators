@@ -25,7 +25,7 @@ class PythonAttributeProcessor {
     def CharSequence generateAllAttributes(Data rosettaClass, Map<String, String> metaDataKeys) {
         // generate Python for all the attributes in this class
         val allAttributes = rosettaClass.buildRDataType.getOwnAttributes
-		// it is an empty class if there are no attribute and no conditions
+        // it is an empty class if there are no attribute and no conditions
         if (allAttributes.size() === 0 && rosettaClass.conditions.size() === 0) {
             return "pass";
         }
@@ -90,101 +90,106 @@ class PythonAttributeProcessor {
         var propString = "";
         var isFirst = true;
         for (attrPropEntry : attrProp.entrySet()) {
-        	if (isFirst) {
-        		isFirst = false;
-        	} else {
-        		propString += ", ";
-        	}
+            if (isFirst) {
+                isFirst = false;
+            } else {
+                propString += ", ";
+            }
             propString += (attrPropEntry.key + "=" + attrPropEntry.value);
         }
         // process the cardinality of the attribute 
         // ... it is a list if it is multi or the upper bound is greater than 1 
         // ... it is optional if it is equal to 0
         // otherwise it is required
-		// for a and b gt 1
+        // for a and b gt 1
         var fieldDefault      = "";
-		var cardinalityPrefix = "";
-		var cardinalitySuffix = "";
-		var cardinalityString = "";
-		// TODO: finish cardinality
-		// numberTypes: list[Decimal] = Field([], description='', min_length=1)
-		// attribute name: list[attribute type] = Field([], 
-		//                                              description, 
-		//                                              [min_length=#],
-		// 												[max_length=#], 
-		//												[pattern="ssss"],
-		// 												[max_digits=#],
-		//                                              [decimal_places=#]
-		// list[Annotated[
-    	//     NumberWithMeta,
-    	//     NumberWithMeta.serializer(),
-    	//     NumberWithMeta.validator(('@ref', )),
-    	//     Field(decimal_places=2, max_digits=6)]] = Field(
-    	//     		[],
-    	//     		description='',
-    	//			min_length=1)		
+        var cardinalityPrefix = "";
+        var cardinalitySuffix = "";
+        var cardinalityString = "";
+        /*
+         * numberTypes: list[Decimal] = Field([], description='', min_length=1)
+         *  attribute name: list[attribute type] = Field([], 
+         *                                              description, 
+         *                                              [min_length=#],
+         * 												[max_length=#], 
+         *												[pattern="ssss"],
+         * 												[max_digits=#],
+         *                                              [decimal_places=#]
+         * list[Annotated[
+         *     NumberWithMeta,
+         *     NumberWithMeta.serializer(),
+         *     NumberWithMeta.validator(('@ref', )),
+         *     Field(decimal_places=2, max_digits=6)]] = Field(
+         *     	    [],
+         *     	    description='',
+         *          min_length=1)
+         *
+	     * Optional always calls for None
+         * for a list the argument is []
+         * when the item is not optional and not a list use "..." (ellipsis)
+        */
         var lowerBound = ra.cardinality.getMin();
-		if (lowerBound == 0) {
-			// 0..* --> Optional with no min_length, no max_length
-			// 0..1 --> Optional but not a list
-			// 0..n --> Optional and include max_length=n in Field
-			cardinalityPrefix = "Optional[";
-			cardinalitySuffix = "]";
-			fieldDefault = "None"
-			if (!ra.cardinality.isMulti()) {
-				var upperCardinality = ra.cardinality.getMax ();
-				if (upperCardinality.isPresent ()) {
-					var upperBound = upperCardinality.get();
-					if (upperBound > 1) {
-						cardinalityString = ", max_length=" + String.valueOf(upperBound);
-					}
-				}
-			}
-		} else if (lowerBound == 1) {
-			// 1..1 --> not optional, no list, no min_length, no max_length
-			// 1..n --> list[min_length=1, max_length=n]
-			// 1..* --> list[min_length=1]
-			var upperCardinality = ra.cardinality.getMax ();
-			var upperBoundIsGTOne = (upperCardinality.isPresent () && upperCardinality.get() > 1);
-			if (ra.cardinality.isMulti() || upperBoundIsGTOne) {
-				cardinalityPrefix = "list[";
-				cardinalitySuffix = "]";
-				cardinalityString = ", min_length=1"
-				fieldDefault      = "[]"
-				if (upperBoundIsGTOne) {
-					var upperBound = upperCardinality.get();
-					if (upperBound > 1) {
-						cardinalityString += ", max_length=" + String.valueOf(upperBound);
-					}
-				}
-			} else {
-				fieldDefault = "...";
-			}
-		} else {
-			// a..a --> list[min_length=a, max_length=a]
-			// a..b --> list[min_length=a, max_length=b]
-			// a..* --> list[min_length=a]        
-			cardinalityPrefix = "list["
-			cardinalitySuffix = "]"
-			cardinalityString = ", min_length=" + String.valueOf (lowerBound);
-			fieldDefault      = "[]"
-			var upperCardinality = ra.cardinality.getMax ();
-			if (upperCardinality.isPresent ()) {
-				var upperBound = upperCardinality.get();
-				if (upperBound > 1) {
-					cardinalityString += ", max_length=" + String.valueOf(upperBound);
-				}
-			}
-		}
-		// process meta data
+        if (lowerBound == 0) {
+            // 0..1 --> Optional but not a list
+            // 0..* --> Optional[list] with no min_length, no max_length
+            // 0..n --> Optional[list] and include max_length=n in Field
+            cardinalityPrefix = "Optional[";
+            cardinalitySuffix = "]";
+            fieldDefault = "None"
+            var upperCardinality  = ra.cardinality.getMax ();
+            var upperBoundIsGTOne = (upperCardinality.isPresent () && upperCardinality.get() > 1);
+            if (ra.cardinality.isMulti() || upperBoundIsGTOne) {
+                cardinalityPrefix += "list["
+                cardinalitySuffix += "]"
+                if (upperBoundIsGTOne) {
+                    cardinalityString = ", max_length=" + String.valueOf(upperCardinality.get());
+                }
+            }
+        } else if (lowerBound == 1) {
+            // 1..1 --> not optional, no list, no min_length, no max_length
+            // 1..n --> list[min_length=1, max_length=n]
+            // 1..* --> list[min_length=1]
+            var upperCardinality = ra.cardinality.getMax ();
+            var upperBoundIsGTOne = (upperCardinality.isPresent () && upperCardinality.get() > 1);
+            if (ra.cardinality.isMulti() || upperBoundIsGTOne) {
+                cardinalityPrefix = "list[";
+                cardinalitySuffix = "]";
+                cardinalityString = ", min_length=1"
+                fieldDefault      = "[]"
+                if (upperBoundIsGTOne) {
+                    var upperBound = upperCardinality.get();
+                    if (upperBound > 1) {
+                        cardinalityString += ", max_length=" + String.valueOf(upperBound);
+                    }
+                }
+            } else {
+                fieldDefault = "...";
+            }
+        } else {
+            // a..a --> list[min_length=a, max_length=a]
+            // a..b --> list[min_length=a, max_length=b]
+            // a..* --> list[min_length=a]        
+            cardinalityPrefix = "list["
+            cardinalitySuffix = "]"
+            cardinalityString = ", min_length=" + String.valueOf (lowerBound);
+            fieldDefault      = "[]"
+            var upperCardinality = ra.cardinality.getMax ();
+            if (upperCardinality.isPresent ()) {
+                var upperBound = upperCardinality.get();
+                if (upperBound > 1) {
+                    cardinalityString += ", max_length=" + String.valueOf(upperBound);
+                }
+            }
+        }
+        // process meta data
         var metaPrefix = "";
         var metaSuffix = "";
-		val validators = new ArrayList<String>()
-		val attributeIsMetaKey = metaDataKeys.containsKey (attrTypeName);
-		if (attributeIsMetaKey) {
-			validators.add ('@key');
-		}
-		// check whether the attribute has meta 
+        val validators = new ArrayList<String>()
+        val attributeIsMetaKey = metaDataKeys.containsKey (attrTypeName);
+        if (attributeIsMetaKey) {
+            validators.add ('@key');
+        }
+        // check whether the attribute has meta 
         if (attrRMAT.hasMeta()) {
             for (ma : attrRMAT.getMetaAttributes()) {
                 // TODO: handle all meta types
@@ -199,41 +204,41 @@ class PythonAttributeProcessor {
                 } else if (ma.getName().equals("scheme")) {
                     validators.add("@scheme");
                 } else {
-                	println ('---- unprocessed meta ... name: ' + ma.getName())
+                    println ('---- unprocessed meta ... name: ' + ma.getName())
                 }
             }
-		}
+        }
         if (!validators.isEmpty()) {
-        	if (!attributeIsMetaKey)  {
-        		attrTypeName = PythonTranslator.getAttributeTypeWithMeta (attrTypeName);
-        	}
-			isFirst = true;
+            if (!attributeIsMetaKey)  {
+                attrTypeName = PythonTranslator.getAttributeTypeWithMeta (attrTypeName);
+            }
+            isFirst = true;
             metaPrefix = "Annotated[";
             metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator((";
             for (validator : validators) {
-            	if (isFirst) {
-            		isFirst = false;
-            	} else {
-            		metaSuffix += ","
-            	}
-            	metaSuffix += "'" + validator + "'";
+                if (isFirst) {
+                    isFirst = false;
+                } else {
+                    metaSuffix += ","
+                }
+                metaSuffix += "'" + validator + "'";
             }
             metaSuffix += "))]"
         }
         var _builder = new StringConcatenation();
         _builder.append(attrName);
         _builder.append(": ");
-		// attribute string depends on whether there are props and whether there is cardinality
-		if (!attrProp.isEmpty() && cardinalityString.length () > 0) {
+        // attribute string depends on whether there are props and whether there is cardinality
+        if (!attrProp.isEmpty() && cardinalityString.length () > 0) {
             _builder.append(cardinalityPrefix);
             _builder.append("Annotated[")
             _builder.append(attrTypeName);
             _builder.append(", Field(");
             _builder.append(propString);
             if (metaSuffix.length() != 0) {
-	            _builder.append(metaSuffix);
+                _builder.append(metaSuffix);
             } else {
-	            _builder.append(")]");
+                _builder.append(")]");
             }
             _builder.append(cardinalitySuffix);
             _builder.append(" = Field(");
@@ -243,8 +248,8 @@ class PythonAttributeProcessor {
             _builder.append("'");
             _builder.append(cardinalityString);
             _builder.append(")"); 
-		}
-		else {
+        }
+        else {
             _builder.append(cardinalityPrefix);
             _builder.append(metaPrefix);
             _builder.append(attrTypeName);
@@ -257,18 +262,18 @@ class PythonAttributeProcessor {
             _builder.append("'");
             _builder.append(cardinalityString);
             if (propString.length() > 0) {
-            	_builder.append(", ");
-	            _builder.append(propString);
+                _builder.append(", ");
+                _builder.append(propString);
             }
             _builder.append(")"); 
-		}
+        }
         if (ra.definition !== null) {
             _builder.append("\n\"\"\"\n");
             _builder.append(ra.definition);
             _builder.append("\n\"\"\"");
         }
         _builder.append("\n"); 
- 		return  _builder.toString();
+         return  _builder.toString();
     }
     def getImportsFromAttributes(Data rosettaClass) {
         val rdt = rosettaClass.buildRDataType

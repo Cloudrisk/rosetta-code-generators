@@ -65,7 +65,7 @@ public class PythonTranslator {
     public static String mangleName(String attrib) {
         // Check if the attribute is a Python keyword or starts with an underscore
         if (PYTHON_KEYWORDS.contains(attrib) || attrib.charAt(0) == '_') {
-            return "rosetta_attr_" + attrib;
+            return "rune_attr_" + attrib;
         }
         return attrib;
     }
