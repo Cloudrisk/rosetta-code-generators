@@ -13,12 +13,10 @@ ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') 
 $PYEXE -m venv --clear $MYPATH/.pytest
 source $MYPATH/.pytest/$ACDIR/activate
 
-RUNTIMENEW="/Users/dls/projects/rune/rune-python-runtime"
-ROSETTARUNTIMEDIR="../src/main/resources/runtime"
-PYTHONCDMDIR="../target/python"
+RUNERUNTIMEDIR="../../../../rune-python-runtime"
 PYTHONUNITTESTDIR="../target/python/unit_tests"
 echo "**** Install Runtime ****"
-$PYEXE -m pip install $RUNTIMENEW/rune.runtime*-py3-*.whl --force-reinstall
+$PYEXE -m pip install $RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
 echo "**** Build and Install Generated Unit Tests ****"
 cd $MYPATH/$PYTHONUNITTESTDIR
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
