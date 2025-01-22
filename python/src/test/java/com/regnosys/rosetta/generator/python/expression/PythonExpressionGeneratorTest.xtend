@@ -30,7 +30,7 @@ class PythonExpressionGeneratorTest {
                     default False
             '''.generatePython()
             val expected = '''class FooTest(BaseDataClass):
-    a: int = Field(..., description="")
+    a: int = Field(..., description='')
     
     @rosetta_condition
     def condition_0_Test(self):
@@ -412,11 +412,11 @@ class PythonExpressionGeneratorTest {
     """
     Test type
     """
-    field1: list[int] = Field([], description="Test int field 1")
+    field1: list[int] = Field([], description="Test int field 1", min_length=1)
     """
     Test int field 1
     """
-    field2: list[int] = Field([], description="Test int field 2")
+    field2: list[int] = Field([], description="Test int field 2", min_length=1)
     """
     Test int field 2
     """'''

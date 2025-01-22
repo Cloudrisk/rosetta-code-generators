@@ -1,35 +1,20 @@
 package com.regnosys.rosetta.generator.python
 
 import com.google.inject.Inject
-import com.google.inject.Provider
-import java.io.File
-import java.io.FileReader
-import java.io.IOException
-import java.lang.CharSequence
-import java.nio.charset.StandardCharsets
-import java.nio.file.Files
-import java.nio.file.FileVisitOption
-import java.nio.file.Path
-import java.nio.file.Paths
-import java.util.ArrayList
-import java.util.Collection
-import java.util.Map
-import java.util.Properties
-import java.util.stream.Collectors
-import org.apache.commons.io.FileUtils
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader
-import org.eclipse.emf.common.util.URI
-import org.eclipse.xtext.resource.XtextResourceSet
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.extensions.InjectionExtension
-import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.^extension.ExtendWith
 import org.junit.jupiter.api.Disabled
-import com.regnosys.rosetta.rosetta.RosettaModel
-import com.regnosys.rosetta.tests.RosettaInjectorProvider
-import com.regnosys.rosetta.tests.util.ModelHelper
 import org.slf4j.LoggerFactory
+import com.regnosys.rosetta.tests.RosettaInjectorProvider
+import java.io.IOException
+import java.nio.file.Paths
+import java.nio.file.Files
+import org.junit.jupiter.api.^extension.ExtendWith
+import com.regnosys.rosetta.generator.python.PythonCodeGeneratorUtils;
+import java.util.stream.Collectors
+import static org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Test
 
 /*
  * Test Principal
@@ -38,239 +23,195 @@ import org.slf4j.LoggerFactory
 @InjectWith(RosettaInjectorProvider)
 class PythonFilesGeneratorTest {
 
-    static val LOGGER = LoggerFactory.getLogger(PythonFilesGeneratorTest);
+    static val LOGGER = LoggerFactory.getLogger(PythonFilesGeneratorTest)
 
-    @Inject PythonCodeGenerator generator
+    @Inject PythonCodeGeneratorUtils utils
 
-    @Inject extension ParseHelper<RosettaModel>
-    
-    @Inject Provider<XtextResourceSet> resourceSetProvider;
-
-    def private Properties getProperties () throws Exception {
-        var reader     = new MavenXpp3Reader();
-        var model      = reader.read(new FileReader("pom.xml"))
-        return model.getProperties();
-    }
-    def private String getProperty (String property) throws Exception {
-        var reader     = new MavenXpp3Reader();
-        var model      = reader.read(new FileReader("pom.xml"))
-        return model.getProperties().getProperty(property);
-    }
-    def private void cleanSrcFolder(String folderPath) {
-        val folder = new File(folderPath + File.separator + "src")
-        if (folder.exists() && folder.isDirectory()) {
-            try {
-                FileUtils.cleanDirectory(folder)
-            } catch (IOException e) {
-                LOGGER.error ("Failed to delete folder content: " + e.message)
-            }
-        } else {
-            LOGGER.error (folderPath + " does not exist or is not a directory")
-        }
-    }
-    
-    def private writeFiles(String pythonTgtPath, Map<String, ? extends CharSequence> generatedFiles){
-        // Assuming 'generatedFiles' is a HashMap<String, CharSequence>
-        for (entry : generatedFiles.entrySet) {
-            // Split the key into its components and replace '.' with the file separator
-            val filePath     = entry.key
-            val fileContents = entry.value.toString
-            val outputPath  = Path.of(pythonTgtPath + File.separator + filePath)
-            Files.createDirectories(outputPath.parent);
-            Files.write(outputPath, fileContents.getBytes(StandardCharsets.UTF_8))
-        }
-        LOGGER.info("Write Files ... wrote: {}", generatedFiles.size ())
-        
-    }
-    def generatePythonFromRosettaModel (RosettaModel m, org.eclipse.emf.ecore.resource.ResourceSet resourceSet) {
-        val version = m.version
-        val result  = newHashMap
-        result.putAll(generator.beforeAllGenerate(resourceSet, #{m}, version))
-        result.putAll(generator.beforeGenerate(m.eResource, m, version))
-        result.putAll(generator.generate(m.eResource, m, version))
-        result.putAll(generator.afterGenerate(m.eResource, m, version))
-        result.putAll(generator.afterAllGenerate(resourceSet, #{m}, version))
-        result
-    }
-    def getListOfDSLFiles(String dslSourceDir, String suffix) {
-        LOGGER.info("PythonFilesGeneratorTest::getListOfDSLFiles ... looking for files with suffix {} in {}", suffix, dslSourceDir)
-        
-        if (dslSourceDir === null) {
-            throw new Exception('Initialization failure: source dsl path not specified')
-        }
-
-        if (suffix === null) {
-            throw new Exception('Initialization failure: extension not specified')
-        }
-        
-        val sourcePath = Paths.get(dslSourceDir)
-        if (!Files.exists(sourcePath)) {
-            throw new Exception("Unable to generate Python from non-existent source directory: " + dslSourceDir)
-        }
-        
-        val result = new ArrayList<Path>()
-        val directory = new File(dslSourceDir)
-        if (directory.isDirectory) {
-            directory.listFiles.filter [ file |
-                file.isFile && file.name.endsWith(suffix)
-            ].forEach [ file |
-                result.add(file.toPath)
-            ]
-        }
-        LOGGER.info("PythonFilesGeneratorTest::getListOfDSLFiles ... found {} dsl files in {}", result.size.toString, dslSourceDir)
-        return result    
-    }    	
-    def getListOfDSLFilesWithRecursion(String dslSourceDir, String suffix) {
-        LOGGER.info("PythonFilesGeneratorTest::getListOfDSLFilesWithRecursion ... looking for files with suffix {} in {}", suffix, dslSourceDir)
-        
-        if (dslSourceDir === null) {
-            throw new Exception('Initialization failure: source dsl path not specified')
-        }
-
-        if (suffix === null) {
-            throw new Exception('Initialization failure: extension not specified')
-        }
-        
-        val sourcePath = Paths.get(dslSourceDir)
-        if (!Files.exists(sourcePath)) {
-            throw new Exception("Unable to generate Python from non-existent source directory: " + dslSourceDir)
-        }
-        
-        val result = new ArrayList<Path>()
-        
-        try {
-            val stream = Files.walk(sourcePath, FileVisitOption.FOLLOW_LINKS)
-            try {
-                result.addAll(
-                    stream
-                        .filter [ path | 
-                            Files.isRegularFile(path) && path.toString.endsWith(suffix)
-                        ]
-                        .collect(Collectors.toList)
-                )
-            } finally {
-                stream.close()
-            }
-        } catch (IOException e) {
-            e.printStackTrace
-        }
-        LOGGER.info("PythonFilesGeneratorTest::getListOfDSLFilesWithRecursion ... found {} dsl files in {}", result.size.toString, dslSourceDir)
-        return result    
-    }
-    
-    def void generatePythonFromDSLFiles (ArrayList<Path> dslFilePathList, String outputPathPropertyName){
-        // loop through each of the rosetta dsl definitions
-        //  - produce new python from the dsl definitions 
-        //  - delete any existing directory and create a new one
-        val outputPath = getProperties().getProperty (outputPathPropertyName)
-        if (outputPath === null) {
-            throw new Exception('Initialization failure: Python target not specified')
-        }
-        LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... generating Python from {} rosetta files", dslFilePathList.length.toString ())                  
-        // Create a resource set and add the common Rosetta models to it
-        LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... creating resource set and adding common Rosetta models")
-        val resourceSet = resourceSetProvider.get 
-        parse(ModelHelper.commonTestTypes, resourceSet)
-        resourceSet.getResource(URI.createURI('classpath:/model/basictypes.rosetta'), true)
-        resourceSet.getResource(URI.createURI('classpath:/model/annotations.rosetta'), true)
-
-        val resources      = dslFilePathList
-            .map[resourceSet.getResource(URI.createURI(it.toString()), true)]
-            .toList
-        LOGGER.info ("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... converted to resources")                  
-        val rosettaModels  = resources
-            .flatMap[contents.filter(RosettaModel)]
-            .toList as Collection<RosettaModel>
-        LOGGER.info ("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... created {} rosetta models", rosettaModels.length.toString ())                  
-        val generatedFiles = newHashMap
-        for (model : rosettaModels) {
-            LOGGER.info ("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: {}", model.name)
-            val python = generatePythonFromRosettaModel (model, resourceSet);
-            generatedFiles.putAll (python)
-        }
-        cleanSrcFolder(outputPath)
-        writeFiles(outputPath, generatedFiles)
-        LOGGER.info ("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... done")
-    } 
     @Disabled("Generate CDM from Rosetta Files")
     @Test
-    def void generateCDMPythonFromRosetta () {
-        // the process: get directory information from the POM, create Python from Rosetta definitions and write out results
-        
+    def void generateCDMPythonFromRosetta() {
         try {
             LOGGER.info('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... start')
-            generatePythonFromDSLFiles (getListOfDSLFiles(getProperty('cdm.rosetta.source.path'), 'rosetta'), 
-            							'cdm.python.output.path')
+
+            // Retrieve properties
+            val rosettaSourcePath = utils.getProperty('cdm.rosetta.source.path')
+            // Check if properties exist
+            if (rosettaSourcePath === null || rosettaSourcePath.isEmpty) {
+                LOGGER.error("Property 'cdm.rosetta.source.path' does not exist or is empty")
+                return
+            }
+            val pythonOutputPath = utils.getProperty('cdm.python.output.path')
+            if (pythonOutputPath === null || pythonOutputPath.isEmpty) {
+                LOGGER.error("Property 'cdm.python.output.path' does not exist or is empty")
+                return
+            }
+    
+            // Proceed with the test
+            utils.generatePythonFromDSLFiles(utils.getFileList(rosettaSourcePath, 'rosetta'), pythonOutputPath)
             LOGGER.info('generateCDMPythonFromRosetta ... done')
         } 
         catch (IOException ioE) {
-            LOGGER.error ('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... processing failed with an IO Exception')
-            ioE.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... processing failed with an IO Exception')
+            ioE.printStackTrace()
         }
         catch (ClassCastException ccE) {
-            LOGGER.error ('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... processing failed with a ClassCastException')
-            ccE.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... processing failed with a ClassCastException')
+            ccE.printStackTrace()
         }
         catch(Exception e) {
-            LOGGER.error ('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... processing failed with an Exception')
-            e.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generateCDMPythonFromRosetta ... processing failed with an Exception')
+            e.printStackTrace()
         }
     }
-//    @Disabled("Generate Python Unit Tests from Rosetta Files")
+
+    @Disabled("generatePythonUnitTests")
     @Test
-    def void generatePythonUnitTests () {
-        // the process: get directory information from the POM, create Python from Rosetta definitions and write out results
+    def void generatePythonUnitTests() {
         try {
+            // Retrieve properties
+            val rosettaSourcePath = utils.getProperty('unittest.rosetta.source.path')
+            // Check if properties exist
+            if (rosettaSourcePath === null || rosettaSourcePath.isEmpty) {
+                LOGGER.error("Property 'unittest.rosetta.source.path' does not exist or is empty")
+                return
+            }
+            val pythonOutputPath = utils.getProperty('unittest.python.output.path')
+            if (pythonOutputPath === null || pythonOutputPath.isEmpty) {
+                LOGGER.error("Property 'unittest.python.output.path' does not exist or is empty")
+                return
+            }
+    
+            // Proceed with the test
+
             LOGGER.info('generatePythonUnitTests::generatePythonUnitTests ... start')
-            generatePythonFromDSLFiles (getListOfDSLFiles(getProperty('unit.test.rosetta.source.path'), 'rosetta'),
-            							'unit.test.python.output.path')
+            utils.generatePythonFromDSLFiles(utils.getFileList(rosettaSourcePath, 'rosetta'), pythonOutputPath)
             LOGGER.info('generatePythonUnitTests::generatePythonUnitTests ... done')
         } 
         catch (IOException ioE) {
-            LOGGER.error ('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... processing failed with an IO Exception')
-            LOGGER.error ('\n' + ioE.toString ())
-            ioE.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... processing failed with an IO Exception')
+            LOGGER.error('\n' + ioE.toString())
+            ioE.printStackTrace()
         }
         catch (ClassCastException ccE) {
-            LOGGER.error ('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... processing failed with a ClassCastException')
-            LOGGER.error ('\n' + ccE.toString ())
-            ccE.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... processing failed with a ClassCastException')
+            LOGGER.error('\n' + ccE.toString())
+            ccE.printStackTrace()
         }
         catch(Exception e) {
-            LOGGER.error ('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... processing failed with an Exception')
-            LOGGER.error ('\n' + e.toString ())
-            e.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonUnitTestsFromRosetta ... processing failed with an Exception')
+            LOGGER.error('\n' + e.toString())
+            e.printStackTrace()
         }
     }
-//    @Disabled("Generate Python Serialization Unit Tests from Rosetta Files")
+
     @Test
-    def void generatePythonSerializationUnitTests () {
-        // the process: get directory information from the POM, create Python from Rosetta definitions and write out results
+    def void generatePythonSerializationUnitTests() {
         try {
             LOGGER.info('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... start')
-            generatePythonFromDSLFiles (getListOfDSLFilesWithRecursion(getProperty('serialization.test.rosetta.source.path'), 'rosetta'), 
-                                        'serialization.test.python.output.path')
-            val path = Paths.get(getProperty('serialization.test.python.output.path') + '/__init__.py')
-            // Create the file if it does not exist
+
+            // Retrieve properties
+            val rosettaSourcePath = utils.getProperty('serialization.test.rosetta.source.path')
+            // Check if properties exist
+            if (rosettaSourcePath === null || rosettaSourcePath.isEmpty) {
+                LOGGER.error("Property 'unittest.rosetta.source.path' does not exist or is empty")
+                return
+            }
+            val pythonOutputPath = utils.getProperty('serialization.test.python.output.path')
+            if (pythonOutputPath === null || pythonOutputPath.isEmpty) {
+                LOGGER.error("Property 'unittest.python.output.path' does not exist or is empty")
+                return
+            }
+    
+            utils.generatePythonFromDSLFiles(utils.getFileListWithRecursion(rosettaSourcePath, 'rosetta'), pythonOutputPath)
+
+            val path = Paths.get(pythonOutputPath + '/__init__.py')
             if (!Files.exists(path)) {
                 Files.createFile(path)
             }
             LOGGER.info('generatePythonSerializationUnitTests ... done')
         } 
         catch (IOException ioE) {
-            LOGGER.error ('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... processing failed with an IO Exception')
-            LOGGER.error ('\n' + ioE.toString ())
-            ioE.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... processing failed with an IO Exception')
+            LOGGER.error('\n' + ioE.toString())
+            ioE.printStackTrace()
         }
         catch (ClassCastException ccE) {
-            LOGGER.error ('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... processing failed with a ClassCastException')
-            LOGGER.error ('\n' + ccE.toString ())
-            ccE.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... processing failed with a ClassCastException')
+            LOGGER.error('\n' + ccE.toString())
+            ccE.printStackTrace()
         }
         catch(Exception e) {
-            LOGGER.error ('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... processing failed with an Exception')
-            LOGGER.error ('\n' + e.toString ())
-            e.printStackTrace ()
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... processing failed with an Exception')
+            LOGGER.error('\n' + e.toString())
+            e.printStackTrace()
         }
     }
+
+    @Test
+    def void generatePythonAndCompareToExpected() {
+        try {
+            LOGGER.info('PythonFilesGeneratorTest::generatePythonAndCompareToExpected ... start')
+    
+            // Retrieve properties
+            val sourcePath = utils.getProperty('unittest.code.generator.source.path')
+            val targetPath = utils.getProperty('unittest.code.generator.target.path')
+            val expectedPath = utils.getProperty('unittest.code.generator.expected.path')
+    
+            // Check if properties exist
+            if (sourcePath === null || sourcePath.isEmpty) {
+                LOGGER.error("Property 'unittest.codegenerator.source.path' does not exist or is empty")
+                return
+            }
+            if (targetPath === null || targetPath.isEmpty) {
+                LOGGER.error("Property 'unittest.codegenerator.targetpath' does not exist or is empty")
+                return
+            }
+            if (expectedPath === null || expectedPath.isEmpty) {
+                LOGGER.error("Property 'unittest.codegenerator.expected.path' does not exist or is empty")
+                return
+            }
+    
+            // Generate Python from DSL files
+            utils.generatePythonFromDSLFiles(utils.getFileListWithRecursion(sourcePath, 'rosetta'), targetPath)
+            
+            // Verify generated code against expected code
+            var generatedFiles = utils.getFileListWithRecursion(targetPath, 'py');
+    
+            for (generatedFile : generatedFiles) {
+                val fileName = generatedFile.getFileName.toString
+                if (fileName != "__init__.py" && fileName != "version.py") {
+	                // Calculate the relative path from the targetPath
+	                val expectedFilePathString = generatedFile.toString.replace(targetPath, expectedPath)
+	                
+	                val expectedFilePath = Paths.get(expectedFilePathString)
+	            
+	                if (Files.exists(expectedFilePath)) {
+	                    val expectedCode = Files.readString(expectedFilePath)
+	                    val generatedCode = Files.readString(generatedFile)
+	    
+	                    // Assert that the expected code matches the generated code
+	                    assertTrue(generatedCode.contains(expectedCode), 
+	                        "Mismatch in generated code for file: " + generatedFile.toString + 
+	                        "\nExpected:\n" + expectedCode + 
+	                        "\nGenerated:\n" + generatedCode)
+	                } else {
+	                    fail("Expected file does not exist ... generated file: " + generatedFile.toString + " expected path: " + expectedFilePath.toString)
+	                }
+                }
+            } 
+            LOGGER.info('generatePythonCodeGeneratorUnitTests ... done')
+        } 
+        catch (IOException ioE) {
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonCodeGeneratorUnitTests ... processing failed with an IO Exception')
+            LOGGER.error('\n' + ioE.getMessage())
+        }
+        catch (ClassCastException ccE) {
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonCodeGeneratorUnitTests ... processing failed with a ClassCastException')
+            LOGGER.error('\n' + ccE.getMessage())
+        }
+        catch(Exception e) {
+            LOGGER.error('PythonFilesGeneratorTest::generatePythonCodeGeneratorUnitTests ... processing failed with an Exception')
+            LOGGER.error('\n' + e.getMessage())
+        }
+    }    
 }

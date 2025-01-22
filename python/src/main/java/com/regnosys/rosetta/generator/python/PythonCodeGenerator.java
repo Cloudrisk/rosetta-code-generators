@@ -57,14 +57,6 @@ public class PythonCodeGenerator extends AbstractExternalGenerator {
 		List<Data> rosettaClasses = model.getElements().stream().filter(Data.class::isInstance).map(Data.class::cast)
 				.collect(Collectors.toList());
 
-		Map<String, String> metaDataKeys = metaDataProcessor.getMetaDataKeys(rosettaClasses);
-		
-        for (Map.Entry<String, String> entry : metaDataKeys.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            System.out.println("----- PythonCodeGenerator::generate ... metadata source ... Key: " + key + ", Value: " + value);
-        }
-
         List<RosettaMetaType> metaTypes = model.getElements().stream().filter(RosettaMetaType.class::isInstance)
 				.map(RosettaMetaType.class::cast).collect(Collectors.toList());
 

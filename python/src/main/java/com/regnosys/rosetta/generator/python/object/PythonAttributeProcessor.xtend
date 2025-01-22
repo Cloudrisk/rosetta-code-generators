@@ -69,7 +69,7 @@ class PythonAttributeProcessor {
         val attrProp = new HashMap<String, String>();
         if (attrRType instanceof RStringType) {
             // TODO: there seems to be a default for strings to have min_length = 0 
-            attrRType.getPattern().ifPresent[value|attrProp.put("pattern", '"' + '^r' + value.toString() + '*$"')];
+            attrRType.getPattern().ifPresent[value|attrProp.put("pattern", "'r^" + value.toString() + "*$'")];
             attrRType.getInterval().getMin().ifPresent [ value |
                 if (value > 0) { 
                     attrProp.put("min_length", value.toString())
@@ -87,31 +87,95 @@ class PythonAttributeProcessor {
                 attrTypeName = 'int';
             }
         }
-        var attrPropAsString = "";
+        var propString = "";
+        var isFirst = true;
         for (attrPropEntry : attrProp.entrySet()) {
-            attrPropAsString += (", " + attrPropEntry.key + "=" + attrPropEntry.value);
+        	if (isFirst) {
+        		isFirst = false;
+        	} else {
+        		propString += ", ";
+        	}
+            propString += (attrPropEntry.key + "=" + attrPropEntry.value);
         }
         // process the cardinality of the attribute 
         // ... it is a list if it is multi or the upper bound is greater than 1 
         // ... it is optional if it is equal to 0
         // otherwise it is required
-        var lowerCardinality = ra.cardinality.getMin();
-        var upperCardinality = (!ra.cardinality.isMulti()) ? ra.cardinality.getMax.get() : -1 // set the default to -1 if unbounded
-        var upperCardString  = (ra.cardinality.isMulti()) ? "None" : ra.cardinality.getMax.get.toString()
-        var fieldDefault = (upperCardinality == 1 && lowerCardinality == 1) ? '...' : 'None' // mandatory field -> cardinality (1..1)
+		// for a and b gt 1
+        var fieldDefault      = "";
 		var cardinalityPrefix = "";
 		var cardinalitySuffix = "";
-		
-        if (ra.cardinality.isMulti || upperCardinality > 1) {
-            // is a list
-        	cardinalityPrefix = "list[";
-        	cardinalitySuffix = "]"
-            fieldDefault = '[]'
-        } else if (lowerCardinality == 0) {
-            // is optional
-        	cardinalityPrefix = "Optional[";
-        	cardinalitySuffix = "]"
-        } 
+		var cardinalityString = "";
+		// TODO: finish cardinality
+		// numberTypes: list[Decimal] = Field([], description='', min_length=1)
+		// attribute name: list[attribute type] = Field([], 
+		//                                              description, 
+		//                                              [min_length=#],
+		// 												[max_length=#], 
+		//												[pattern="ssss"],
+		// 												[max_digits=#],
+		//                                              [decimal_places=#]
+		// list[Annotated[
+    	//     NumberWithMeta,
+    	//     NumberWithMeta.serializer(),
+    	//     NumberWithMeta.validator(('@ref', )),
+    	//     Field(decimal_places=2, max_digits=6)]] = Field(
+    	//     		[],
+    	//     		description='',
+    	//			min_length=1)		
+        var lowerBound = ra.cardinality.getMin();
+		if (lowerBound == 0) {
+			// 0..* --> Optional with no min_length, no max_length
+			// 0..1 --> Optional but not a list
+			// 0..n --> Optional and include max_length=n in Field
+			cardinalityPrefix = "Optional[";
+			cardinalitySuffix = "]";
+			fieldDefault = "None"
+			if (!ra.cardinality.isMulti()) {
+				var upperCardinality = ra.cardinality.getMax ();
+				if (upperCardinality.isPresent ()) {
+					var upperBound = upperCardinality.get();
+					if (upperBound > 1) {
+						cardinalityString = ", max_length=" + String.valueOf(upperBound);
+					}
+				}
+			}
+		} else if (lowerBound == 1) {
+			// 1..1 --> not optional, no list, no min_length, no max_length
+			// 1..n --> list[min_length=1, max_length=n]
+			// 1..* --> list[min_length=1]
+			var upperCardinality = ra.cardinality.getMax ();
+			var upperBoundIsGTOne = (upperCardinality.isPresent () && upperCardinality.get() > 1);
+			if (ra.cardinality.isMulti() || upperBoundIsGTOne) {
+				cardinalityPrefix = "list[";
+				cardinalitySuffix = "]";
+				cardinalityString = ", min_length=1"
+				fieldDefault      = "[]"
+				if (upperBoundIsGTOne) {
+					var upperBound = upperCardinality.get();
+					if (upperBound > 1) {
+						cardinalityString += ", max_length=" + String.valueOf(upperBound);
+					}
+				}
+			} else {
+				fieldDefault = "...";
+			}
+		} else {
+			// a..a --> list[min_length=a, max_length=a]
+			// a..b --> list[min_length=a, max_length=b]
+			// a..* --> list[min_length=a]        
+			cardinalityPrefix = "list["
+			cardinalitySuffix = "]"
+			cardinalityString = ", min_length=" + String.valueOf (lowerBound);
+			fieldDefault      = "[]"
+			var upperCardinality = ra.cardinality.getMax ();
+			if (upperCardinality.isPresent ()) {
+				var upperBound = upperCardinality.get();
+				if (upperBound > 1) {
+					cardinalityString += ", max_length=" + String.valueOf(upperBound);
+				}
+			}
+		}
 		// process meta data
         var metaPrefix = "";
         var metaSuffix = "";
@@ -143,9 +207,9 @@ class PythonAttributeProcessor {
         	if (!attributeIsMetaKey)  {
         		attrTypeName = PythonTranslator.getAttributeTypeWithMeta (attrTypeName);
         	}
-			var isFirst = true;
+			isFirst = true;
             metaPrefix = "Annotated[";
-            metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator(";
+            metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator((";
             for (validator : validators) {
             	if (isFirst) {
             		isFirst = false;
@@ -154,26 +218,57 @@ class PythonAttributeProcessor {
             	}
             	metaSuffix += "'" + validator + "'";
             }
-            metaSuffix += ")]"
+            metaSuffix += "))]"
         }
-        var definition = ra.definition;
-        var needCardCheck = !(
-            (lowerCardinality == 0 && upperCardinality == 1) || (lowerCardinality == 1 && upperCardinality == 1) ||
-            (lowerCardinality == 0 && ra.cardinality.isMulti))
-        '''
-            «attrName»: «cardinalityPrefix»«metaPrefix»«attrTypeName»«metaSuffix»«cardinalitySuffix» = Field(«fieldDefault», description="«attrDesc»"«attrPropAsString»)
-            «IF definition !== null»
-                """
-                «definition»
-                """
-            «ENDIF»
-            «IF needCardCheck»
-                @rosetta_condition
-                def cardinality_«attrName»(self):
-                    return check_cardinality(self.«attrName», «lowerCardinality», «upperCardString»)
-                
-            «ENDIF»
-        '''
+        var _builder = new StringConcatenation();
+        _builder.append(attrName);
+        _builder.append(": ");
+		// attribute string depends on whether there are props and whether there is cardinality
+		if (!attrProp.isEmpty() && cardinalityString.length () > 0) {
+            _builder.append(cardinalityPrefix);
+            _builder.append("Annotated[")
+            _builder.append(attrTypeName);
+            _builder.append(", Field(");
+            _builder.append(propString);
+            if (metaSuffix.length() != 0) {
+	            _builder.append(metaSuffix);
+            } else {
+	            _builder.append(")]");
+            }
+            _builder.append(cardinalitySuffix);
+            _builder.append(" = Field(");
+            _builder.append(fieldDefault);
+            _builder.append(", description='");
+            _builder.append(attrDesc);
+            _builder.append("'");
+            _builder.append(cardinalityString);
+            _builder.append(")"); 
+		}
+		else {
+            _builder.append(cardinalityPrefix);
+            _builder.append(metaPrefix);
+            _builder.append(attrTypeName);
+            _builder.append(metaSuffix);
+            _builder.append(cardinalitySuffix);
+            _builder.append(" = Field(");
+            _builder.append(fieldDefault);
+            _builder.append(", description='");
+            _builder.append(attrDesc);
+            _builder.append("'");
+            _builder.append(cardinalityString);
+            if (propString.length() > 0) {
+            	_builder.append(", ");
+	            _builder.append(propString);
+            }
+            _builder.append(")"); 
+		}
+        if (ra.definition !== null) {
+            _builder.append("\n\"\"\"\n");
+            _builder.append(ra.definition);
+            _builder.append("\n\"\"\"");
+        }
+        _builder.append("\n"); 
+ 		return  _builder.toString();
     }
     def getImportsFromAttributes(Data rosettaClass) {
         val rdt = rosettaClass.buildRDataType

@@ -40,12 +40,6 @@ class PythonModelObjectGenerator {
 
 		var metaDataKeys = pythonMetaDataProcessor.getMetaDataKeys(rosettaClasses.toList);
 		
-        for (Map.Entry<String, String> entry : metaDataKeys.entrySet()) {
-            val key = entry.getKey();
-            val value = entry.getValue();
-            System.out.println("----- PythonModelObjectGenerator::generate ... metadata source ... Key: " + key + ", Value: " + value);
-        }
-        
         val result = new HashMap
 
         for (Data rosettaClass : rosettaClasses) {

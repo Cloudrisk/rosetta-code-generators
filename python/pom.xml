@@ -18,8 +18,11 @@
         <!-- used by PythonFilesGeneratorTest::generatePython to generate python from a rosetta source --> 
         <cdm.rosetta.source.path>[Path to Rosetta]</cdm.rosetta.source.path>
         <cdm.python.output.path>target/python-cdm</cdm.python.output.path>
-        <unit.test.rosetta.source.path>build/resources/rosetta/python_unit_tests</unit.test.rosetta.source.path>
-        <unit.test.python.output.path>target/python_unit_tests</unit.test.python.output.path>
+        <unittest.rosetta.source.path>build/resources/rosetta/python_unit_tests</unittest.rosetta.source.path>
+        <unittest.python.output.path>target/python_unit_tests</unittest.python.output.path>
+        <unittest.code.generator.source.path>build/resources/generated_code_unit_tests/rosetta</unittest.code.generator.source.path>
+        <unittest.code.generator.target.path>target/generated_code_unit_tests</unittest.code.generator.target.path>
+        <unittest.code.generator.expected.path>build/resources/generated_code_unit_tests/expected</unittest.code.generator.expected.path>
         <serialization.test.rosetta.source.path>../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test</serialization.test.rosetta.source.path>
         <serialization.test.python.output.path>target/serialization_unit_tests</serialization.test.python.output.path>
     </properties>
@@ -94,11 +97,11 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest</artifactId>
-                <scope>test</scope>
-            </dependency>
+     	<dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- extra dependencies -->
         <dependency>
             <groupId>org.eclipse.emf</groupId>

@@ -28,7 +28,7 @@ class ImportsGeneratorTest {
                    deep1 Deep1 (1..1)
             '''.generatePython
         val expected = '''class Bar1(BaseDataClass):
-    deep1: rosetta_dsl.test.semantic.deep_path.Deep1.Deep1 = Field(..., description="")
+    deep1: rosetta_dsl.test.semantic.deep_path.Deep1.Deep1 = Field(..., description='')
 
 import rosetta_dsl 
 import rosetta_dsl.test.semantic.deep_path.Deep1'''
