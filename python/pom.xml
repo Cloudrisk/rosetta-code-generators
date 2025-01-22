@@ -23,7 +23,7 @@
         <unittest.generated.syntax.source.path>build/resources/generated_syntax_tests/rosetta</unittest.generated.syntax.source.path>
         <unittest.generated.syntax.target.path>target/python/generated_syntax_tests</unittest.generated.syntax.target.path>
         <unittest.generated.syntax.expected.path>build/resources/generated_syntax_tests/expected</unittest.generated.syntax.expected.path>
-        <serialization.test.rosetta.source.path>../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test</serialization.test.rosetta.source.path>
+        <serialization.test.rune.source.path>../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test</serialization.test.rune.source.path>
         <serialization.test.python.output.path>target/python/serialization_unit_tests</serialization.test.python.output.path>
     </properties>
     <build>

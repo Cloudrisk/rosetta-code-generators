@@ -110,7 +110,7 @@ class PythonFilesGeneratorTest {
             LOGGER.info('PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... start')
 
             // Retrieve properties
-            val rosettaSourcePath = utils.getProperty('serialization.test.rosetta.source.path')
+            val rosettaSourcePath = utils.getProperty('serialization.test.rune.source.path')
             // Check if properties exist
             if (rosettaSourcePath === null || rosettaSourcePath.isEmpty) {
                 LOGGER.error("Property 'unittest.rosetta.source.path' does not exist or is empty")

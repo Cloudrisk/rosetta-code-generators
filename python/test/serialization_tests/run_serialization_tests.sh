@@ -13,13 +13,10 @@ ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') 
 $PYEXE -m venv --clear $MYPATH/.pytest
 source $MYPATH/.pytest/$ACDIR/activate
 
-ROSETTARUNTIMEDIR="../../src/main/resources/runtime"
-SERIALIZATIONTESTSDIR="../../target/serialization_unit_tests"
-echo "**** Install Dependencies ****"
-$PYEXE -m pip install "pydantic>=2.6.1,<2.10"
-$PYEXE -m pip install pytest
+RUNERUNTIMEDIR="../../../../rune-python-runtime"
+SERIALIZATIONTESTSDIR="../../target/python/serialization_unit_tests"
 echo "**** Install Runtime ****"
-$PYEXE -m pip install $MYPATH/$ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl --force-reinstall
+$PYEXE -m pip install $RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
 echo "**** Build and Install Helper ****"
 cd $MYPATH/test_helper
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
@@ -27,6 +24,7 @@ $PYEXE -m pip install test_helper-0.0.0-py3-none-any.whl
 rm test_helper-0.0.0-py3-none-any.whl
 
 echo "**** Build and Install Generated Unit Tests ****"
+$PYEXE -m pip install pytest
 cd $MYPATH/$SERIALIZATIONTESTSDIR
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
 $PYEXE -m pip install python_*-0.0.0-py3-none-any.whl

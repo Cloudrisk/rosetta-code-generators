@@ -9,7 +9,7 @@ import pytest
 from pydantic import BaseModel
 from typing import Any, Dict
 from test_helper import dict_comp
-from rosetta.runtime.utils import BaseDataClass 
+from rune.runtime.base_data_class import BaseDataClass
 
 JSON_DIR = '/Users/dls/projects/rune/rune-common/regnosys/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/extension'
 
