@@ -69,7 +69,7 @@ class PythonAttributeProcessor {
         val attrProp = new HashMap<String, String>();
         if (attrRType instanceof RStringType) {
             // TODO: there seems to be a default for strings to have min_length = 0 
-            attrRType.getPattern().ifPresent[value|attrProp.put("pattern", "'r^" + value.toString() + "*$'")];
+            attrRType.getPattern().ifPresent[value|attrProp.put("pattern", "r'^" + value.toString() + "*$'")];
             attrRType.getInterval().getMin().ifPresent [ value |
                 if (value > 0) { 
                     attrProp.put("min_length", value.toString())
@@ -276,14 +276,17 @@ class PythonAttributeProcessor {
          return  _builder.toString();
     }
     def getImportsFromAttributes(Data rosettaClass) {
-        val rdt = rosettaClass.buildRDataType
-        // get all non-Meta attributes
-        val fa = rdt.getOwnAttributes.filter [
+        val allAttributes = rosettaClass.buildRDataType.getOwnAttributes.filter [
             (it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")
         ].filter[!PythonTranslator::isRosettaTypeSupported(it)]
+
         val imports = newArrayList
-        for (attribute : fa) {
+        for (attribute : allAttributes) {
             var rt = attribute.getRMetaAnnotatedType.getRType
+            // get all non-Meta attributes
+            if (rt instanceof RAliasType) {
+                rt = typeSystem.stripFromTypeAliases(rt);
+            }
             if (rt === null) {
                 throw new Exception("Attribute type is null for " + attribute.name + " for class " + rosettaClass.name)
             }

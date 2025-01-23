@@ -13,10 +13,10 @@ ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') 
 $PYEXE -m venv --clear $MYPATH/.pytest
 source $MYPATH/.pytest/$ACDIR/activate
 
-RUNERUNTIMEDIR="../../../../rune-python-runtime"
+RUNERUNTIMEDIR="../../../../../../rune-python-runtime"
 SERIALIZATIONTESTSDIR="../../target/python/serialization_unit_tests"
 echo "**** Install Runtime ****"
-$PYEXE -m pip install $RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
+$PYEXE -m pip install $MYPATH/$RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
 echo "**** Build and Install Helper ****"
 cd $MYPATH/test_helper
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
