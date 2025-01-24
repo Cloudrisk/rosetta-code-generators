@@ -5,6 +5,10 @@ rune_dict = json.loads(rune_string)
 rune_model = rune_dict.pop('@model')
 rune_type = rune_dict.pop('@type')
 rune_model_version = rune_dict.pop('@version')
-rune_class = rune_type.rsplit('.')[-1]
-# rune_module = importlib.import_module(rune_type)
-from serialization.test.basic.Root import Root
+rune_type_split = rune_type.rsplit('.')
+rune_class = rune_type_split[-1]
+print(rune_type)
+rune_module = importlib.import_module(rune_type)
+rune_cls = getattr(rune_module, rune_class)
+rune = rune_cls.model_validate (rune_dict)
+print(rune)

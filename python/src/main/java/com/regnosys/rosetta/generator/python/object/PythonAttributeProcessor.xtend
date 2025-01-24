@@ -189,6 +189,8 @@ class PythonAttributeProcessor {
             validators.add ('@key');
         }
         // check whether the attribute has meta 
+        // TODO: process meta
+
         if (attrRMAT.hasMeta()) {
             for (ma : attrRMAT.getMetaAttributes()) {
                 // TODO: handle all meta types
@@ -199,7 +201,7 @@ class PythonAttributeProcessor {
                     println ('---- meta ... key');
                 } else if (ma.getName().equals("id")) {
                     validators.add("@key");
-                    println ('---- meta ... id');
+                    println ('----  meta id processed as @key');
                 } else if (ma.getName().equals("scheme")) {
                     validators.add("@scheme");
                 } else {
@@ -211,16 +213,23 @@ class PythonAttributeProcessor {
             if (!attributeIsMetaKey)  {
                 attrTypeName = PythonTranslator.getAttributeTypeWithMeta (attrTypeName);
             }
-            isFirst = true;
             metaPrefix = "Annotated[";
             metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator((";
+            var isFirstValidator = true;
+            var isOne = true;
             for (validator : validators) {
-                if (isFirst) {
-                    isFirst = false;
+                if (isFirstValidator) {
+                    isFirstValidator = false
                 } else {
-                    metaSuffix += ","
-                }
+                    metaSuffix += ", ";
+                    if (isOne) {
+                        isOne = false;
+                    }
+                } 
                 metaSuffix += "'" + validator + "'";
+            }
+            if (isOne) {
+                metaSuffix += ", ";
             }
             metaSuffix += "))]"
         }

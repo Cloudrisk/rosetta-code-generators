@@ -17,5 +17,5 @@ __all__ = ['NodeRef']
 
 
 class NodeRef(BaseDataClass):
-    typeA: Optional[Annotated[test.generated_syntax.meta_keys.A.A, test.generated_syntax.meta_keys.A.A.serializer(), test.generated_syntax.meta_keys.A.A.validator(('@key'))]] = Field(None, description='')
-    aReference: Optional[Annotated[test.generated_syntax.meta_keys.A.A, test.generated_syntax.meta_keys.A.A.serializer(), test.generated_syntax.meta_keys.A.A.validator(('@key','@ref'))]] = Field(None, description='')
+    typeA: Optional[Annotated[test.generated_syntax.meta_keys.A.A, test.generated_syntax.meta_keys.A.A.serializer(), test.generated_syntax.meta_keys.A.A.validator(('@key', ))]] = Field(None, description='')
+    aReference: Optional[Annotated[test.generated_syntax.meta_keys.A.A, test.generated_syntax.meta_keys.A.A.serializer(), test.generated_syntax.meta_keys.A.A.validator(('@key', '@ref'))]] = Field(None, description='')

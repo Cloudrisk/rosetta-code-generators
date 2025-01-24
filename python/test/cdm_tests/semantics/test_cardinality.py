@@ -2,13 +2,13 @@
 import datetime
 import pytest
 from cdm.base.datetime.DateList import DateList
-from rosetta.runtime.utils import ConditionViolationError
+from rune.runtime.conditions import ConditionViolationError
 
 
 def test_1_many_fail():
     '''DateList cannot be empty'''
-    dl = DateList(date=[])
     with pytest.raises(ConditionViolationError):
+        dl = DateList(date=[])
         dl.validate_conditions()
 
 

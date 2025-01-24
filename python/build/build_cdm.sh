@@ -21,18 +21,24 @@ fi
 
 ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
-ROSETTARUNTIMEDIR=$MYPATH/"../src/main/resources/runtime"
-PYTHONSOURCEDIR=$MYPATH/"../target/python-cdm"
-cd $PYTHONSOURCEDIR
+
+cd $MYPATH
 $PYEXE -m venv --clear .pybuild || processError
 source .pybuild/$ACDIR/activate || processError
-rm python_cdm-*.*.*-py3-none-any.whl
 $PYEXE -m pip install --upgrade pip || processError
+
+echo "**** Install Runtime ****"
+RUNERUNTIMEDIR="../../../../../rune-python-runtime"
+$PYEXE -m pip install $RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
+
+echo "**** build CDM ****"
+PYTHONSOURCEDIR=$MYPATH/"../target/python-cdm"
+cd $PYTHONSOURCEDIR
+rm python_cdm-*.*.*-py3-none-any.whl
 $PYEXE -m pip install "setuptools>=62.0" || processError
-$PYEXE -m pip install "pydantic>=2.6.1,<2.10" || processError
-$PYEXE -m pip install $ROSETTARUNTIMEDIR/rosetta_runtime-2.1.0-py3-none-any.whl || processError
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
-rm -rf .pybuild
+rm -rf $MYPATH/.pybuild
+
 echo ""
 echo ""
 echo "***************************************************************************"
