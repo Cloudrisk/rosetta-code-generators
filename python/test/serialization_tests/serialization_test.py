@@ -49,7 +49,7 @@ def serialize (rune_out: BaseDataClass) -> str:
     """
     serialize a rune object to a string
     
-    :param obj - the item to be serialized.
+    :param rune_out - the item to be serialized.
     :return: a string
     """
     rune_dict_out = {'@model': rune_out.__class__.__module__.split('.')[0],
