@@ -54,11 +54,12 @@ def serialize (rune: BaseDataClass) -> str:
     :param obj - the item to be serialized.
     :return: a string
     """
-    
-    rune_header = {'@model': rune.__class__.__module__.split('.')[0], 
-                  '@type': rune.__class__.__module__,
-                  '@version': '0.0.0'}
-    rune_string = json.dumps(rune_header, indent=2) + os.linesep + rune.model_dump_json(indent=2)
+
+    rune_dict_out = {'@model': rune_out.__class__.__module__.split('.')[0],
+                     '@type': rune_out.__class__.__module__,
+                     '@version': '0.0.0'}
+    rune_dict_out.update(rune_out.model_dump(exclude_unset=True))
+    rune_string = json.dumps(rune_dict_out, indent=2, default=str)
     return rune_string
 
 json_files = glob.glob(JSON_DIR + os.sep + '**/*.json', recursive = True)
