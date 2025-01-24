@@ -10,6 +10,7 @@ export PYTHONDONTWRITEBYTECODE=1
 
 MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
+rm -rf $MYPATH/.pytest
 $PYEXE -m venv --clear $MYPATH/.pytest
 source $MYPATH/.pytest/$ACDIR/activate
 

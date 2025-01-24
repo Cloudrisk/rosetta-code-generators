@@ -47,7 +47,6 @@ class PythonAttributeProcessor {
         /*
          * translate the attribute to its representation in Python
          */
-        // TODO: use builder and remove block quotes
         val attrRMAT   = ra.getRMetaAnnotatedType();
         var attrRType  = attrRMAT.getRType();
         // TODO: confirm refactoring of type properly handles enums

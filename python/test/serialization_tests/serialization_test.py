@@ -6,12 +6,10 @@ import importlib
 import glob
 import argparse
 import pytest
-import datetime
 from rune.runtime.base_data_class import BaseDataClass
-from typing import Any, Dict, Annotated
 from test_helper.test_helper.dict_comp import dict_comp
 
-JSON_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/basic'
+JSON_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/metakey'
 
 def deserialize (rune_string: str) -> BaseDataClass:
     '''generate a rune object from a string'''
@@ -19,10 +17,10 @@ def deserialize (rune_string: str) -> BaseDataClass:
     rune_model = rune_dict.pop('@model')
     rune_type = rune_dict.pop('@type')
     rune_model_version = rune_dict.pop('@version')
-    rune = deserialize_from_dict (rune_type, rune_dict)
-    return rune
+    rune_in = deserialize_from_dict (rune_type, rune_dict)
+    return rune_in
 
-def deserialize_from_dict(rune_type: str, rune_dict: Dict[str, Any]) -> BaseDataClass:
+def deserialize_from_dict(rune_type: str, rune_dict: dict) -> BaseDataClass:
     """
     Create an object of the specified class from a dictionary.
     
@@ -32,33 +30,33 @@ def deserialize_from_dict(rune_type: str, rune_dict: Dict[str, Any]) -> BaseData
     """
     # Import the module and get the class
     print('deserialize_from_dict ... getting cls ... obj_class_path:' + rune_type)
-    rune_class = rune_type.rsplit('.')[-1]
-    print('deserialize_from_dict ... rune_class:' + rune_class)
+    rune_class_name = rune_type.rsplit('.')[-1]
+    print('deserialize_from_dict ... rune_class_name:' + rune_class_name)
     rune_module = importlib.import_module(rune_type)
-    print('deserialize_from_dict ... rune_module:' + rune_module)
-    rune_cls = getattr(rune_module, rune_class)
-    print('deserialize_from_dict ... cls:' + rune_cls)
+    print('deserialize_from_dict ... called importlib 1 ... rune_module: ' + str(rune_module))
+    rune_cls = getattr(rune_module, rune_class_name)
+    print('deserialize_from_dict ... called gettar ... rune_cls :' + str(rune_cls))
 
     # Ensure the class is a subclass of BaseDataClass (from the rune runtime)
     if not issubclass(rune_cls, BaseDataClass):
-        raise TypeError(f"{rune_class} is not a subclass of BaseDataClass")
+        raise TypeError(f"{rune_class_name} is not a subclass of BaseDataClass")
 
-    print('rune_class: ' + rune_class + ' cls:' + rune_cls + '\ndata\n' + rune_dict)
     rune_obj = rune_cls.model_validate (rune_dict)
+    print('deserialize_from_dict ... done')
     return rune_obj
 
-def serialize (rune: BaseDataClass) -> str:
+def serialize (rune_out: BaseDataClass) -> str:
     """
     serialize a rune object to a string
     
     :param obj - the item to be serialized.
     :return: a string
     """
-    
-    rune_header = {'@model': rune.__class__.__module__.split('.')[0], 
-                  '@type': rune.__class__.__module__,
-                  '@version': '0.0.0'}
-    rune_string = json.dumps(rune_header, indent=2) + os.linesep + rune.model_dump_json(indent=2)
+    rune_dict_out = {'@model': rune_out.__class__.__module__.split('.')[0],
+                     '@type': rune_out.__class__.__module__,
+                     '@version': '0.0.0'}
+    rune_dict_out.update(rune_out.model_dump(exclude_unset=True))
+    rune_string = json.dumps(rune_dict_out, indent=2, default=str)
     return rune_string
 
 json_files = glob.glob(JSON_DIR + os.sep + '**/*.json', recursive = True)
@@ -124,7 +122,9 @@ if __name__ == "__main__":
         try:
             rune = deserialize(rune_str)
             print (rune)
+            rune_str_out = serialize(rune)
+            print (rune_str_out)
         except Exception as ex:
-            print('error processing file:', args.execute, '\nexception\n', ex, 'n', rune_str)
+            print('error processing file:', args.execute, '\nexception\n', ex, '\n', rune_str)
     else:
         parser.print_help()
