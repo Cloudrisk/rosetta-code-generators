@@ -4,6 +4,8 @@ import com.google.inject.Inject
 import org.eclipse.xtext.testing.InjectWith
 import org.eclipse.xtext.testing.extensions.InjectionExtension
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestFactory
+import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.Disabled
 import org.slf4j.LoggerFactory
 import com.regnosys.rosetta.tests.RosettaInjectorProvider
@@ -12,13 +14,16 @@ import java.nio.file.Paths
 import java.nio.file.Files
 import org.junit.jupiter.api.^extension.ExtendWith
 import com.regnosys.rosetta.generator.python.PythonCodeGeneratorUtils;
-import java.util.stream.Collectors
 import static org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
 
 /*
- * Test Principal
+ * File based unit tests 
+ * 
+ * includes support for the generation of Python from CDM and other Rune definitions
+ * 
  */
+// TODO: move source rune test code to the test directory
+
 @ExtendWith(InjectionExtension)
 @InjectWith(RosettaInjectorProvider)
 class PythonFilesGeneratorTest {
@@ -147,71 +152,72 @@ class PythonFilesGeneratorTest {
         }
     }
 
-    @Test
-    def void testGeneratedSyntax() {
+    @TestFactory
+    def Iterable<DynamicTest> testGeneratedSyntax() {
+        val tests = newArrayList
+
         try {
             LOGGER.info('PythonFilesGeneratorTest::testGeneratedSyntax ... start')
-    
+
             // Retrieve properties
             val sourcePath = utils.getProperty('unittest.generated.syntax.source.path')
-            // Check if properties exist
             if (sourcePath === null || sourcePath.isEmpty) {
                 LOGGER.error("Property 'unittest.generated.syntax.source.path' does not exist or is empty")
-                return
+                return tests
             }
             val targetPath = utils.getProperty('unittest.generated.syntax.target.path')
             if (targetPath === null || targetPath.isEmpty) {
-                LOGGER.error("Property 'unittest.generated.syntax.targetpath' does not exist or is empty")
-                return
+                LOGGER.error("Property 'unittest.generated.syntax.target.path' does not exist or is empty")
+                return tests
             }
             val expectedPath = utils.getProperty('unittest.generated.syntax.expected.path')
             if (expectedPath === null || expectedPath.isEmpty) {
                 LOGGER.error("Property 'unittest.generated.syntax.expected.path' does not exist or is empty")
-                return
+                return tests
             }
-    
+
             // Generate Python from DSL files
             utils.generatePythonFromDSLFiles(utils.getFileListWithRecursion(sourcePath, 'rosetta'), targetPath)
-            
+
             // Verify generated code against expected code
-            var generatedFiles = utils.getFileListWithRecursion(targetPath, 'py');
-    
-            // TODO: keep testing if one file fails
+            val generatedFiles = utils.getFileListWithRecursion(targetPath, 'py')
+
             for (generatedFile : generatedFiles) {
                 val fileName = generatedFile.getFileName.toString
                 if (fileName != "__init__.py" && fileName != "version.py") {
-	                // Calculate the relative path from the targetPath
-	                val expectedFilePathString = generatedFile.toString.replace(targetPath, expectedPath)
-	                
-	                val expectedFilePath = Paths.get(expectedFilePathString)
-	            
-	                if (Files.exists(expectedFilePath)) {
-	                    val expectedCode = Files.readString(expectedFilePath)
-	                    val generatedCode = Files.readString(generatedFile)
-	    
-	                    // Assert that the expected code matches the generated code
-	                    assertTrue(generatedCode.contains(expectedCode), 
-	                        "Mismatch in generated code for file: " + generatedFile.toString + 
-	                        "\nExpected:\n" + expectedCode + 
-	                        "\nGenerated:\n" + generatedCode)
-	                } else {
-	                    fail("Expected file does not exist ... generated file: " + generatedFile.toString + " expected path: " + expectedFilePath.toString)
-	                }
+                    // Calculate the relative path from the targetPath
+                    val expectedFilePathString = generatedFile.toString.replace(targetPath, expectedPath)
+                    val expectedFilePath = Paths.get(expectedFilePathString)
+
+                    tests.add(DynamicTest.dynamicTest("Test for " + fileName, [
+                        if (Files.exists(expectedFilePath)) {
+                            val expectedCode = Files.readString(expectedFilePath)
+                            val generatedCode = Files.readString(generatedFile)
+
+                            // Assert that the expected code matches the generated code
+                            assertTrue(generatedCode.contains(expectedCode),
+                                "Mismatch in generated code for file: " + generatedFile.toString +
+                                "\nExpected:\n" + expectedCode +
+                                "\nGenerated:\n" + generatedCode)
+                        } else {
+                            fail("Expected file does not exist ... generated file: " + generatedFile.toString + " expected path: " + expectedFilePath.toString)
+                        }
+                    ]))
                 }
-            } 
+            }
             LOGGER.info('generatePythonCodeGeneratorUnitTests ... done')
-        } 
-        catch (IOException ioE) {
+        } catch (IOException ioE) {
             LOGGER.error('PythonFilesGeneratorTest::generatePythonCodeGeneratorUnitTests ... processing failed with an IO Exception')
             LOGGER.error('\n' + ioE.getMessage())
-        }
-        catch (ClassCastException ccE) {
+        } catch (ClassCastException ccE) {
             LOGGER.error('PythonFilesGeneratorTest::generatePythonCodeGeneratorUnitTests ... processing failed with a ClassCastException')
             LOGGER.error('\n' + ccE.getMessage())
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             LOGGER.error('PythonFilesGeneratorTest::generatePythonCodeGeneratorUnitTests ... processing failed with an Exception')
             LOGGER.error('\n' + e.getMessage())
         }
-    }    
+
+        return tests
+    }
+
 }

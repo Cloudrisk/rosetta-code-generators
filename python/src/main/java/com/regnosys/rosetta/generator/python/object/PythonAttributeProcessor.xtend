@@ -47,8 +47,8 @@ class PythonAttributeProcessor {
         /*
          * translate the attribute to its representation in Python
          */
-        val attrRMAT   = ra.getRMetaAnnotatedType();
-        var attrRType  = attrRMAT.getRType();
+        val attrRMAT = ra.getRMetaAnnotatedType();
+        var attrRType = attrRMAT.getRType();
         // TODO: confirm refactoring of type properly handles enums
         var attrTypeName = null as String;
         // strip out the alias if there is one and align the attribute type name to the to the underlying type
@@ -70,7 +70,7 @@ class PythonAttributeProcessor {
             // TODO: there seems to be a default for strings to have min_length = 0 
             attrRType.getPattern().ifPresent[value|attrProp.put("pattern", "r'^" + value.toString() + "*$'")];
             attrRType.getInterval().getMin().ifPresent [ value |
-                if (value > 0) { 
+                if (value > 0) {
                     attrProp.put("min_length", value.toString())
                 }
             ]
@@ -82,7 +82,7 @@ class PythonAttributeProcessor {
                 attrRType.getFractionalDigits().ifPresent[value|attrProp.put("decimal_places", value.toString())];
                 attrRType.getInterval().getMin().ifPresent[value|attrProp.put("ge", value.toPlainString())]
                 attrRType.getInterval().getMax().ifPresent[value|attrProp.put("le", value.toPlainString())]
-            } else { 
+            } else {
                 attrTypeName = 'int';
             }
         }
@@ -110,9 +110,9 @@ class PythonAttributeProcessor {
          *  attribute name: list[attribute type] = Field([], 
          *                                              description, 
          *                                              [min_length=#],
-         * 												[max_length=#], 
-         *												[pattern="ssss"],
-         * 												[max_digits=#],
+         *                                              [max_length=#], 
+         *                                              [pattern="ssss"],
+         *                                              [max_digits=#],
          *                                              [decimal_places=#]
          * list[Annotated[
          *     NumberWithMeta,
@@ -123,10 +123,10 @@ class PythonAttributeProcessor {
          *     	    description='',
          *          min_length=1)
          *
-	     * Optional always calls for None
+         * Optional always calls for None
          * for a list the argument is []
          * when the item is not optional and not a list use "..." (ellipsis)
-        */
+         */
         var lowerBound = ra.cardinality.getMin();
         if (lowerBound == 0) {
             // 0..1 --> Optional but not a list
@@ -135,8 +135,8 @@ class PythonAttributeProcessor {
             cardinalityPrefix = "Optional[";
             cardinalitySuffix = "]";
             fieldDefault = "None"
-            var upperCardinality  = ra.cardinality.getMax ();
-            var upperBoundIsGTOne = (upperCardinality.isPresent () && upperCardinality.get() > 1);
+            var upperCardinality  = ra.cardinality.getMax();
+            var upperBoundIsGTOne = (upperCardinality.isPresent() && upperCardinality.get() > 1);
             if (ra.cardinality.isMulti() || upperBoundIsGTOne) {
                 cardinalityPrefix += "list["
                 cardinalitySuffix += "]"
@@ -148,13 +148,13 @@ class PythonAttributeProcessor {
             // 1..1 --> not optional, no list, no min_length, no max_length
             // 1..n --> list[min_length=1, max_length=n]
             // 1..* --> list[min_length=1]
-            var upperCardinality = ra.cardinality.getMax ();
-            var upperBoundIsGTOne = (upperCardinality.isPresent () && upperCardinality.get() > 1);
+            var upperCardinality  = ra.cardinality.getMax();
+            var upperBoundIsGTOne = (upperCardinality.isPresent() && upperCardinality.get() > 1);
             if (ra.cardinality.isMulti() || upperBoundIsGTOne) {
                 cardinalityPrefix = "list[";
                 cardinalitySuffix = "]";
                 cardinalityString = ", min_length=1"
-                fieldDefault      = "[]"
+                fieldDefault = "[]"
                 if (upperBoundIsGTOne) {
                     var upperBound = upperCardinality.get();
                     if (upperBound > 1) {
@@ -170,10 +170,10 @@ class PythonAttributeProcessor {
             // a..* --> list[min_length=a]        
             cardinalityPrefix = "list["
             cardinalitySuffix = "]"
-            cardinalityString = ", min_length=" + String.valueOf (lowerBound);
-            fieldDefault      = "[]"
-            var upperCardinality = ra.cardinality.getMax ();
-            if (upperCardinality.isPresent ()) {
+            cardinalityString = ", min_length=" + String.valueOf(lowerBound);
+            fieldDefault = "[]"
+            var upperCardinality = ra.cardinality.getMax();
+            if (upperCardinality.isPresent()) {
                 var upperBound = upperCardinality.get();
                 if (upperBound > 1) {
                     cardinalityString += ", max_length=" + String.valueOf(upperBound);
@@ -184,34 +184,37 @@ class PythonAttributeProcessor {
         var metaPrefix = "";
         var metaSuffix = "";
         val validators = new ArrayList<String>()
-        val attributeIsMetaKey = metaDataKeys.containsKey (attrTypeName);
+        val attributeIsMetaKey = metaDataKeys.containsKey(attrTypeName);
         if (attributeIsMetaKey) {
-            validators.add ('@key');
+            validators.add('@key');
         }
         // check whether the attribute has meta 
-        // TODO: process meta
-
         if (attrRMAT.hasMeta()) {
             for (ma : attrRMAT.getMetaAttributes()) {
                 // TODO: handle all meta types
-                if (ma.getName().equals("reference")) {
-                    validators.add("@ref");
-                } else if (ma.getName().equals("key")) {
-                    validators.add("@key");
-                    println ('---- meta ... key');
-                } else if (ma.getName().equals("id")) {
-                    validators.add("@key");
-                    println ('----  meta id processed as @key');
-                } else if (ma.getName().equals("scheme")) {
-                    validators.add("@scheme");
-                } else {
-                    println ('---- unprocessed meta ... name: ' + ma.getName())
+                switch (ma.getName()) {
+                    case "key",
+                    case "id": {
+                        validators.add("@key");
+                        if (ma.getName().equals('id')) {
+                            println('----  meta id processed as @key');
+                        }
+                    }
+                    case "reference": {
+                        validators.add("@ref");
+                    }
+                    case "scheme": {
+                        validators.add("@scheme");
+                    }
+                    default: {
+                        println('---- unprocessed meta ... name: ' + ma.getName())
+                    }
                 }
             }
         }
         if (!validators.isEmpty()) {
-            if (!attributeIsMetaKey)  {
-                attrTypeName = PythonTranslator.getAttributeTypeWithMeta (attrTypeName);
+            if (!attributeIsMetaKey) {
+                attrTypeName = PythonTranslator.getAttributeTypeWithMeta(attrTypeName);
             }
             metaPrefix = "Annotated[";
             metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator((";
@@ -225,7 +228,7 @@ class PythonAttributeProcessor {
                     if (isOne) {
                         isOne = false;
                     }
-                } 
+                }
                 metaSuffix += "'" + validator + "'";
             }
             if (isOne) {
@@ -237,7 +240,7 @@ class PythonAttributeProcessor {
         _builder.append(attrName);
         _builder.append(": ");
         // attribute string depends on whether there are props and whether there is cardinality
-        if (!attrProp.isEmpty() && cardinalityString.length () > 0) {
+        if (!attrProp.isEmpty() && cardinalityString.length() > 0) {
             _builder.append(cardinalityPrefix);
             _builder.append("Annotated[")
             _builder.append(attrTypeName);
@@ -255,9 +258,8 @@ class PythonAttributeProcessor {
             _builder.append(attrDesc);
             _builder.append("'");
             _builder.append(cardinalityString);
-            _builder.append(")"); 
-        }
-        else {
+            _builder.append(")");
+        } else {
             _builder.append(cardinalityPrefix);
             _builder.append(metaPrefix);
             _builder.append(attrTypeName);
@@ -273,16 +275,17 @@ class PythonAttributeProcessor {
                 _builder.append(", ");
                 _builder.append(propString);
             }
-            _builder.append(")"); 
+            _builder.append(")");
         }
         if (ra.definition !== null) {
             _builder.append("\n\"\"\"\n");
             _builder.append(ra.definition);
             _builder.append("\n\"\"\"");
         }
-        _builder.append("\n"); 
-         return  _builder.toString();
+        _builder.append("\n");
+        return _builder.toString();
     }
+
     def getImportsFromAttributes(Data rosettaClass) {
         val allAttributes = rosettaClass.buildRDataType.getOwnAttributes.filter [
             (it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")
