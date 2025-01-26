@@ -184,9 +184,12 @@ class PythonAttributeProcessor {
         var metaPrefix = "";
         var metaSuffix = "";
         val validators = new ArrayList<String>()
+        // if the attribute of a type that is metadata, add "@key"
         val attributeIsMetaKey = metaDataKeys.containsKey(attrTypeName);
         if (attributeIsMetaKey) {
             validators.add('@key');
+            // TODO: confirm that @key:external should be added here
+            validators.add("@key:external")
         }
         // check whether the attribute has meta 
         if (attrRMAT.hasMeta()) {
@@ -195,6 +198,7 @@ class PythonAttributeProcessor {
                 switch (ma.getName()) {
                     case "key",
                     case "id": {
+                        // TODO: confirm that there's no need to worry about adding "@key" et al twice bc attributeIsMetaKey is true
                         validators.add("@key");
                         validators.add("@key:external")
                         if (ma.getName().equals('id')) {
@@ -231,7 +235,7 @@ class PythonAttributeProcessor {
                         isOne = false;
                     }
                 }
-                metaSuffix += "'" + validator + "'";
+                metaSuffix += ("'" + validator + "'");
             }
             if (isOne) {
                 metaSuffix += ", ";
