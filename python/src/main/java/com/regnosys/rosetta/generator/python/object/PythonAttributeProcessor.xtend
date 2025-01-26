@@ -196,12 +196,14 @@ class PythonAttributeProcessor {
                     case "key",
                     case "id": {
                         validators.add("@key");
+                        validators.add("@key:external")
                         if (ma.getName().equals('id')) {
                             println('----  meta id processed as @key');
                         }
                     }
                     case "reference": {
                         validators.add("@ref");
+                        validators.add("@ref:external")
                     }
                     case "scheme": {
                         validators.add("@scheme");
