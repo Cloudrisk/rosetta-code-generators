@@ -33,7 +33,7 @@ class PythonEnumGeneratorTest {
 
         val enums = python.toString
         val expected = '''
-        class TestEnum(Enum):
+        class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Test enum description.
             """

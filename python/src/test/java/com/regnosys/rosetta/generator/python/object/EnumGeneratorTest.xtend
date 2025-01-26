@@ -36,7 +36,7 @@ class EnumGeneratorTest {
             '''.generatePython
 
         val expected = '''
-        class TestEnum(Enum):
+        class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Test enum description.
             """
@@ -95,7 +95,7 @@ class EnumGeneratorTest {
 
 
         val expected = '''
-        class TestEnum(Enum):
+        class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Test enum description.
             """
@@ -129,7 +129,7 @@ class EnumGeneratorTest {
 
         
         val expected = '''
-        class ConfirmationStatusEnum(Enum):
+        class ConfirmationStatusEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Enumeration for the different types of confirmation status.
             """
@@ -152,7 +152,7 @@ class EnumGeneratorTest {
         
         val expected = 
         '''
-        class TransferStatusEnum(Enum):
+        class TransferStatusEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             The enumeration values to specify the transfer status.
             """
@@ -197,7 +197,7 @@ class EnumGeneratorTest {
         
            val expected = 
            '''
-           class FinancialUnitEnum(Enum):
+           class FinancialUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
                """
                Provides enumerated values for financial units, generally used in the context of defining quantities for securities.
                """

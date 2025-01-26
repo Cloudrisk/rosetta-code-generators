@@ -160,7 +160,7 @@ definition">
     Optional test enum
     """'''
 
-        val expectedTestEnum ='''class TestEnum(Enum):
+        val expectedTestEnum ='''class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Test enum description.
     """
@@ -268,7 +268,7 @@ definition">
             one-of
         '''.generatePython
 
-        val expectedTestType2='''class FinancialUnitEnum(Enum):
+        val expectedTestType2='''class FinancialUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Provides enumerated values for financial units, generally used in the context of defining quantities for securities.
     """
@@ -333,7 +333,7 @@ definition">
         item = self
         return rune_check_one_of(self, 'capacityUnit', 'weatherUnit', 'financialUnit', 'currency', necessity=True)
     '''
-        val expectedTestType3='''class WeatherUnitEnum(Enum):
+        val expectedTestType3='''class WeatherUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Provides enumerated values for weather units, generally used in the context of defining quantities for commodities.
     """
@@ -349,7 +349,7 @@ definition">
     """
     Heating Degree Day as a standard unit.
     """'''
-        val expectedTestType4='''class CapacityUnitEnum(Enum):
+        val expectedTestType4='''class CapacityUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Provides enumerated values for capacity units, generally used in the context of defining quantities for commodities.
     """
@@ -672,7 +672,7 @@ definition">
         item = self
         return rune_check_one_of(self, 'ancillaryParty', 'legalEntity', necessity=True)'''
 
-        val expectedTestType4='''class AncillaryRoleEnum(Enum):
+        val expectedTestType4='''class AncillaryRoleEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Defines the enumerated values to specify the ancillary roles to the transaction. The product is agnostic to the actual parties involved in the transaction, with the party references abstracted away from the product definition and replaced by the AncillaryRoleEnum. The AncillaryRoleEnum can then be positioned in the product and the AncillaryParty type, which is positioned outside of the product definition, allows the AncillaryRoleEnum to be associated with an actual party reference.
     """
@@ -720,7 +720,7 @@ definition">
     """
     Specifies the clearing organization (CCP, DCO) which the trade test be cleared.
     """'''
-        val expectedTestType5='''class TelephoneTypeEnum(Enum):
+        val expectedTestType5='''class TelephoneTypeEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     The enumerated values to specify the type of telephone number, e.g. work vs. mobile.
     """
@@ -979,7 +979,7 @@ definition">
         item = self
         return rune_attr_exists(rune_resolve_attr(self, "value"))'''
         
-        val expectedTestType3='''class WeatherUnitEnum(Enum):
+        val expectedTestType3='''class WeatherUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Provides enumerated values for weather units, generally used in the context of defining quantities for commodities.
     """
@@ -996,7 +996,7 @@ definition">
     Heating Degree Day as a standard unit.
     """'''
     
-        val expectedTestType4='''class FinancialUnitEnum(Enum):
+        val expectedTestType4='''class FinancialUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Provides enumerated values for financial units, generally used in the context of defining quantities for securities.
     """
@@ -1061,7 +1061,7 @@ definition">
         item = self
         return rune_check_one_of(self, 'capacityUnit', 'weatherUnit', 'financialUnit', 'currency', necessity=True)'''
         
-        val expectedTestType6='''class CapacityUnitEnum(Enum):
+        val expectedTestType6='''class CapacityUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Provides enumerated values for capacity units, generally used in the context of defining quantities for commodities.
     """

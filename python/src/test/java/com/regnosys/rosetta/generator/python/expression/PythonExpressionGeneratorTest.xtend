@@ -277,7 +277,7 @@ class PythonExpressionGeneratorTest {
                         then field2=0
             '''.generatePython 
             
-        val expectedEnum= '''class TestEnum(Enum):
+        val expectedEnum= '''class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Enum to test
     """
@@ -604,7 +604,7 @@ class PythonExpressionGeneratorTest {
                     then bValue->aValue->cValue contains C->field4
                 '''.generatePython 
                   
-            val expectedClassC='''class C(Enum):
+            val expectedClassC='''class C(rune.runtime.metadata.EnumWithMetaMixin, Enum):
     """
     Test type C
     """

@@ -73,7 +73,7 @@ class RosettaExtensionsTest {
 
         val expectedBar=
         '''
-        class Bar(Enum):
+        class Bar(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             BAR = "bar"
             FOO_0 = "foo0"
             FOO_1 = "foo1"
@@ -81,7 +81,7 @@ class RosettaExtensionsTest {
 
         val expectedBaz=
         '''
-        class Baz(Enum):
+        class Baz(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             BAR = "bar"
             BAZ = "baz"
             FOO_0 = "foo0"
@@ -90,7 +90,7 @@ class RosettaExtensionsTest {
 
         val expectedFoo=
         '''
-        class Foo(Enum):
+        class Foo(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             FOO_0 = "foo0"
             FOO_1 = "foo1"
         '''

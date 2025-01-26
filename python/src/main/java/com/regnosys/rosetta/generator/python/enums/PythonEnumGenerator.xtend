@@ -20,6 +20,7 @@ class PythonEnumGenerator {
             val all = '''
                 # pylint: disable=missing-module-docstring, invalid-name, line-too-long
                 from enum import Enum
+                import rune.runtime.metadata
                 
                 __all__ = ['«enum.name»']
                 
@@ -43,7 +44,7 @@ class PythonEnumGenerator {
     private def generateEnums(RosettaEnumeration enume, String version) {
         '''
             «val allEnumValues = allEnumsValues(enume)»
-            class «enume.name»(Enum):
+            class «enume.name»(rune.runtime.metadata.EnumWithMetaMixin, Enum):
                 «IF enume.definition!==null»
                     """
                     «enume.definition»
