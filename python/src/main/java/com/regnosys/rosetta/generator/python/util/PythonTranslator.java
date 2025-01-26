@@ -102,7 +102,7 @@ public class PythonTranslator {
         // returns null if no matching type
         switch (attributeType) {
             case "str":
-                return "StringWithMeta";
+                return "StrWithMeta";
             case "datetime.time":
                 return "TimeWithMeta";
             case "datetime.date":
@@ -110,7 +110,7 @@ public class PythonTranslator {
             case "datetime.datetime":
                 return "DateTimeWithMeta";
             case "Decimal":
-                return "DecimalWithMeta";
+                return "NumberWithMeta";
             case "bool":
                 return "BoolWithMeta";
             case "int":
