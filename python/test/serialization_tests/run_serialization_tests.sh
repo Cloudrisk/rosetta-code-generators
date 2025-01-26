@@ -14,7 +14,9 @@ rm -rf $MYPATH/.pytest
 $PYEXE -m venv --clear $MYPATH/.pytest
 source $MYPATH/.pytest/$ACDIR/activate
 
-RUNERUNTIMEDIR="../../../../../../rune-python-runtime"
+#RUNERUNTIMEDIR="../../../../../../rune-python-runtime"
+RUNERUNTIMEDIR="."
+
 SERIALIZATIONTESTSDIR="../../target/python/serialization_unit_tests"
 echo "**** Install Runtime ****"
 $PYEXE -m pip install $MYPATH/$RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
