@@ -58,7 +58,7 @@ def process_directory(dir_name):
         file_name = extract_dir_and_file(result['path_name'])
         if (not result['result']):
             print('file:', file_name, '...', 'something failed')
-            process_file(result['path_name'])
+            process_file(result['path_name'], show_results=True)
             failures += 1
     print('---- result summary for dir:', dir_name, ' matches:', matches, 'failures:', failures)
 

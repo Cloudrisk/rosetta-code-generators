@@ -1,0 +1,522 @@
+[INFO] Scanning for projects...
+[INFO] Inspecting build with total of 1 modules...
+[INFO] Installing Nexus Staging features:
+[INFO]   ... total of 1 executions of maven-deploy-plugin replaced with nexus-staging-maven-plugin
+[INFO] 
+[INFO] ------------< com.regnosys.rosetta.code-generators:python >-------------
+[INFO] Building code-gen-python 0.0.0.main-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.1.0:clean (default-clean) @ python ---
+[INFO] Deleting /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target
+[INFO] 
+[INFO] --- enforcer:3.2.1:enforce (enforce-java) @ python ---
+[INFO] Rule 0: org.apache.maven.enforcer.rules.version.RequireJavaVersion passed
+[INFO] Rule 1: org.apache.maven.enforcer.rules.dependency.BannedDependencies passed
+[INFO] Rule 2: org.apache.maven.enforcer.rules.version.RequireMavenVersion passed
+[INFO] 
+[INFO] --- xtend:2.27.0:compile (Generate xtend sources) @ python ---
+[WARNING] 
+WARNING: 	PythonExpressionGenerator.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.xtend
+228: Unnecessary cast from RosettaFeature to RosettaFeature
+[WARNING] 
+WARNING: 	PythonChoiceAliasProcessor.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.xtend
+33: The method asRDataType() from the type RChoiceType is deprecated
+[WARNING] 
+WARNING: 	PythonChoiceAliasProcessor.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.xtend
+63: The method asRDataType() from the type RChoiceType is deprecated
+[INFO] 
+[INFO] --- resources:3.1.0:resources (default-resources) @ python ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 8 resources
+[INFO] 
+[INFO] --- compiler:3.8.1:compile (default-compile) @ python ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 12 source files to /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/classes
+[INFO] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.java: /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.java uses or overrides a deprecated API.
+[INFO] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- xtend:2.27.0:testCompile (Generate xtend test sources) @ python ---
+[WARNING] 
+WARNING: 	ChoiceAliasesGeneratorTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/object/ChoiceAliasesGeneratorTest.xtend
+12: The import 'org.junit.jupiter.api.Assertions' is never used.
+[WARNING] 
+WARNING: 	ChoiceAliasesGeneratorTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/object/ChoiceAliasesGeneratorTest.xtend
+23: The value of the local variable pythonCode is not used
+[WARNING] 
+WARNING: 	PythonMetaDataGenerationTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/PythonMetaDataGenerationTest.xtend
+183: The value of the local variable python is not used
+[WARNING] 
+WARNING: 	PythonExpressionGeneratorTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/expression/PythonExpressionGeneratorTest.xtend
+13: The import 'org.junit.Ignore' is never used.
+[WARNING] 
+WARNING: 	DataRuleGeneratorTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/rule/DataRuleGeneratorTest.xtend
+417: Inconsistent indentation
+[INFO] 
+[INFO] --- resources:3.1.0:testResources (default-testResources) @ python ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.8.1:testCompile (default-testCompile) @ python ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 16 source files to /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/test-classes
+[INFO] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/test/generated/xtend/com/regnosys/rosetta/generator/python/PythonCodeGeneratorUtils.java: /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/test/generated/xtend/com/regnosys/rosetta/generator/python/PythonCodeGeneratorUtils.java uses unchecked or unsafe operations.
+[INFO] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/test/generated/xtend/com/regnosys/rosetta/generator/python/PythonCodeGeneratorUtils.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- surefire:2.22.2:test (default-test) @ python ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.regnosys.rosetta.generator.python.PythonFilesGeneratorTest
+INFO  c.r.r.g.p.PythonFilesGeneratorTest - PythonFilesGeneratorTest::testGeneratedSyntax ... start
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileListWithRecursion ... looking for files with suffix rosetta in build/resources/generated_syntax_tests/rosetta
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileListWithRecursion ... found 2 files in build/resources/generated_syntax_tests/rosetta
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... generating Python from 2 rosetta files
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... converted to resources
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... created 2 rosetta models
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: test.generated_syntax.meta_keys
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: test.generated_syntax.meta_keys
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: test.generated_syntax.basic
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: test.generated_syntax.basic
+ERROR c.r.r.g.p.PythonCodeGeneratorUtils - target/python/generated_syntax_tests does not exist or is not a directory
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - Write Files ... wrote: 14
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... done
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileListWithRecursion ... looking for files with suffix py in target/python/generated_syntax_tests
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileListWithRecursion ... found 12 files in target/python/generated_syntax_tests
+INFO  c.r.r.g.p.PythonFilesGeneratorTest - generatePythonCodeGeneratorUnitTests ... done
+INFO  c.r.r.g.p.PythonFilesGeneratorTest - PythonFilesGeneratorTest::generatePythonSerializationUnitTests ... start
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileListWithRecursion ... looking for files with suffix rosetta in ../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileListWithRecursion ... found 9 files in ../../../../rune-common/serialization/src/test/resources/rune-serializer-round-trip-test
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... generating Python from 9 rosetta files
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... converted to resources
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... created 9 rosetta models
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.extension
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.extension
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.record
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.record
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.metascheme
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.metascheme
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.choicetype
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.choicetype
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.basic
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.basic
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.metalocation
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.metalocation
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.enumtypes
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.enumtypes
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.data
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.data
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: serialization.test.metakey
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: serialization.test.metakey
+ERROR c.r.r.g.p.PythonCodeGeneratorUtils - target/python/serialization_unit_tests does not exist or is not a directory
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - Write Files ... wrote: 48
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... done
+INFO  c.r.r.g.p.PythonFilesGeneratorTest - generatePythonSerializationUnitTests ... done
+INFO  c.r.r.g.p.PythonFilesGeneratorTest - generatePythonUnitTests::generatePythonUnitTests ... start
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileList ... looking for files with suffix rosetta in build/resources/rosetta/python_unit_tests
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::getFileList ... found 11 files in build/resources/rosetta/python_unit_tests
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... generating Python from 11 rosetta files
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... converted to resources
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... created 11 rosetta models
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.min_max
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.min_max
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.multiline
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.multiline
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.model
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.sum_operator
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.sum_operator
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.sort_operator
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.sort_operator
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.join_operator
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.join_operator
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.deep_path
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.deep_path
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.filter_operator
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.filter_operator
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.switch_operator
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.switch_operator
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: rosetta_dsl.test.semantic.last_operator
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rosetta_dsl.test.semantic.last_operator
+ERROR c.r.r.g.p.PythonCodeGeneratorUtils - target/python/unit_tests does not exist or is not a directory
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - Write Files ... wrote: 35
+INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... done
+INFO  c.r.r.g.p.PythonFilesGeneratorTest - generatePythonUnitTests::generatePythonUnitTests ... done
+[WARNING] Tests run: 10, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 1.344 s - in com.regnosys.rosetta.generator.python.PythonFilesGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.exceptions.PythonExceptionsTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 s - in com.regnosys.rosetta.generator.python.exceptions.PythonExceptionsTest
+[INFO] Running com.regnosys.rosetta.generator.python.rule.DataRuleGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.298 s - in com.regnosys.rosetta.generator.python.rule.DataRuleGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.ModelObjectGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[WARNING] Tests run: 28, Failures: 0, Errors: 0, Skipped: 9, Time elapsed: 0.246 s - in com.regnosys.rosetta.generator.python.object.ModelObjectGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.ChoiceAliasGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s - in com.regnosys.rosetta.generator.python.object.ChoiceAliasGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.ImportsGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rune_dsl.test.semantic.deep_path
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s - in com.regnosys.rosetta.generator.python.object.ImportsGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.PythonEnumGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s - in com.regnosys.rosetta.generator.python.object.PythonEnumGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.RosettaObjectInheritanceGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s - in com.regnosys.rosetta.generator.python.object.RosettaObjectInheritanceGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.EnumGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[WARNING] Tests run: 9, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.038 s - in com.regnosys.rosetta.generator.python.object.EnumGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.PythonObjectGenerationTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[WARNING] Tests run: 13, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.148 s - in com.regnosys.rosetta.generator.python.object.PythonObjectGenerationTest
+[INFO] Running com.regnosys.rosetta.generator.python.object.RosettaExtensionsTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: test
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: test
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s - in com.regnosys.rosetta.generator.python.object.RosettaExtensionsTest
+[INFO] Running com.regnosys.rosetta.generator.python.expression.RosettaExistsExpressionTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.065 s - in com.regnosys.rosetta.generator.python.expression.RosettaExistsExpressionTest
+[INFO] Running com.regnosys.rosetta.generator.python.expression.PythonExpressionGeneratorTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.22 s - in com.regnosys.rosetta.generator.python.expression.PythonExpressionGeneratorTest
+[INFO] Running com.regnosys.rosetta.generator.python.PythonMetaDataGenerationTest
+[WARNING] Tests run: 2, Failures: 0, Errors: 0, Skipped: 2, Time elapsed: 0.001 s - in com.regnosys.rosetta.generator.python.PythonMetaDataGenerationTest
+[INFO] Running com.regnosys.rosetta.generator.python.func.PythonFunctionsTest
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.157 s - in com.regnosys.rosetta.generator.python.func.PythonFunctionsTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[WARNING] Tests run: 113, Failures: 0, Errors: 0, Skipped: 18
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.1.1:jar (default-jar) @ python ---
+[INFO] Building jar: /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/python-0.0.0.main-SNAPSHOT.jar
+[INFO] 
+[INFO] --- javadoc:3.5.0:jar (attach-javadocs) @ python ---
+[INFO] No previous run data found, generating javadoc.
+[WARNING] Javadoc Warnings
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/FunctionDependencyProvider.java:56: warning: no comment
+[WARNING] public Set<EObject> findDependencies(final EObject object) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/FunctionDependencyProvider.java:235: warning: no comment
+[WARNING] public Set<EObject> findDependenciesFromIterable(final Iterable<? extends EObject> objects) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/FunctionDependencyProvider.java:64: warning: no comment
+[WARNING] public Set<EObject> generateDependencies(final EObject object) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/FunctionDependencyProvider.java:279: warning: no comment
+[WARNING] public void reset() {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/FunctionDependencyProvider.java:247: warning: no comment
+[WARNING] public Set<RFunction> rFunctionDependencies(final RosettaExpression expression) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/FunctionDependencyProvider.java:267: warning: no comment
+[WARNING] public Set<RFunction> rFunctionDependencies(final Iterable<? extends RosettaExpression> expressions) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonAttributeProcessor.java:46: warning: no comment
+[WARNING] public CharSequence generateAllAttributes(final Data rosettaClass, final Map<String, String> metaDataKeys) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonAttributeProcessor.java:66: warning: no comment
+[WARNING] public String generateAttribute(final Data rosettaClass, final RAttribute ra, final Map<String, String> metaDataKeys) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonAttributeProcessor.java:372: warning: no comment
+[WARNING] public List<String> getImportsFromAttributes(final Data rosettaClass) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.java:27: warning: no comment
+[WARNING] public Map<String, ArrayList<String>> generateChoiceAliases(final RDataType choiceType) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.java:135: warning: no comment
+[WARNING] public String generateChoiceAliasesAsString(final RDataType choiceType) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.java:119: warning: no comment
+[WARNING] public String toString(final Map<String, ArrayList<String>> choiceAliases) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/PythonCodeGenerator.java:26: warning: no comment
+[WARNING] public class PythonCodeGenerator extends AbstractExternalGenerator {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/PythonCodeGenerator.java:38: warning: no comment
+[WARNING] public PythonCodeGenerator() {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/enums/PythonEnumGenerator.java:19: warning: no comment
+[WARNING] public class PythonEnumGenerator {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/enums/PythonEnumGenerator.java:20: warning: no comment
+[WARNING] public Map<String, ? extends CharSequence> generate(final Iterable<RosettaEnumeration> rosettaEnums, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:77: warning: no comment
+[WARNING] public class PythonExpressionGenerator {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:80: warning: no comment
+[WARNING] public ArrayList<String> if_cond_blocks = new ArrayList<String>();
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:78: warning: no comment
+[WARNING] public List<String> importsFound;
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:82: warning: no comment
+[WARNING] public ArrayList<String> switch_cond_blocks = new ArrayList<String>();
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:1290: warning: no comment
+[WARNING] public boolean addImportsFromConditions(final String variable, final String namespace) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:1157: warning: no comment
+[WARNING] public String binaryExpr(final RosettaBinaryOperation expr, final int iflvl, final boolean isLambda) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:1117: warning: no comment
+[WARNING] public String callableWithArgsCall(final RosettaCallableWithArgs s, final RosettaSymbolReference expr, final int iflvl, final boolean isLambda) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:84: warning: no comment
+[WARNING] public String generateConditions(final Data cls) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:110: warning: no comment
+[WARNING] public String generateConditions(final List<Condition> conditions) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:341: warning: no comment
+[WARNING] public String generateExpression(final RosettaExpression expr, final int iflvl, final boolean isLambda) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:316: warning: no comment
+[WARNING] public String generateExpressionThenElse(final RosettaExpression expr, final List<Integer> iflvl) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:128: warning: no comment
+[WARNING] public String generateFunctionConditions(final List<Condition> conditions, final String condition_type) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:146: warning: no comment
+[WARNING] public boolean isConstraintCondition(final Condition cond) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:979: warning: no comment
+[WARNING] protected String reference(final RosettaReference expr, final int iflvl, final boolean isLambda) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.java:998: warning: no comment
+[WARNING] public String symbolReference(final RosettaSymbolReference expr, final int iflvl, final boolean isLambda) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/PythonFunctionGenerator.java:707: warning: no comment
+[WARNING] public boolean addImportsFromConditions(final String variable, final String namespace) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/func/PythonFunctionGenerator.java:55: warning: no comment
+[WARNING] public Map<String, ? extends CharSequence> generate(final List<Function> rosettaFunctions, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonMetaDataProcessor.java:22: warning: no @param for rosettaClasses
+[WARNING] public Map<String, String> getMetaDataKeys(List<Data> rosettaClasses) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonMetaDataProcessor.java:22: warning: no @return
+[WARNING] public Map<String, String> getMetaDataKeys(List<Data> rosettaClasses) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonMetaDataProcessor.java:14: warning: no comment
+[WARNING] public class PythonMetaDataProcessor {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:9: warning: no comment
+[WARNING] public class PythonModelGeneratorUtil {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:39: warning: no comment
+[WARNING] public static CharSequence classComment(final String definition, final Iterable<RAttribute> attributes) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:23: warning: no comment
+[WARNING] public static CharSequence comment(final String definition) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:69: warning: no comment
+[WARNING] public static String createImports(final String name) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:114: warning: no comment
+[WARNING] public static String createImportsFunc(final String name) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:189: warning: no comment
+[WARNING] public static String createPYProjectTomlFile(final String namespace, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:175: warning: no comment
+[WARNING] public static String createTopLevelInitFile(final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:179: warning: no comment
+[WARNING] public static String createVersionFile(final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:10: warning: no comment
+[WARNING] public static String fileComment(final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:146: warning: no comment
+[WARNING] public static String toFileName(final String namespace, final String fileName) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:156: warning: no comment
+[WARNING] public static String toPyFileName(final String namespace, final String fileName) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/util/PythonModelGeneratorUtil.java:164: warning: no comment
+[WARNING] public static String toPyFunctionFileName(final String namespace, final String fileName) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonModelObjectGenerator.java:52: warning: no @param for rosettaClasses
+[WARNING] public Map<String, ? extends CharSequence> generate(final Iterable<Data> rosettaClasses, final Iterable<RosettaMetaType> metaTypes, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonModelObjectGenerator.java:52: warning: no @param for metaTypes
+[WARNING] public Map<String, ? extends CharSequence> generate(final Iterable<Data> rosettaClasses, final Iterable<RosettaMetaType> metaTypes, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonModelObjectGenerator.java:52: warning: no @param for version
+[WARNING] public Map<String, ? extends CharSequence> generate(final Iterable<Data> rosettaClasses, final Iterable<RosettaMetaType> metaTypes, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/main/generated/xtend/com/regnosys/rosetta/generator/python/object/PythonModelObjectGenerator.java:52: warning: no @return
+[WARNING] public Map<String, ? extends CharSequence> generate(final Iterable<Data> rosettaClasses, final Iterable<RosettaMetaType> metaTypes, final String version) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:13: warning: no comment
+[WARNING] public class PythonTranslator {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:100: warning: no comment
+[WARNING] public static String getAttributeTypeWithMeta (String attributeType) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:167: warning: no comment
+[WARNING] public static boolean isPythonBasicType(final String pythonType) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:160: warning: no comment
+[WARNING] public static boolean isRosettaBasicType(RAttribute ra) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:157: warning: no comment
+[WARNING] public static boolean isRosettaBasicType(String rt) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:65: warning: no comment
+[WARNING] public static String mangleName(String attrib) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:122: warning: no comment
+[WARNING] public static String toPythonBasicType(String rosettaType) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:149: warning: no comment
+[WARNING] public static String toPythonType(Attribute rosettaAttributeType) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:138: warning: no comment
+[WARNING] public static String toPythonType(RAttribute ra) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/PythonTranslator.java:127: warning: no comment
+[WARNING] public static String toPythonType(RType rt) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:11: warning: no comment
+[WARNING] public class Util {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:13: warning: no comment
+[WARNING] public static <T> Iterable<T> distinct(Iterable<T> parentIterable) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:17: warning: no comment
+[WARNING] public static <T, U> Iterable<T> distinctBy(Iterable<T> parentIterable, Function<T, U> extractFunction) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:21: warning: no comment
+[WARNING] public static <T> boolean exists(Iterable<?> iter, Class<T> clazz) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:75: warning: no comment
+[WARNING] public static String fullname(RosettaType clazz) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:30: warning: no comment
+[WARNING] public static String getNamespace(RosettaModel rm) {
+[WARNING] ^
+[WARNING] /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/util/Util.java:79: warning: no comment
+[WARNING] public static String packageName(RosettaType clazz) {
+[WARNING] ^
+[WARNING] 69 warnings
+[INFO] Building jar: /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/python-0.0.0.main-SNAPSHOT-javadoc.jar
+[INFO] 
+[INFO] >>> source:3.2.1:jar (default) > generate-sources @ python >>>
+[INFO] 
+[INFO] --- enforcer:3.2.1:enforce (enforce-java) @ python ---
+[INFO] Rule 1: org.apache.maven.enforcer.rules.dependency.BannedDependencies passed
+[INFO] 
+[INFO] --- xtend:2.27.0:compile (Generate xtend sources) @ python ---
+[WARNING] 
+WARNING: 	PythonExpressionGenerator.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/expressions/PythonExpressionGenerator.xtend
+228: Unnecessary cast from RosettaFeature to RosettaFeature
+[WARNING] 
+WARNING: 	PythonChoiceAliasProcessor.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.xtend
+33: The method asRDataType() from the type RChoiceType is deprecated
+[WARNING] 
+WARNING: 	PythonChoiceAliasProcessor.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/main/java/com/regnosys/rosetta/generator/python/object/PythonChoiceAliasProcessor.xtend
+63: The method asRDataType() from the type RChoiceType is deprecated
+[INFO] 
+[INFO] <<< source:3.2.1:jar (default) < generate-sources @ python <<<
+[INFO] 
+[INFO] 
+[INFO] --- source:3.2.1:jar (default) @ python ---
+[INFO] Building jar: /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/python-0.0.0.main-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- enforcer:3.2.1:enforce (default) @ python ---
+[INFO] 
+[INFO] --- checkstyle:3.1.0:check (checkstyle) @ python ---
+[WARNING] checkstyle:check violations detected but failOnViolation set to false
+[INFO] 
+[INFO] --- install:2.5.2:install (default-install) @ python ---
+[INFO] Installing /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/python-0.0.0.main-SNAPSHOT.jar to /Users/dls/.m2/repository/com/regnosys/rosetta/code-generators/python/0.0.0.main-SNAPSHOT/python-0.0.0.main-SNAPSHOT.jar
+[INFO] Installing /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/pom.xml to /Users/dls/.m2/repository/com/regnosys/rosetta/code-generators/python/0.0.0.main-SNAPSHOT/python-0.0.0.main-SNAPSHOT.pom
+[INFO] Installing /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/python-0.0.0.main-SNAPSHOT-javadoc.jar to /Users/dls/.m2/repository/com/regnosys/rosetta/code-generators/python/0.0.0.main-SNAPSHOT/python-0.0.0.main-SNAPSHOT-javadoc.jar
+[INFO] Installing /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/target/python-0.0.0.main-SNAPSHOT-sources.jar to /Users/dls/.m2/repository/com/regnosys/rosetta/code-generators/python/0.0.0.main-SNAPSHOT/python-0.0.0.main-SNAPSHOT-sources.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  15.968 s
+[INFO] Finished at: 2025-01-27T14:37:44-05:00
+[INFO] ------------------------------------------------------------------------

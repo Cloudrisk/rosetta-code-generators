@@ -119,7 +119,7 @@ class DataRuleGeneratorTest {
         val expectedQuote=
         '''
         class Quote(BaseDataClass):
-            quotePrice: Optional[com.rosetta.test.model.QuotePrice.QuotePrice] = Field(None, description='')
+            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice]] = Field(None, description='')
             
             @rune_condition
             def condition_0_Quote_Price(self):
@@ -167,7 +167,7 @@ class DataRuleGeneratorTest {
         val expectedQuote=
         '''
         class Quote(BaseDataClass):
-            quotePrice: Optional[com.rosetta.test.model.QuotePrice.QuotePrice] = Field(None, description='')
+            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice]] = Field(None, description='')
             
             @rune_condition
             def condition_0_Quote_Price(self):
@@ -209,7 +209,7 @@ class DataRuleGeneratorTest {
         val expectedQuote=
         '''
         class Quote(BaseDataClass):
-            quotePrice: Optional[com.rosetta.test.model.QuotePrice.QuotePrice] = Field(None, description='')
+            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice]] = Field(None, description='')
             
             @rune_condition
             def condition_0_Quote_Price(self):

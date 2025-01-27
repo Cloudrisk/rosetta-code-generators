@@ -336,7 +336,7 @@ class PythonExpressionGeneratorTest {
     """
     Test only exists condition
     """
-    aValue: com.rosetta.test.model.A.A = Field(..., description='Test A type aValue')
+    aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='Test A type aValue')
     """
     Test A type aValue
     """
@@ -388,7 +388,7 @@ class PythonExpressionGeneratorTest {
     """
     Test count operation condition
     """
-    aValue: list[com.rosetta.test.model.A.A] = Field([], description='Test A type aValue', min_length=1)
+    aValue: list[Annotated[com.rosetta.test.model.A.A]] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """
@@ -490,7 +490,7 @@ class PythonExpressionGeneratorTest {
     """
     Test distinct operation condition
     """
-    aValue: list[com.rosetta.test.model.A.A] = Field([], description='Test A type aValue', min_length=1)
+    aValue: list[Annotated[com.rosetta.test.model.A.A]] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """
@@ -553,7 +553,7 @@ class PythonExpressionGeneratorTest {
                 """
                 Test filter operation condition
                 """
-                aValue: com.rosetta.test.model.A.A = Field(..., description='Test A type aValue')
+                aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='Test A type aValue')
                 """
                 Test A type aValue
                 """
@@ -637,7 +637,7 @@ class PythonExpressionGeneratorTest {
     """
     Test int field 2
     """
-    aValue: list[com.rosetta.test.model.A.A] = Field([], description='Test A type aValue', min_length=1)
+    aValue: list[Annotated[com.rosetta.test.model.A.A]] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """'''
@@ -645,7 +645,7 @@ class PythonExpressionGeneratorTest {
     """
     Test filter operation condition
     """
-    bValue: list[com.rosetta.test.model.B.B] = Field([], description='Test B type bValue', min_length=1)
+    bValue: list[Annotated[com.rosetta.test.model.B.B]] = Field([], description='Test B type bValue', min_length=1)
     """
     Test B type bValue
     """
@@ -668,9 +668,9 @@ class PythonExpressionGeneratorTest {
         
         return if_cond_fn(rune_all_elements(rune_resolve_attr(self, "field3"), "=", True), _then_fn0, _else_fn0)'''
             
-           assertTrue(python.toString.contains(expectedClassA), "\n" + "expectedClassA" + expectedClassA + "\npython\n" + python)
-           assertTrue(python.toString.contains(expectedClassB), "\n" + "expectedClassB" + expectedClassB + "\npython\n" + python)
-           assertTrue(python.toString.contains(expectedClassC), "\n" + "expectedClassC" + expectedClassC + "\npython\n" + python)
+           assertTrue(python.toString.contains(expectedClassA), "\n" + "expectedClassA\n" + expectedClassA + "\npython\n" + python)
+           assertTrue(python.toString.contains(expectedClassB), "\n" + "expectedClassB\n" + expectedClassB + "\npython\n" + python)
+           assertTrue(python.toString.contains(expectedClassC), "\n" + "expectedClassC\n" + expectedClassC + "\npython\n" + python)
            assertTrue(python.toString.contains(expected), "\n" + "expected" + expected + "\npython\n" + python)
     }
     

@@ -13,6 +13,7 @@ import java.util.ArrayList
 import java.util.HashMap
 import org.eclipse.xtend2.lib.StringConcatenation
 import java.util.Map
+import com.regnosys.rosetta.types.REnumType
 
 /*
  * Generate Python from Rune Attributes
@@ -52,11 +53,14 @@ class PythonAttributeProcessor {
         // TODO: confirm refactoring of type properly handles enums
         var attrTypeName = null as String;
         // strip out the alias if there is one and align the attribute type name to the to the underlying type
+        var isRosettaBasicType = false;
         if (attrRType instanceof RAliasType) {
             attrRType = typeSystem.stripFromTypeAliases(attrRType);
             attrTypeName = PythonTranslator::toPythonType(attrRType); // alias must be of underlying type number or string
+            isRosettaBasicType = true;
         } else {
             attrTypeName = PythonTranslator::toPythonType(ra);
+            isRosettaBasicType = PythonTranslator::isRosettaBasicType (ra);
         }
         // an empty attribute name is cause for an exception
         if (attrTypeName === null) {
@@ -108,12 +112,12 @@ class PythonAttributeProcessor {
         /*
          * numberTypes: list[Decimal] = Field([], description='', min_length=1)
          *  attribute name: list[attribute type] = Field([], 
-         *                                              description, 
-         *                                              [min_length=#],
-         *                                              [max_length=#], 
-         *                                              [pattern="ssss"],
-         *                                              [max_digits=#],
-         *                                              [decimal_places=#]
+         *                                               description, 
+         *                                               [min_length=#],
+         *                                               [max_length=#], 
+         *                                               [pattern="ssss"],
+         *                                               [max_digits=#],
+         *                                               [decimal_places=#]
          * list[Annotated[
          *     NumberWithMeta,
          *     NumberWithMeta.serializer(),
@@ -181,29 +185,24 @@ class PythonAttributeProcessor {
             }
         }
         // process meta data
-        var metaPrefix = "";
-        var metaSuffix = "";
         val validators = new ArrayList<String>()
         // if the attribute of a type that is metadata, add "@key"
         val attributeIsMetaKey = metaDataKeys.containsKey(attrTypeName);
         if (attributeIsMetaKey) {
             validators.add('@key');
-            // TODO: confirm that @key:external should be added here
             validators.add("@key:external")
         }
         // check whether the attribute has meta 
         if (attrRMAT.hasMeta()) {
             for (ma : attrRMAT.getMetaAttributes()) {
                 // TODO: handle all meta types
+                //       id treated as a key
+                //       ignoring address "pointsTo"
                 switch (ma.getName()) {
                     case "key",
                     case "id": {
-                        // TODO: confirm that there's no need to worry about adding "@key" et al twice bc attributeIsMetaKey is true
                         validators.add("@key");
                         validators.add("@key:external")
-                        if (ma.getName().equals('id')) {
-                            println('----  meta id processed as @key');
-                        }
                     }
                     case "reference": {
                         validators.add("@ref");
@@ -212,17 +211,27 @@ class PythonAttributeProcessor {
                     case "scheme": {
                         validators.add("@scheme");
                     }
+                    case "location": {
+                        validators.add("@key:scoped")
+                    }
+                    case "address": {
+                        validators.add("@ref:scoped")
+                    }
                     default: {
                         println('---- unprocessed meta ... name: ' + ma.getName())
                     }
                 }
             }
         }
+        var metaPrefix = "";
+        var metaSuffix = "";
+        var hasBeenAnnotated = false;
         if (!validators.isEmpty()) {
             if (!attributeIsMetaKey) {
                 attrTypeName = PythonTranslator.getAttributeTypeWithMeta(attrTypeName);
             }
             metaPrefix = "Annotated[";
+            hasBeenAnnotated = true;
             metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator((";
             var isFirstValidator = true;
             var isOne = true;
@@ -241,6 +250,13 @@ class PythonAttributeProcessor {
                 metaSuffix += ", ";
             }
             metaSuffix += "))]"
+        }
+        if (!hasBeenAnnotated && !isRosettaBasicType && !(attrRType instanceof REnumType)) { 
+            if (metaPrefix.length() > 0) {
+                println ("----- @@@@@ whoops ... metaPrefix: " + metaPrefix)
+            }
+            metaPrefix = "Annotated["
+            metaSuffix = "]"
         }
         var _builder = new StringConcatenation();
         _builder.append(attrName);
@@ -295,7 +311,7 @@ class PythonAttributeProcessor {
     def getImportsFromAttributes(Data rosettaClass) {
         val allAttributes = rosettaClass.buildRDataType.getOwnAttributes.filter [
             (it.name !== "reference") && (it.name !== "meta") && (it.name !== "scheme")
-        ].filter[!PythonTranslator::isRosettaTypeSupported(it)]
+        ].filter[!PythonTranslator::isRosettaBasicType(it)]
 
         val imports = newArrayList
         for (attribute : allAttributes) {
@@ -307,7 +323,7 @@ class PythonAttributeProcessor {
             if (rt === null) {
                 throw new Exception("Attribute type is null for " + attribute.name + " for class " + rosettaClass.name)
             }
-            if (!PythonTranslator::isRosettaTypeSupported(rt.getName())) { // need imports for derived types
+            if (!PythonTranslator::isRosettaBasicType(rt.getName())) { // need imports for derived types
                 imports.add('''import «rt.getQualifiedName»''')
             }
         }

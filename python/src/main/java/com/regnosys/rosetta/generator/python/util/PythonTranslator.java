@@ -154,16 +154,15 @@ public class PythonTranslator {
         return (pythonType == null) ? StringExtensions.toFirstUpper(rosettaType) : pythonType;
     }
 
-    public static boolean isRosettaTypeSupported(String rt) {
+    public static boolean isRosettaBasicType(String rt) {
         return (toPythonBasicTypeInnerFunction(rt) != null);
     }
-    public static boolean isRosettaTypeSupported(RAttribute ra) {
-
+    public static boolean isRosettaBasicType(RAttribute ra) {
     	if (ra == null) {
             return false;
         }
-        RType rt = (ra != null) ? ra.getRMetaAnnotatedType().getRType() : null;
-        return (rt != null) ? isRosettaTypeSupported(rt.getName()) : false;
+        RType rt = ra.getRMetaAnnotatedType().getRType();
+        return (rt != null) ? isRosettaBasicType(rt.getName()) : false;
     }
     public static boolean isPythonBasicType(final String pythonType) {
         // Check if the given type is in the set of Python types

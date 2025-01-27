@@ -302,7 +302,7 @@ class ModelObjectGeneratorTest {
         val expectedA =
         '''
         class A(B):
-            c: list[com.rosetta.test.model.C.C] = Field([], description='', min_length=1)'''
+            c: list[Annotated[com.rosetta.test.model.C.C]] = Field([], description='', min_length=1)'''
 
         val expectedB=
         '''
@@ -476,7 +476,7 @@ class ModelObjectGeneratorTest {
         val expectedB = '''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description='')
     intValue2: Optional[int] = Field(None, description='')
-    aValue: com.rosetta.test.model.A.A = Field(..., description='')
+    aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='')
     
     @rune_condition
     def condition_0_Rule(self):
@@ -541,7 +541,7 @@ class ModelObjectGeneratorTest {
     """
     Test string list
     """
-    testTypeValue4: com.rosetta.test.model.TestType2.TestType2 = Field(..., description='Test TestType2')
+    testTypeValue4: Annotated[com.rosetta.test.model.TestType2.TestType2] = Field(..., description='Test TestType2')
     """
     Test TestType2
     """
@@ -591,7 +591,7 @@ class ModelObjectGeneratorTest {
     """
     Specifies an amount to be qualified and used in a Price or Quantity definition.
     """
-    unitOfAmount: com.rosetta.test.model.UnitType.UnitType = Field(..., description='Qualifies the unit by which the amount is measured.')
+    unitOfAmount: Annotated[com.rosetta.test.model.UnitType.UnitType] = Field(..., description='Qualifies the unit by which the amount is measured.')
     """
     Qualifies the unit by which the amount is measured.
     """'''
@@ -615,7 +615,7 @@ class ModelObjectGeneratorTest {
     """
     Defines the number to be multiplied by the amount to derive a total quantity.
     """
-    multiplierUnit: Optional[com.rosetta.test.model.UnitType.UnitType] = Field(None, description='Qualifies the multiplier with the applicable unit. For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).')
+    multiplierUnit: Optional[Annotated[com.rosetta.test.model.UnitType.UnitType]] = Field(None, description='Qualifies the multiplier with the applicable unit. For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).')
     """
     Qualifies the multiplier with the applicable unit.  For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).
     """'''
@@ -799,7 +799,7 @@ class ModelObjectGeneratorTest {
         val expectedB = '''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description='')
     intValue2: Optional[int] = Field(None, description='')
-    aValue: com.rosetta.test.model.A.A = Field(..., description='')
+    aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='')
     
     @rune_condition
     def condition_0_Rule(self):
