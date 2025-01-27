@@ -336,7 +336,7 @@ class PythonExpressionGeneratorTest {
     """
     Test only exists condition
     """
-    aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='Test A type aValue')
+    aValue: Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()] = Field(..., description='Test A type aValue')
     """
     Test A type aValue
     """
@@ -388,7 +388,7 @@ class PythonExpressionGeneratorTest {
     """
     Test count operation condition
     """
-    aValue: list[Annotated[com.rosetta.test.model.A.A]] = Field([], description='Test A type aValue', min_length=1)
+    aValue: list[Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()]] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """
@@ -490,7 +490,7 @@ class PythonExpressionGeneratorTest {
     """
     Test distinct operation condition
     """
-    aValue: list[Annotated[com.rosetta.test.model.A.A]] = Field([], description='Test A type aValue', min_length=1)
+    aValue: list[Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()]] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """
@@ -637,7 +637,7 @@ class PythonExpressionGeneratorTest {
     """
     Test int field 2
     """
-    aValue: list[Annotated[com.rosetta.test.model.A.A]] = Field([], description='Test A type aValue', min_length=1)
+    aValue: list[Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()]] = Field([], description='Test A type aValue', min_length=1)
     """
     Test A type aValue
     """'''
@@ -645,7 +645,7 @@ class PythonExpressionGeneratorTest {
     """
     Test filter operation condition
     """
-    bValue: list[Annotated[com.rosetta.test.model.B.B]] = Field([], description='Test B type bValue', min_length=1)
+    bValue: list[Annotated[com.rosetta.test.model.B.B, com.rosetta.test.model.B.B.serializer(), com.rosetta.test.model.B.B.validator()]] = Field([], description='Test B type bValue', min_length=1)
     """
     Test B type bValue
     """

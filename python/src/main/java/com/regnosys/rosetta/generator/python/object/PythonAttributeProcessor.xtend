@@ -255,8 +255,8 @@ class PythonAttributeProcessor {
             if (metaPrefix.length() > 0) {
                 println ("----- @@@@@ whoops ... metaPrefix: " + metaPrefix)
             }
-            metaPrefix = "Annotated["
-            metaSuffix = "]"
+            metaPrefix = "Annotated[";
+            metaSuffix = ", " + attrTypeName + ".serializer(), " + attrTypeName + ".validator()]";
         }
         var _builder = new StringConcatenation();
         _builder.append(attrName);

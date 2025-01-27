@@ -74,7 +74,7 @@ definition">
         val expectedB='''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description='')
     intValue2: Optional[int] = Field(None, description='')
-    aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='')
+    aValue: Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()] = Field(..., description='')
     
     @rune_condition
     def condition_0_Rule(self):
@@ -138,7 +138,7 @@ definition">
     """
     Test string list
     """
-    testTypeValue4: Annotated[com.rosetta.test.model.TestType2.TestType2] = Field(..., description='Test TestType2')
+    testTypeValue4: Annotated[com.rosetta.test.model.TestType2.TestType2, com.rosetta.test.model.TestType2.TestType2.serializer(), com.rosetta.test.model.TestType2.TestType2.validator()] = Field(..., description='Test TestType2')
     """
     Test TestType2
     """
@@ -771,7 +771,7 @@ definition">
     """
     Specifies an amount to be qualified and used in a Price or Quantity definition.
     """
-    unitOfAmount: Annotated[com.rosetta.test.model.UnitType.UnitType] = Field(..., description='Qualifies the unit by which the amount is measured.')
+    unitOfAmount: Annotated[com.rosetta.test.model.UnitType.UnitType, com.rosetta.test.model.UnitType.UnitType.serializer(), com.rosetta.test.model.UnitType.UnitType.validator()] = Field(..., description='Qualifies the unit by which the amount is measured.')
     """
     Qualifies the unit by which the amount is measured.
     """'''
@@ -791,13 +791,13 @@ definition">
     """
     Defines the number to be multiplied by the amount to derive a total quantity.
     """
-    multiplierUnit: Optional[Annotated[com.rosetta.test.model.UnitType.UnitType]] = Field(None, description='Qualifies the multiplier with the applicable unit. For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).')
+    multiplierUnit: Optional[Annotated[com.rosetta.test.model.UnitType.UnitType, com.rosetta.test.model.UnitType.UnitType.serializer(), com.rosetta.test.model.UnitType.UnitType.validator()]] = Field(None, description='Qualifies the multiplier with the applicable unit. For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).')
     """
     Qualifies the multiplier with the applicable unit.  For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).
     """'''
-        assertTrue(python.toString.contains(expectedMeasureBase))
-        assertTrue(python.toString.contains(expectedUnitType))
-        assertTrue(python.toString.contains(expectedQuantity))
+        assertTrue(python.toString.contains(expectedMeasureBase), "\n" + "expectedMeasureBase" + "\n" + expectedMeasureBase + "\n" + python)
+        assertTrue(python.toString.contains(expectedUnitType), "\n" + "expectedUnitType" + "\n" + expectedUnitType + "\n" + python)
+        assertTrue(python.toString.contains(expectedQuantity), "\n" + "expectedQuantity" + "\n" + expectedQuantity + "\n" + python)
     }
 
     @Test
@@ -1524,7 +1524,7 @@ definition">
         val expectedB='''class B(BaseDataClass):
     intValue1: Optional[int] = Field(None, description='')
     intValue2: Optional[int] = Field(None, description='')
-    aValue: Annotated[com.rosetta.test.model.A.A] = Field(..., description='')
+    aValue: Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()] = Field(..., description='')
     
     @rune_condition
     def condition_0_Rule(self):

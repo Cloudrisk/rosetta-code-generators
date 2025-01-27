@@ -17,5 +17,5 @@ __all__ = ['Root']
 
 
 class Root(BaseDataClass):
-    nodeRef: Optional[Annotated[test.generated_syntax.meta_keys.NodeRef.NodeRef]] = Field(None, description='')
-    attributeRef: Optional[Annotated[test.generated_syntax.meta_keys.AttributeRef.AttributeRef]] = Field(None, description='')
+    nodeRef: Optional[Annotated[test.generated_syntax.meta_keys.NodeRef.NodeRef, test.generated_syntax.meta_keys.NodeRef.NodeRef.serializer(), test.generated_syntax.meta_keys.NodeRef.NodeRef.validator()]] = Field(None, description='')
+    attributeRef: Optional[Annotated[test.generated_syntax.meta_keys.AttributeRef.AttributeRef, test.generated_syntax.meta_keys.AttributeRef.AttributeRef.serializer(), test.generated_syntax.meta_keys.AttributeRef.AttributeRef.validator()]] = Field(None, description='')

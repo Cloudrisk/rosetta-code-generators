@@ -50,9 +50,6 @@ WARNING: 	PythonMetaDataGenerationTest.xtend - /Users/dls/projects/rune/rosetta-
 [WARNING] 
 WARNING: 	PythonExpressionGeneratorTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/expression/PythonExpressionGeneratorTest.xtend
 13: The import 'org.junit.Ignore' is never used.
-[WARNING] 
-WARNING: 	DataRuleGeneratorTest.xtend - /Users/dls/projects/rune/rosetta-code-generators/CloudRisk/rosetta-code-generators/python/src/test/java/com/regnosys/rosetta/generator/python/rule/DataRuleGeneratorTest.xtend
-417: Inconsistent indentation
 [INFO] 
 [INFO] --- resources:3.1.0:testResources (default-testResources) @ python ---
 [INFO] Using 'UTF-8' encoding to copy filtered resources.
@@ -146,12 +143,12 @@ ERROR c.r.r.g.p.PythonCodeGeneratorUtils - target/python/unit_tests does not exi
 INFO  c.r.r.g.p.PythonCodeGeneratorUtils - Write Files ... wrote: 35
 INFO  c.r.r.g.p.PythonCodeGeneratorUtils - PythonFilesGeneratorTest::generatePythonFromDSLFiles ... done
 INFO  c.r.r.g.p.PythonFilesGeneratorTest - generatePythonUnitTests::generatePythonUnitTests ... done
-[WARNING] Tests run: 10, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 1.344 s - in com.regnosys.rosetta.generator.python.PythonFilesGeneratorTest
+[WARNING] Tests run: 10, Failures: 0, Errors: 0, Skipped: 1, Time elapsed: 1.32 s - in com.regnosys.rosetta.generator.python.PythonFilesGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.exceptions.PythonExceptionsTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 s - in com.regnosys.rosetta.generator.python.exceptions.PythonExceptionsTest
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.058 s - in com.regnosys.rosetta.generator.python.exceptions.PythonExceptionsTest
 [INFO] Running com.regnosys.rosetta.generator.python.rule.DataRuleGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
@@ -166,7 +163,7 @@ DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.298 s - in com.regnosys.rosetta.generator.python.rule.DataRuleGeneratorTest
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.272 s - in com.regnosys.rosetta.generator.python.rule.DataRuleGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.ModelObjectGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
@@ -187,26 +184,26 @@ DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[WARNING] Tests run: 28, Failures: 0, Errors: 0, Skipped: 9, Time elapsed: 0.246 s - in com.regnosys.rosetta.generator.python.object.ModelObjectGeneratorTest
+[WARNING] Tests run: 28, Failures: 0, Errors: 0, Skipped: 9, Time elapsed: 0.267 s - in com.regnosys.rosetta.generator.python.object.ModelObjectGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.ChoiceAliasGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.013 s - in com.regnosys.rosetta.generator.python.object.ChoiceAliasGeneratorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s - in com.regnosys.rosetta.generator.python.object.ChoiceAliasGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.ImportsGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: rune_dsl.test.semantic.deep_path
 [INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s - in com.regnosys.rosetta.generator.python.object.ImportsGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.PythonEnumGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s - in com.regnosys.rosetta.generator.python.object.PythonEnumGeneratorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.005 s - in com.regnosys.rosetta.generator.python.object.PythonEnumGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.RosettaObjectInheritanceGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.009 s - in com.regnosys.rosetta.generator.python.object.RosettaObjectInheritanceGeneratorTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.011 s - in com.regnosys.rosetta.generator.python.object.RosettaObjectInheritanceGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.EnumGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[WARNING] Tests run: 9, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.038 s - in com.regnosys.rosetta.generator.python.object.EnumGeneratorTest
+[WARNING] Tests run: 9, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.043 s - in com.regnosys.rosetta.generator.python.object.EnumGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.PythonObjectGenerationTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
@@ -218,14 +215,14 @@ DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[WARNING] Tests run: 13, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.148 s - in com.regnosys.rosetta.generator.python.object.PythonObjectGenerationTest
+[WARNING] Tests run: 13, Failures: 0, Errors: 0, Skipped: 3, Time elapsed: 0.187 s - in com.regnosys.rosetta.generator.python.object.PythonObjectGenerationTest
 [INFO] Running com.regnosys.rosetta.generator.python.object.RosettaExtensionsTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: test
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: test
-[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s - in com.regnosys.rosetta.generator.python.object.RosettaExtensionsTest
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.017 s - in com.regnosys.rosetta.generator.python.object.RosettaExtensionsTest
 [INFO] Running com.regnosys.rosetta.generator.python.expression.RosettaExistsExpressionTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.065 s - in com.regnosys.rosetta.generator.python.expression.RosettaExistsExpressionTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.079 s - in com.regnosys.rosetta.generator.python.expression.RosettaExistsExpressionTest
 [INFO] Running com.regnosys.rosetta.generator.python.expression.PythonExpressionGeneratorTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
@@ -241,9 +238,9 @@ DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.22 s - in com.regnosys.rosetta.generator.python.expression.PythonExpressionGeneratorTest
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.254 s - in com.regnosys.rosetta.generator.python.expression.PythonExpressionGeneratorTest
 [INFO] Running com.regnosys.rosetta.generator.python.PythonMetaDataGenerationTest
-[WARNING] Tests run: 2, Failures: 0, Errors: 0, Skipped: 2, Time elapsed: 0.001 s - in com.regnosys.rosetta.generator.python.PythonMetaDataGenerationTest
+[WARNING] Tests run: 2, Failures: 0, Errors: 0, Skipped: 2, Time elapsed: 0 s - in com.regnosys.rosetta.generator.python.PythonMetaDataGenerationTest
 [INFO] Running com.regnosys.rosetta.generator.python.func.PythonFunctionsTest
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
@@ -259,7 +256,7 @@ DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
 DEBUG c.r.r.g.p.PythonCodeGenerator - Processing module: com.rosetta.test.model
-[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.157 s - in com.regnosys.rosetta.generator.python.func.PythonFunctionsTest
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.175 s - in com.regnosys.rosetta.generator.python.func.PythonFunctionsTest
 [INFO] 
 [INFO] Results:
 [INFO] 
@@ -517,6 +514,6 @@ WARNING: 	PythonChoiceAliasProcessor.xtend - /Users/dls/projects/rune/rosetta-co
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  15.968 s
-[INFO] Finished at: 2025-01-27T14:37:44-05:00
+[INFO] Total time:  16.321 s
+[INFO] Finished at: 2025-01-27T16:28:39-05:00
 [INFO] ------------------------------------------------------------------------

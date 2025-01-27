@@ -116,28 +116,24 @@ class DataRuleGeneratorTest {
                     offerPrice number (0..1)
         '''.generatePython
         
-        val expectedQuote=
-        '''
-        class Quote(BaseDataClass):
-            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice]] = Field(None, description='')
-            
-            @rune_condition
-            def condition_0_Quote_Price(self):
-                item = self
-                def _then_fn0():
-                    return (rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "bidPrice")) or rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "offerPrice")))
-                
-                def _else_fn0():
-                    return True
-                
-                return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "quotePrice")), _then_fn0, _else_fn0)
+        val expectedQuote='''class Quote(BaseDataClass):
+    quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice, com.rosetta.test.model.QuotePrice.QuotePrice.serializer(), com.rosetta.test.model.QuotePrice.QuotePrice.validator()]] = Field(None, description='')
+    
+    @rune_condition
+    def condition_0_Quote_Price(self):
+        item = self
+        def _then_fn0():
+            return (rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "bidPrice")) or rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "offerPrice")))
+        
+        def _else_fn0():
+            return True
+        
+        return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "quotePrice")), _then_fn0, _else_fn0)
         '''
 
-        val expectedQuotePrice=
-        '''
-        class QuotePrice(BaseDataClass):
-            bidPrice: Optional[Decimal] = Field(None, description='')
-            offerPrice: Optional[Decimal] = Field(None, description='')
+        val expectedQuotePrice= '''class QuotePrice(BaseDataClass):
+    bidPrice: Optional[Decimal] = Field(None, description='')
+    offerPrice: Optional[Decimal] = Field(None, description='')
         '''
         
         assertTrue(python.toString.contains(expectedQuote))
@@ -164,30 +160,23 @@ class DataRuleGeneratorTest {
 
         '''.generatePython
         
-        val expectedQuote=
-        '''
-        class Quote(BaseDataClass):
-            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice]] = Field(None, description='')
-            
-            @rune_condition
-            def condition_0_Quote_Price(self):
-                item = self
-                def _then_fn0():
-                    return ((rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "price1")) and rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "price2"))) and rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "price3")))
-                
-                def _else_fn0():
-                    return True
-                
-                return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "quotePrice")), _then_fn0, _else_fn0)
+        val expectedQuote='''class Quote(BaseDataClass):
+    quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice, com.rosetta.test.model.QuotePrice.QuotePrice.serializer(), com.rosetta.test.model.QuotePrice.QuotePrice.validator()]] = Field(None, description='')
+    
+    @rune_condition
+    def condition_0_Quote_Price(self):
+        item = self
+        def _then_fn0():
+            return ((rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "price1")) and rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "price2"))) and rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "quotePrice"), "price3")))
         
-        '''
-        val expectedQuotePrice=
-        '''
-        class QuotePrice(BaseDataClass):
-            price1: Optional[Decimal] = Field(None, description='')
-            price2: Optional[Decimal] = Field(None, description='')
-            price3: Optional[Decimal] = Field(None, description='')
-        '''
+        def _else_fn0():
+            return True
+        
+        return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "quotePrice")), _then_fn0, _else_fn0)'''
+        val expectedQuotePrice='''class QuotePrice(BaseDataClass):
+    price1: Optional[Decimal] = Field(None, description='')
+    price2: Optional[Decimal] = Field(None, description='')
+    price3: Optional[Decimal] = Field(None, description='')'''
         
         assertTrue(python.toString.contains(expectedQuote))
         assertTrue(python.toString.contains(expectedQuotePrice))
@@ -209,7 +198,7 @@ class DataRuleGeneratorTest {
         val expectedQuote=
         '''
         class Quote(BaseDataClass):
-            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice]] = Field(None, description='')
+            quotePrice: Optional[Annotated[com.rosetta.test.model.QuotePrice.QuotePrice, com.rosetta.test.model.QuotePrice.QuotePrice.serializer(), com.rosetta.test.model.QuotePrice.QuotePrice.validator()]] = Field(None, description='')
             
             @rune_condition
             def condition_0_Quote_Price(self):
@@ -414,7 +403,7 @@ class DataRuleGeneratorTest {
         val python = '''
             type CondTest:
                 multiAttr number (1..*)
-    
+
                 condition:
                     multiAttr count >= 0
         '''.generatePython
