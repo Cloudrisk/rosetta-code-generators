@@ -19,5 +19,3 @@ kotlin-feature.code-workspace
 json-schema/src/main/generated-sources/
 json-schema/src/test/generated-sources/
 **/.checkstyle
-python/test/serialization_tests/rune.runtime-*.*.*-py3-none-any.whl
-python/test/serialization_tests/runtime-versions

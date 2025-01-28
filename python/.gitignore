@@ -49,3 +49,5 @@ __pycache__
 .pydevproject
 # project
 **/*.egg-info
+**/rune.runtime-*.*.*-py3-none-any.whl
+**/test_helper-0.0.0-py3-none-any.whl
