@@ -19,7 +19,6 @@ if ! $PYEXE -c 'import sys; assert sys.version_info >= (3,10)' > /dev/null 2>&1;
         exit 1
 fi
 
-
 MY_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${MY_PATH} || error
 

@@ -1,5 +1,5 @@
 #!/bin/sh
-function processError() {
+function error() {
   echo ""
   echo ""
   echo "***************************************************************************"
@@ -19,25 +19,28 @@ if ! $PYEXE -c 'import sys; assert sys.version_info >= (3,10)' > /dev/null 2>&1;
         exit 1
 fi
 
-ACDIR=$($PYEXE -c "import sys;print('Scripts' if sys.platform.startswith('win') else 'bin')")
-MYPATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+MY_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd ${MY_PATH} || error
 
-cd $MYPATH
-$PYEXE -m venv --clear .pybuild || processError
-source .pybuild/$ACDIR/activate || processError
-$PYEXE -m pip install --upgrade pip || processError
+echo "***** setting up common environment"
+BUILDPATH="../build"
+source $MY_PATH/$BUILDPATH/setup_python_env.sh
 
-echo "**** Install Runtime ****"
-RUNERUNTIMEDIR="../../../../../rune-python-runtime"
-$PYEXE -m pip install $RUNERUNTIMEDIR/rune.runtime*-py3-*.whl --force-reinstall
+echo "***** activating virtual environment"
+VENV_NAME=".pyenv"
+VENV_PATH=".."
+source $MY_PATH/$BUILDPATH/$VENV_PATH/$VENV_NAME/${PY_SCRIPTS}/activate || error
 
-echo "**** build CDM ****"
-PYTHONSOURCEDIR=$MYPATH/"../target/python-cdm"
+echo "***** build CDM"
+PYTHONSOURCEDIR=$MY_PATH/"../target/python-cdm"
 cd $PYTHONSOURCEDIR
 rm python_cdm-*.*.*-py3-none-any.whl
-$PYEXE -m pip install "setuptools>=62.0" || processError
 $PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
-rm -rf $MYPATH/.pybuild
+
+echo "***** cleanup"
+
+deactivate
+source $MY_PATH/$BUILDPATH/cleanup_python_env.sh
 
 echo ""
 echo ""
@@ -45,9 +48,9 @@ echo "**************************************************************************
 echo "*                                                                         *"
 echo "*                                 SUCCESS!!!                              *"
 echo "*                                                                         *"
-echo "*Finished installing dependencies and building/installing the cdm package!*"
+echo "*     Finished installing dependencies and building the cdm package!      *"
 echo "*                                                                         *"
-echo "*                      package placed in target/python                    !*"
+echo "*                      package placed in target/python-cdm                *"
 echo "*                                                                         *"
 echo "***************************************************************************"
 echo ""

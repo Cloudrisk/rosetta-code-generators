@@ -35,7 +35,8 @@ fi
 
 ${PY_EXE} -m venv --clear $VENV_PATH/$VENV_NAME || error
 . $VENV_PATH/$VENV_NAME/${PY_SCRIPTS}/activate || error
-${PY_EXE} -m pip install --upgrade pip
+${PY_EXE} -m pip install --upgrade pip || error
+${PY_EXE} -m pip install "setuptools>=62.0" || error
 
 echo "***** Install Runtime"
 RUNTIMEURL="https://github.com/Cloudrisk/rune-python-runtime/releases/download"
