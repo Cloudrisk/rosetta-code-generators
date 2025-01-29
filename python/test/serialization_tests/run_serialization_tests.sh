@@ -34,14 +34,14 @@ source $MY_PATH/$BUILDPATH/$VENV_PATH/$VENV_NAME/${PY_SCRIPTS}/activate || error
 
 echo "***** Build and Install Helper"
 cd $MY_PATH/test_helper
-$PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
+$PYEXE -m pip wheel --no-deps --only-binary :all: . || error
 $PYEXE -m pip install test_helper-0.0.0-py3-none-any.whl
 rm test_helper-0.0.0-py3-none-any.whl
 
 echo "***** Build and Install Generated Unit Tests"
 SERIALIZATIONTESTSDIR="../../target/python/serialization_unit_tests"
 cd $MY_PATH/$SERIALIZATIONTESTSDIR
-$PYEXE -m pip wheel --no-deps --only-binary :all: . || processError
+$PYEXE -m pip wheel --no-deps --only-binary :all: . || error
 $PYEXE -m pip install python_*-0.0.0-py3-none-any.whl
 
 # run tests
