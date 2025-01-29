@@ -12,14 +12,21 @@ from rune.runtime.object_registry import _OBJECT_REGISTRY
 
 from test_helper.test_helper.dict_comp import dict_comp
 
-JSON_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/'
+ROUNDTRIP_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/'
+SHOULDFAIL_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-error-handling-test'
 
-def extract_dir_and_file (path_name):
+
+def extract_dir_and_file(path_name) -> str:
+    '''extract the directory and file name'''
     return Path(path_name).parent.name + '/' + os.path.basename(path_name)
 
-def process_file(path_name, compare: bool = True, reset_registry: bool = True, show_results: bool = False) -> bool:
+
+def process_file(path_name,
+                 compare: bool = True,
+                 reset_registry: bool = True,
+                 show_results: bool = False) -> bool:
     '''process a file'''
-    file_name =  extract_dir_and_file(path_name)
+    file_name = extract_dir_and_file(path_name)
     try:
         json_str_in = Path(path_name).read_text(encoding='utf8')
         if (reset_registry):
@@ -30,21 +37,27 @@ def process_file(path_name, compare: bool = True, reset_registry: bool = True, s
             dict_file_in = json.loads(json_str_in)
             dict_file_out = json.loads(json_str_out)
             result = dict_comp(dict_file_in, dict_file_out)
-            if (show_results):
+            if show_results:
                 result_str = 'serialization matches' if result else 'serialization does not match'
-                print('.... processed file: ', file_name, ' result: ', result_str)
+                print('.... processed file: ', file_name, ' result: ',
+                      result_str)
             return result
     except Exception as error_msg:
-        if (show_results):
-            print('.... exception processing file:', file_name, ' exception:', error_msg)
+        if show_results:
+            print('.... exception processing file:', file_name, ' exception:',
+                  error_msg)
         return False
+
 
 def process_directory(dir_name):
     '''process all files in a directory'''
     path_names = glob.glob(dir_name + os.sep + '**/*.json', recursive=True)
     results = []
     for path_name in path_names:
-        results.append({"path_name": path_name, "result": process_file (path_name)})
+        results.append({
+            "path_name": path_name,
+            "result": process_file(path_name)
+        })
     matches = 0
     failures = 0
     print('---- result summary for dir:', dir_name, '----- matches')
@@ -60,22 +73,45 @@ def process_directory(dir_name):
             print('file:', file_name, '...', 'something failed')
             process_file(result['path_name'], show_results=True)
             failures += 1
-    print('---- result summary for dir:', dir_name, ' matches:', matches, 'failures:', failures)
+    print('---- result summary for dir:', dir_name, ' matches:', matches,
+          'failures:', failures)
 
-@pytest.mark.parametrize("json_file", glob.glob(JSON_DIR + os.sep + '**/*.json', recursive=True))
-def test_json_file(json_file):
-    '''Load data from the JSON file'''
-    assert process_file(json_file), f"failed dict comparison for {json_file}"
+
+@pytest.mark.parametrize(
+    "round_trip_file",
+    glob.glob(ROUNDTRIP_DIR + os.sep + '**/*.json', recursive=True))
+def test_round_trip_files(round_trip_file):
+    '''test round trip files'''
+    assert process_file(
+        round_trip_file), f"failed dict comparison for {round_trip_file}"
+
+
+@pytest.mark.parametrize(
+    "should_fail_file",
+    glob.glob(SHOULDFAIL_DIR + os.sep + '**/*.json', recursive=True))
+def test_should_fail_files(should_fail_file):
+    '''test should fail files'''
+    assert not process_file(
+        should_fail_file
+    ), f"dict comparison should not have passed for {should_fail_file}"
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--test', help='Run Unit Tests', action="store_true")
+    parser.add_argument('-t',
+                        '--test',
+                        help='Run Unit Tests',
+                        action="store_true")
     parser.add_argument('-f', '--file', help='Test a JSON File')
-    parser.add_argument('-d', '--directory', help='Test All Files in a Directory')
+    parser.add_argument('-d',
+                        '--directory',
+                        help='Test All Files in a Directory')
     args = parser.parse_args()
     if args.test:
         print('run tests')
-        pytest_args = ['-v', __file__]  # '-v' for verbose output, '__file__' to specify the current file
+        pytest_args = [
+            '-v', __file__
+        ]  # '-v' for verbose output, '__file__' to specify the current file
         pytest.main(pytest_args)
     elif args.directory:
         print('testing files in the directory: ', args.directory)
@@ -85,7 +121,7 @@ if __name__ == "__main__":
             print('testing file: ', args.file)
             process_file(args.file, show_results=True)
         except Exception as error_msg:
-            print ('procesing file:', args.file, ' created exception:', error_msg)
-                        
+            print('procesing file:', args.file, ' created exception:',
+                  error_msg)
     else:
         parser.print_help()

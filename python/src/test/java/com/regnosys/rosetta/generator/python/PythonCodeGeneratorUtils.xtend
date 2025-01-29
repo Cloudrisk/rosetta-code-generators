@@ -47,6 +47,20 @@ class PythonCodeGeneratorUtils {
         return model.getProperties().getProperty(property)
     }
 
+    def String getPropertyOrMessage (String propertyName) {
+        // Check if property exists
+        var property = null as String;
+        try {
+            property =  getProperty(propertyName)
+            if (property === null || property.isEmpty()) {
+                LOGGER.error("Property:" + propertyName + " does not exist or is empty")
+            }
+        } catch (Exception e) {
+            LOGGER.error("Exception when getting property:" + propertyName + "exception:" + e.getMessage())
+        }
+        return property;
+    }
+
     def void cleanFolder(String folderPath) {
         val folder = new File(folderPath + File.separator + "src")
         if (folder.exists() && folder.isDirectory()) {
@@ -83,7 +97,7 @@ class PythonCodeGeneratorUtils {
     }
 
     def ArrayList<Path> getFileList(String dslSourceDir, String suffix) {
-        LOGGER.info("PythonFilesGeneratorTest::getFileList ... looking for files with suffix {} in {}", suffix, dslSourceDir)
+        LOGGER.info("getFileList ... looking for files with suffix {} in {}", suffix, dslSourceDir)
 
         if (dslSourceDir === null) {
             throw new Exception('Initialization failure: source dsl path not specified')
@@ -107,12 +121,12 @@ class PythonCodeGeneratorUtils {
                 result.add(file.toPath)
             ]
         }
-        LOGGER.info("PythonFilesGeneratorTest::getFileList ... found {} files in {}", result.size.toString, dslSourceDir)
+        LOGGER.info("getFileList ... found {} files in {}", result.size.toString, dslSourceDir)
         return result    
     }
 
     def ArrayList<Path> getFileListWithRecursion(String dslSourceDir, String suffix) {
-        LOGGER.info("PythonFilesGeneratorTest::getFileListWithRecursion ... looking for files with suffix {} in {}", suffix, dslSourceDir)
+        LOGGER.info("getFileListWithRecursion ... looking for files with suffix {} in {}", suffix, dslSourceDir)
 
         if (dslSourceDir === null) {
             throw new Exception('Initialization failure: source dsl path not specified')
@@ -145,12 +159,12 @@ class PythonCodeGeneratorUtils {
         } catch (IOException e) {
 			throw e;
         }
-        LOGGER.info("PythonFilesGeneratorTest::getFileListWithRecursion ... found {} files in {}", result.size.toString, dslSourceDir)
+        LOGGER.info("getFileListWithRecursion ... found {} files in {}", result.size.toString, dslSourceDir)
         return result    
     }
 
     def void generatePythonFromDSLFiles(ArrayList<Path> dslFilePathList, String outputPath) {
-        LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... generating Python from {} rosetta files", dslFilePathList.length.toString())                  
+        LOGGER.info("generatePythonFromDSLFiles ... generating Python from {} rosetta files", dslFilePathList.length.toString())                  
         val resourceSet = resourceSetProvider.get 
         parse(ModelHelper.commonTestTypes, resourceSet)
         resourceSet.getResource(URI.createURI('classpath:/model/basictypes.rosetta'), true)
@@ -159,19 +173,19 @@ class PythonCodeGeneratorUtils {
         val resources = dslFilePathList
             .map[resourceSet.getResource(URI.createURI(it.toString()), true)]
             .toList
-        LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... converted to resources")                  
+        LOGGER.info("generatePythonFromDSLFiles ... converted to resources")                  
         val rosettaModels = resources
             .flatMap[contents.filter(RosettaModel)]
             .toList as Collection<RosettaModel>
-        LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... created {} rosetta models", rosettaModels.length.toString())                  
+        LOGGER.info("generatePythonFromDSLFiles ... created {} rosetta models", rosettaModels.length.toString())                  
         val generatedFiles = newHashMap
         for (model : rosettaModels) {
-            LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... processing model: {}", model.name)
+            LOGGER.info("generatePythonFromDSLFiles ... processing model: {}", model.name)
             val python = generatePythonFromRosettaModel(model, resourceSet)
             generatedFiles.putAll(python)
         }
         cleanFolder(outputPath)
         writeFiles(outputPath, generatedFiles)
-        LOGGER.info("PythonFilesGeneratorTest::generatePythonFromDSLFiles ... done")
+        LOGGER.info("generatePythonFromDSLFiles ... done")
     }
 }

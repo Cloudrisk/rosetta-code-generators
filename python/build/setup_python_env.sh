@@ -22,7 +22,7 @@ export PYTHONDONTWRITEBYTECODE=1
 ENV_BUILD_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd ${ENV_BUILD_PATH} || error
 
-echo "***** setup virtual environment in project_root/.pyenv"
+echo "***** setup virtual environment in [project_root]/.pyenv"
 VENV_NAME=".pyenv"
 VENV_PATH="../"
 
