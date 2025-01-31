@@ -19,3 +19,10 @@ __all__ = ['AttributeRef']
 class AttributeRef(BaseDataClass):
     dateField: Optional[Annotated[DateWithMeta, DateWithMeta.serializer(), DateWithMeta.validator(('@key', '@key:external'))]] = Field(None, description='')
     dateReference: Optional[Annotated[DateWithMeta, DateWithMeta.serializer(), DateWithMeta.validator(('@ref', '@ref:external'))]] = Field(None, description='')
+    
+    _KEY_REF_CONSTRAINTS = {
+      'dateField': {'@key', '@key:external'},
+      'dateReference': {'@ref', '@ref:external'}
+    }
+
+import test 

@@ -22,7 +22,7 @@ class RosettaObjectInheritanceGeneratorTest {
 
 
     @Test
-    def void shouldGeneratePythonClassWithMultipleParents() {
+    def void testPythonClassGenerationWithMultipleParents() {
         val python = '''
             type D extends C:
                 dd string (0..1)

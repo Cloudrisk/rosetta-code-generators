@@ -147,8 +147,8 @@ class PythonFilesGeneratorTest {
             LOGGER.info('testGeneratedSyntax ... start')
 
             // Retrieve properties
-            val sourcePath    = utils.getPropertyOrMessage('unittest.generated.syntax.source.path')
-            val targetPath    = utils.getPropertyOrMessage('unittest.generated.syntax.target.path')
+            val sourcePath   = utils.getPropertyOrMessage('unittest.generated.syntax.source.path')
+            val targetPath   = utils.getPropertyOrMessage('unittest.generated.syntax.target.path')
             val expectedPath = utils.getPropertyOrMessage('unittest.generated.syntax.expected.path')
             if (sourcePath !== null && targetPath !== null && expectedPath !== null) {
                 // Generate Python from DSL files

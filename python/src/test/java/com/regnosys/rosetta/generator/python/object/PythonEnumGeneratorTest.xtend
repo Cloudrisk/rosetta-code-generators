@@ -22,7 +22,7 @@ class PythonEnumGeneratorTest {
     
     
     @Test
-    def void shouldGenerateEnums() {
+    def void testEnumGeneration() {
         val python = '''
             enum TestEnum: <"Test enum description.">
                 TestEnumValue1 <"Test enum value 1">

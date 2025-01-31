@@ -19,3 +19,10 @@ __all__ = ['NodeRef']
 class NodeRef(BaseDataClass):
     typeA: Optional[Annotated[test.generated_syntax.meta_keys.A.A, test.generated_syntax.meta_keys.A.A.serializer(), test.generated_syntax.meta_keys.A.A.validator(('@key', '@key:external'))]] = Field(None, description='')
     aReference: Optional[Annotated[test.generated_syntax.meta_keys.A.A, test.generated_syntax.meta_keys.A.A.serializer(), test.generated_syntax.meta_keys.A.A.validator(('@key', '@key:external', '@ref', '@ref:external'))]] = Field(None, description='')
+    
+    _KEY_REF_CONSTRAINTS = {
+      'aReference': {'@ref', '@ref:external'}
+    }
+
+import test 
+import test.generated_syntax.meta_keys.A

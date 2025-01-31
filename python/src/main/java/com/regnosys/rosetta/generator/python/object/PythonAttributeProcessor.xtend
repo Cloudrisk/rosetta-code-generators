@@ -14,6 +14,7 @@ import java.util.HashMap
 import org.eclipse.xtend2.lib.StringConcatenation
 import java.util.Map
 import com.regnosys.rosetta.types.REnumType
+import java.util.List
 
 /*
  * Generate Python from Rune Attributes
@@ -23,7 +24,7 @@ class PythonAttributeProcessor {
     @Inject extension RObjectFactory
     @Inject TypeSystem typeSystem;
 
-    def CharSequence generateAllAttributes(Data rosettaClass, Map<String, String> metaDataKeys) {
+    def CharSequence generateAllAttributes(Data rosettaClass, Map<String, String> metaDataItems, Map<String, List<String>> keyRefConstraints) {
         // generate Python for all the attributes in this class
         val allAttributes = rosettaClass.buildRDataType.getOwnAttributes
         // it is an empty class if there are no attribute and no conditions
@@ -39,12 +40,12 @@ class PythonAttributeProcessor {
             } else {
                 _builder.appendImmediate("", "");
             }
-            _builder.append(generateAttribute(rosettaClass, ra, metaDataKeys));
+            _builder.append(generateAttribute(rosettaClass, ra, metaDataItems, keyRefConstraints));
         }
-        return _builder;
+        return _builder.toString();
     }
 
-    def generateAttribute(Data rosettaClass, RAttribute ra, Map<String, String> metaDataKeys) {
+    def generateAttribute(Data rosettaClass, RAttribute ra, Map<String, String> metaDataItems, Map<String, List<String>> keyRefConstraints) {
         /*
          * translate the attribute to its representation in Python
          */
@@ -66,7 +67,7 @@ class PythonAttributeProcessor {
         if (attrTypeName === null) {
             throw new Exception("Attribute type is null for " + ra.name + " in class " + rosettaClass.name);
         }
-        var attrName = PythonTranslator.mangleName(ra.name) // mangle the attribute name if it is a Python keyword
+        var attrName = PythonTranslator.mangleName(ra.getName()) // mangle the attribute name if it is a Python keyword
         val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
         // get the properties / parameters if there are any (applies to string and number)
         val attrProp = new HashMap<String, String>();
@@ -187,40 +188,43 @@ class PythonAttributeProcessor {
         // process meta data
         val validators = new ArrayList<String>()
         // if the attribute of a type that is metadata, add "@key"
-        val attributeIsMetaKey = metaDataKeys.containsKey(attrTypeName);
+        val attributeIsMetaKey = metaDataItems.containsKey(attrTypeName);
         if (attributeIsMetaKey) {
             validators.add('@key');
             validators.add("@key:external")
         }
         // check whether the attribute has meta 
         if (attrRMAT.hasMeta()) {
+            var keyRef = new ArrayList<String>()
             for (ma : attrRMAT.getMetaAttributes()) {
-                // TODO: handle all meta types
-                //       id treated as a key
-                //       ignoring address "pointsTo"
+                // TODO: ignoring address "pointsTo"
                 switch (ma.getName()) {
                     case "key",
                     case "id": {
-                        validators.add("@key");
-                        validators.add("@key:external")
+                        keyRef.add("@key");
+                        keyRef.add("@key:external")
                     }
                     case "reference": {
-                        validators.add("@ref");
-                        validators.add("@ref:external")
+                        keyRef.add("@ref");
+                        keyRef.add("@ref:external")
                     }
                     case "scheme": {
                         validators.add("@scheme");
                     }
                     case "location": {
-                        validators.add("@key:scoped")
+                        keyRef.add("@key:scoped")
                     }
                     case "address": {
-                        validators.add("@ref:scoped")
+                        keyRef.add("@ref:scoped")
                     }
                     default: {
                         println('---- unprocessed meta ... name: ' + ma.getName())
                     }
                 }
+            }
+            if (!keyRef.isEmpty()) {
+                keyRefConstraints.put(ra.getName(), keyRef)
+                validators.addAll(keyRef)
             }
         }
         var metaPrefix = "";

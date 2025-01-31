@@ -22,7 +22,7 @@ class PythonMetaDataGenerationTest {
     
     @Test
     @Disabled("Test Meta Types")
-        def void shouldGenerateMetaTypes() {
+        def void testMetaTypeGeneration() {
                 val python = '''
                     metaType reference string
                     metaType address string
