@@ -186,47 +186,50 @@ class PythonAttributeProcessor {
             }
         }
         // process meta data
-        val validators = new ArrayList<String>()
+        var keysRefs = new ArrayList<String>()
+        var otherMeta = new ArrayList<String>()
         // if the attribute of a type that is metadata, add "@key"
         val attributeIsMetaKey = metaDataItems.containsKey(attrTypeName);
         if (attributeIsMetaKey) {
-            validators.add('@key');
-            validators.add("@key:external")
+            keysRefs.add("@key");
+            keysRefs.add("@key:external")
         }
         // check whether the attribute has meta 
         if (attrRMAT.hasMeta()) {
-            var keyRef = new ArrayList<String>()
             for (ma : attrRMAT.getMetaAttributes()) {
                 // TODO: ignoring address "pointsTo"
                 switch (ma.getName()) {
-                    case "key",
+                    case "key", 
                     case "id": {
-                        keyRef.add("@key");
-                        keyRef.add("@key:external")
+                        keysRefs.add("@key")
+                        keysRefs.add("@key:external")
                     }
                     case "reference": {
-                        keyRef.add("@ref");
-                        keyRef.add("@ref:external")
+                        keysRefs.add("@ref")
+                        keysRefs.add("@ref:external")
                     }
                     case "scheme": {
-                        validators.add("@scheme");
+                        otherMeta.add("@scheme")
                     }
                     case "location": {
-                        keyRef.add("@key:scoped")
+                        keysRefs.add("@key:scoped")
                     }
                     case "address": {
-                        keyRef.add("@ref:scoped")
+                        keysRefs.add("@ref:scoped")
                     }
                     default: {
                         println('---- unprocessed meta ... name: ' + ma.getName())
                     }
                 }
             }
-            if (!keyRef.isEmpty()) {
-                keyRefConstraints.put(ra.getName(), keyRef)
-                validators.addAll(keyRef)
-            }
         }
+        val validators = new ArrayList<String>()
+        validators.addAll(keysRefs);
+        validators.addAll(otherMeta);
+        if (!keysRefs.isEmpty()) {
+            keyRefConstraints.put(ra.getName(), keysRefs)
+        }
+
         var metaPrefix = "";
         var metaSuffix = "";
         var hasBeenAnnotated = false;
