@@ -12,8 +12,8 @@ from rune.runtime.object_registry import _OBJECT_REGISTRY
 
 from test_helper.test_helper.dict_comp import dict_comp
 
-ROUNDTRIP_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/'
-SHOULDFAIL_DIR = '/Users/dls/projects/rune/rune-common/serialization/src/test/resources/rune-serializer-error-handling-test'
+ROUNDTRIP_DIR = 'rune-common/serialization/src/test/resources/rune-serializer-round-trip-test/'
+SHOULDFAIL_DIR = 'rune-common/serialization/src/test/resources/rune-serializer-error-handling-test'
 
 
 def extract_dir_and_file(path_name) -> str:
