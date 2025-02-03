@@ -26,6 +26,7 @@ def process_file(path_name,
                  reset_registry: bool = True,
                  show_results: bool = False) -> bool:
     '''process a file'''
+    result = False
     file_name = extract_dir_and_file(path_name)
     try:
         json_str_in = Path(path_name).read_text(encoding='utf8')
@@ -46,8 +47,8 @@ def process_file(path_name,
         if show_results:
             print('.... exception processing file:', file_name, ' exception:',
                   error_msg)
-        return False
-
+        # Raise the exception to be caught in the test function
+        raise RuntimeError(f"Exception processing file {file_name}: {error_msg}")
 
 def process_directory(dir_name):
     '''process all files in a directory'''
@@ -82,19 +83,22 @@ def process_directory(dir_name):
     glob.glob(ROUNDTRIP_DIR + os.sep + '**/*.json', recursive=True))
 def test_round_trip_files(round_trip_file):
     '''test round trip files'''
-    assert process_file(
-        round_trip_file), f"failed dict comparison for {round_trip_file}"
-
+    try:
+        assert process_file(round_trip_file), f"failed dict comparison for {round_trip_file}"
+    except RuntimeError as e:
+        pytest.fail(str(e))
 
 @pytest.mark.parametrize(
     "should_fail_file",
     glob.glob(SHOULDFAIL_DIR + os.sep + '**/*.json', recursive=True))
 def test_should_fail_files(should_fail_file):
     '''test should fail files'''
-    assert not process_file(
-        should_fail_file
-    ), f"dict comparison should not have passed for {should_fail_file}"
-
+    try:
+        result = process_file(should_fail_file)
+        assert not result, f"dict comparison should not have passed for {should_fail_file}"
+    except RuntimeError as e:
+        # If an exception is raised, it is expected, so the test should pass
+        print(f"Expected failure for {should_fail_file}: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

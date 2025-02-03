@@ -2,17 +2,14 @@ package com.regnosys.rosetta.generator.python.object
 
 import com.google.inject.Inject
 import com.regnosys.rosetta.generator.python.expressions.PythonExpressionGenerator
-import com.regnosys.rosetta.generator.python.object.PythonMetaDataProcessor;
-
 import com.regnosys.rosetta.generator.python.util.PythonModelGeneratorUtil
 import com.regnosys.rosetta.generator.python.util.Util
-import com.regnosys.rosetta.rosetta.RosettaMetaType
 import com.regnosys.rosetta.rosetta.RosettaModel
 import com.regnosys.rosetta.rosetta.simple.Data
 import com.regnosys.rosetta.types.RObjectFactory
 import java.util.HashMap
-import java.util.Map
 import java.util.List
+import java.util.Map
 import org.eclipse.xtend2.lib.StringConcatenation
 
 /*

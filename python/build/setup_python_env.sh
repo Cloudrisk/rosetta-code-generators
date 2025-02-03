@@ -40,7 +40,7 @@ ${PY_EXE} -m pip install "setuptools>=62.0" || error
 
 echo "***** Install Runtime"
 RUNTIMEURL="https://github.com/Cloudrisk/rune-python-runtime/releases/download"
-RUNTIMEVERSION="1.0.7"
+RUNTIMEVERSION="1.0.8"
 curl -L -o rune.runtime-$RUNTIMEVERSION-py3-none-any.whl $RUNTIMEURL/$RUNTIMEVERSION/rune.runtime-$RUNTIMEVERSION-py3-none-any.whl
 $PYEXE -m pip install rune.runtime*-py3-*.whl --force-reinstall
 rm rune.runtime*-py3-*.whl
