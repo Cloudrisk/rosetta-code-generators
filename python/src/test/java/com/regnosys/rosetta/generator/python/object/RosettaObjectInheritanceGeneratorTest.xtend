@@ -22,7 +22,7 @@ class RosettaObjectInheritanceGeneratorTest {
 
 
     @Test
-    def void shouldGeneratePythonClassWithMultipleParents() {
+    def void testPythonClassGenerationWithMultipleParents() {
         val python = '''
             type D extends C:
                 dd string (0..1)
@@ -37,22 +37,22 @@ class RosettaObjectInheritanceGeneratorTest {
         val expectedA=
         '''
         class A(BaseDataClass):
-            aa: Optional[str] = Field(None, description="")
+            aa: Optional[str] = Field(None, description='')
         '''
         val expectedB=
         '''
         class B(A):
-            bb: Optional[str] = Field(None, description="")
+            bb: Optional[str] = Field(None, description='')
         '''
         val expectedC=
         '''
         class C(B):
-            cc: Optional[str] = Field(None, description="")
+            cc: Optional[str] = Field(None, description='')
         '''
         val expectedD=
         '''
         class D(C):
-            dd: Optional[str] = Field(None, description="")
+            dd: Optional[str] = Field(None, description='')
         '''
         assertTrue(python.toString.contains(expectedA))
         assertTrue(python.toString.contains(expectedB))

@@ -26,7 +26,7 @@ class EnumGeneratorTest {
     
    
     @Test
-    def void shouldGenerateEnums() {
+    def void testEnumGeneration() {
         val python = '''
             enum TestEnum: <"Test enum description.">
                 TestEnumValue1 <"Test enum value 1">
@@ -36,7 +36,7 @@ class EnumGeneratorTest {
             '''.generatePython
 
         val expected = '''
-        class TestEnum(Enum):
+        class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Test enum description.
             """
@@ -64,7 +64,7 @@ class EnumGeneratorTest {
 
     @Test //not developed at the moment
     @Disabled
-    def void shouldGenerateAnnotationForEnumSynonyms() {
+    def void testGenerationAnnotationForEnumSynonyms() {
         
         /*
         val code = '''
@@ -84,7 +84,7 @@ class EnumGeneratorTest {
     }
     
     @Test
-    def void shouldGenerateEnums2() {
+    def void testEnumGeneration2() {
         val python = '''
             enum TestEnum: <"Test enum description.">
                 TestEnumValue1 <"Test enum value 1">
@@ -95,7 +95,7 @@ class EnumGeneratorTest {
 
 
         val expected = '''
-        class TestEnum(Enum):
+        class TestEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Test enum description.
             """
@@ -120,7 +120,7 @@ class EnumGeneratorTest {
     }
     
     @Test
-    def void shouldGenerateEnums3() {
+    def void testEnumGeneration3() {
         val python =
          '''enum ConfirmationStatusEnum: <"Enumeration for the different types of confirmation status.">
             Confirmed
@@ -129,7 +129,7 @@ class EnumGeneratorTest {
 
         
         val expected = '''
-        class ConfirmationStatusEnum(Enum):
+        class ConfirmationStatusEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             Enumeration for the different types of confirmation status.
             """
@@ -140,7 +140,7 @@ class EnumGeneratorTest {
     }
     
     @Test
-    def void shouldGenerateEnums4() {
+    def void testEnumGeneration4() {
         val python = 
           '''enum TransferStatusEnum: <"The enumeration values to specify the transfer status.">
              Disputed <"The transfer is disputed.">
@@ -152,7 +152,7 @@ class EnumGeneratorTest {
         
         val expected = 
         '''
-        class TransferStatusEnum(Enum):
+        class TransferStatusEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
             """
             The enumeration values to specify the transfer status.
             """
@@ -181,7 +181,7 @@ class EnumGeneratorTest {
     }
     
     @Test
-    def void shouldGenerateEnums5() {
+    def void testEnumGeneration5() {
         val python = 
         '''
         enum FinancialUnitEnum: <"Provides enumerated values for financial units, generally used in the context of defining quantities for securities.">
@@ -197,7 +197,7 @@ class EnumGeneratorTest {
         
            val expected = 
            '''
-           class FinancialUnitEnum(Enum):
+           class FinancialUnitEnum(rune.runtime.metadata.EnumWithMetaMixin, Enum):
                """
                Provides enumerated values for financial units, generally used in the context of defining quantities for securities.
                """
@@ -242,7 +242,7 @@ class EnumGeneratorTest {
 
     @Test
     @Disabled
-    def void shouldGenerateAllDisplayName() {
+    def void testEnumGenerationWithDisplayName() {
         '''
             synonym source FpML
             enum TestEnumWithDisplay:
@@ -264,7 +264,7 @@ class EnumGeneratorTest {
     }
 
     @Test
-    def void shouldGenerateUppercaseUnderscoreFormattedEnumNames() {
+    def void testEnumGenerationWithUppercaseUnderscoreFormattedNames() {
         assertThat(EnumHelper.formatEnumName("ISDA1993Commodity"), is("ISDA_1993_COMMODITY"))
         assertThat(EnumHelper.formatEnumName("ISDA1998FX"), is("ISDA1998FX"))
         assertThat(EnumHelper.formatEnumName("iTraxxEuropeDealer"), is("I_TRAXX_EUROPE_DEALER"))
@@ -290,7 +290,7 @@ class EnumGeneratorTest {
 
     @Test
     @Disabled
-    def void shouldAllowDeprectedAnnotationForEnum() {
+    def void testEnumGenerationWithDeprecatedAnnotation() {
         '''
             enum TestEnumDeprecated:
                 [deprecated]

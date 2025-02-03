@@ -26,14 +26,14 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one string (0..1)
-                list string (0..*)
+                list string (1..*)
         '''.generatePython
         
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[str] = Field(None, description="")
-            list: List[str] = Field([], description="")
+            one: Optional[str] = Field(None, description='')
+            list: list[str] = Field([], description='', min_length=1)
 
         '''
         
@@ -45,18 +45,18 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one int (0..1)
-                list int (0..*)
+                list int (1..*)
         '''.generatePython
 
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[int] = Field(None, description="")
-            list: List[int] = Field([], description="")
+            one: Optional[int] = Field(None, description='')
+            list: list[int] = Field([], description='', min_length=1)
 
         '''
         
-        assertTrue(python.toString.contains(expected))
+        assertTrue(python.toString.contains(expected), "expected:\n" + expected + "\npython:\n" + python)
 
     }
 
@@ -65,14 +65,14 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one number (0..1)
-                list number (0..*)
+                list number (1..*)
         '''.generatePython
         
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[Decimal] = Field(None, description="")
-            list: List[Decimal] = Field([], description="")
+            one: Optional[Decimal] = Field(None, description='')
+            list: list[Decimal] = Field([], description='', min_length=1)
 
         '''
         
@@ -85,7 +85,7 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one boolean (0..1)
-                list boolean (0..*)
+                list boolean (1..*)
         '''.generatePython
 
         
@@ -93,8 +93,8 @@ class ModelObjectGeneratorTest {
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[bool] = Field(None, description="")
-            list: List[bool] = Field([], description="")
+            one: Optional[bool] = Field(None, description='')
+            list: list[bool] = Field([], description='', min_length=1)
         '''
         
         assertTrue(python.toString.contains(expected))
@@ -105,7 +105,7 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one date (0..1)
-                list date (0..*)
+                list date (1..*)
         '''.generatePython
 
         
@@ -113,8 +113,8 @@ class ModelObjectGeneratorTest {
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[datetime.date] = Field(None, description="")
-            list: List[datetime.date] = Field([], description="")
+            one: Optional[datetime.date] = Field(None, description='')
+            list: list[datetime.date] = Field([], description='', min_length=1)
 
         '''
         
@@ -126,19 +126,19 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one date (0..1)
-                list date (0..*)
+                list date (1..*)
                 zoned zonedDateTime (0..1)
         '''.generatePython
 
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[datetime.date] = Field(None, description="")
-            list: List[datetime.date] = Field([], description="")
-            zoned: Optional[datetime.datetime] = Field(None, description="")
+            one: Optional[datetime.date] = Field(None, description='')
+            list: list[datetime.date] = Field([], description='', min_length=1)
+            zoned: Optional[datetime.datetime] = Field(None, description='')
         '''
         
-        assertTrue(python.toString.contains(expected))
+        assertTrue(python.toString.contains(expected), "\nexpected\n" + expected + "\npython\n" + python)
     }
 
     @Test
@@ -146,18 +146,18 @@ class ModelObjectGeneratorTest {
         val python = '''
             type Tester:
                 one time (0..1)
-                list time (0..*)
+                list time (1..*)
         '''.generatePython
     
         val expected=
         '''
         class Tester(BaseDataClass):
-            one: Optional[datetime.time] = Field(None, description="")
-            list: List[datetime.time] = Field([], description="")
+            one: Optional[datetime.time] = Field(None, description='')
+            list: list[datetime.time] = Field([], description='', min_length=1)
 
         '''
         
-        assertTrue(python.toString.contains(expected))
+        assertTrue(python.toString.contains(expected), "\nexpected\n" + expected + "\npython\n" + python)
     }
 
 
@@ -166,7 +166,7 @@ class ModelObjectGeneratorTest {
     @Disabled
     def void testGenerateMetaFieldWhenAttributeSchemePresent() {
         '''
-            type TestObject: <"">
+            type TestObject: <''>
                 fieldOne string (0..1) [metadata scheme]
         '''.generatePython
 
@@ -177,7 +177,7 @@ class ModelObjectGeneratorTest {
     @Disabled
     def void testGenerateRosettaReferenceField() {
         '''
-            type TestObject: <"">
+            type TestObject: <''>
                 fieldOne Test2 (0..1) [metadata reference]
 
             type Test2:
@@ -196,7 +196,7 @@ class ModelObjectGeneratorTest {
             // import basic types
             import com.rosetta.test.model.*
 
-            type TestObject: <"">
+            type TestObject: <''>
                 fieldOne date (0..1) [metadata reference]
         '''.generatePython
 
@@ -210,7 +210,7 @@ class ModelObjectGeneratorTest {
 
             type ComplexObject:
 
-            type TestObject: <"">
+            type TestObject: <''>
                 fieldOne ComplexObject (0..1) [metadata reference]
         '''.generatePython
 
@@ -259,7 +259,7 @@ class ModelObjectGeneratorTest {
         val expected=
         '''
         class AttributeGlobalKeyTest(BaseDataClass):
-            withoutGlobalKey: str = Field(..., description="")
+            withoutGlobalKey: str = Field(..., description='')
 
         '''
         
@@ -282,7 +282,7 @@ class ModelObjectGeneratorTest {
     }
 
     @Test
-    def void testGenerateClassList() {
+    def void testGenerateClasslist() {
         val python = '''
             type A extends B:
                 c C (1..*)
@@ -291,7 +291,7 @@ class ModelObjectGeneratorTest {
 
             type C :
                 one int (0..1)
-                list int (0..*)
+                list int (1..*)
 
 
             type D:
@@ -299,42 +299,31 @@ class ModelObjectGeneratorTest {
         '''.generatePython
 
         
+        val expectedA =
+        '''
+        class A(B):
+            c: list[Annotated[com.rosetta.test.model.C.C, com.rosetta.test.model.C.C.serializer(), com.rosetta.test.model.C.C.validator()]] = Field([], description='', min_length=1)'''
+
         val expectedB=
         '''
         class B(BaseDataClass):
-            pass
-        '''
+            pass'''
 
         val expectedC =
         '''
         class C(BaseDataClass):
-            one: Optional[int] = Field(None, description="")
-            list: List[int] = Field([], description="")
-
-        '''
-
-        val expectedA =
-        '''
-        class A(B):
-            c: List[com.rosetta.test.model.C.C] = Field([], description="")
-            @rosetta_condition
-            def cardinality_c(self):
-                return check_cardinality(self.c, 1, None)
-        '''
+            one: Optional[int] = Field(None, description='')
+            list: list[int] = Field([], description='', min_length=1)'''
 
         val expectedD =
         '''
         class D(BaseDataClass):
-            s: List[str] = Field([], description="")
-            @rosetta_condition
-            def cardinality_s(self):
-                return check_cardinality(self.s, 1, None)
-        '''
+            s: list[str] = Field([], description='', min_length=1)'''
         
-        assertTrue(python.toString.contains(expectedA))
-        assertTrue(python.toString.contains(expectedB))
-        assertTrue(python.toString.contains(expectedC))
-        assertTrue(python.toString.contains(expectedD))
+        assertTrue(python.toString.contains(expectedA), "\nexpectedA" + expectedA + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedB), "\nexpectedB" + expectedB + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedC), "\nexpectedC" + expectedC + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedD), "\nexpectedD" + expectedD + "\npython\n" + python)
             
     }
 
@@ -352,15 +341,15 @@ class ModelObjectGeneratorTest {
         val expectedFoo=
         '''
         class Foo(BaseDataClass):
-            a: Optional[str] = Field(None, description="")
-            b: Optional[str] = Field(None, description="")
+            a: Optional[str] = Field(None, description='')
+            b: Optional[str] = Field(None, description='')
 
         '''
 
         val expectedBar =
         '''
         class Bar(Foo):
-            a: Optional[str] = Field(None, description="")
+            a: Optional[str] = Field(None, description='')
 
         '''
         
@@ -379,7 +368,7 @@ class ModelObjectGeneratorTest {
         val expected=
         '''
         class Foo(BaseDataClass):
-            bar: Optional[str] = Field(None, description="")
+            bar: Optional[str] = Field(None, description='')
 
         '''
         
@@ -398,7 +387,7 @@ class ModelObjectGeneratorTest {
         val expectedFoo=
         '''
         class Foo(BaseDataClass):
-            attr: Optional[str] = Field(None, description="")
+            attr: Optional[str] = Field(None, description='')
         '''
 
         val expectedBar=
@@ -476,42 +465,42 @@ class ModelObjectGeneratorTest {
                         or (intValue2 exists and intValue1 exists and intValue1 is absent)
             '''.generatePython
         val expectedA = '''class A(BaseDataClass):
-    a0: Optional[int] = Field(None, description="")
-    a1: Optional[int] = Field(None, description="")
+    a0: Optional[int] = Field(None, description='')
+    a1: Optional[int] = Field(None, description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_(self):
         item = self
-        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
+        return rune_check_one_of(self, 'a0', 'a1', necessity=True)'''
         
         val expectedB = '''class B(BaseDataClass):
-    intValue1: Optional[int] = Field(None, description="")
-    intValue2: Optional[int] = Field(None, description="")
-    aValue: com.rosetta.test.model.A.A = Field(..., description="")
+    intValue1: Optional[int] = Field(None, description='')
+    intValue2: Optional[int] = Field(None, description='')
+    aValue: Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()] = Field(..., description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_Rule(self):
         item = self
-        return all_elements(rosetta_resolve_attr(self, "intValue1"), "<", 100)
+        return rune_all_elements(rune_resolve_attr(self, "intValue1"), "<", 100)
     
-    @rosetta_condition
+    @rune_condition
     def condition_1_OneOrTwo(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
+        return rune_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
-    @rosetta_condition
+    @rune_condition
     def condition_2_SecondOneOrTwo(self):
         """
         FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
         """
         item = self
-        return ((rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and (not rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))))'''
+        return ((rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "aValue"), "a0")) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and rune_attr_exists(rune_resolve_attr(self, "intValue1")))) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and (not rune_attr_exists(rune_resolve_attr(self, "intValue1")))))'''
 
-        assertTrue(python.toString.contains(expectedA))
-        assertTrue(python.toString.contains(expectedB))
+        assertTrue(python.toString.contains(expectedA), "expectedA\n" + expectedA + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedB), "expectedB\n" + expectedB + "\npython\n" + python)
     }
     
     
@@ -521,7 +510,7 @@ class ModelObjectGeneratorTest {
         type TestType: <"Test type description.">
             testTypeValue1 string (1..1) <"Test string">
             testTypeValue2 string (0..1) <"Test optional string">
-            testTypeValue3 string (0..*) <"Test string list">
+            testTypeValue3 string (1..*) <"Test string list">
             testTypeValue4 TestType2 (1..1) <"Test TestType2">
             testEnum TestEnum (0..1) <"Optional test enum">
 
@@ -540,46 +529,42 @@ class ModelObjectGeneratorTest {
     """
     Test type description.
     """
-    testTypeValue1: str = Field(..., description="Test string")
+    testTypeValue1: str = Field(..., description='Test string')
     """
     Test string
     """
-    testTypeValue2: Optional[str] = Field(None, description="Test optional string")
+    testTypeValue2: Optional[str] = Field(None, description='Test optional string')
     """
     Test optional string
     """
-    testTypeValue3: List[str] = Field([], description="Test string list")
+    testTypeValue3: list[str] = Field([], description='Test string list', min_length=1)
     """
     Test string list
     """
-    testTypeValue4: com.rosetta.test.model.TestType2.TestType2 = Field(..., description="Test TestType2")
+    testTypeValue4: Annotated[com.rosetta.test.model.TestType2.TestType2, com.rosetta.test.model.TestType2.TestType2.serializer(), com.rosetta.test.model.TestType2.TestType2.validator()] = Field(..., description='Test TestType2')
     """
     Test TestType2
     """
-    testEnum: Optional[com.rosetta.test.model.TestEnum.TestEnum] = Field(None, description="Optional test enum")
+    testEnum: Optional[com.rosetta.test.model.TestEnum.TestEnum] = Field(None, description='Optional test enum')
     """
     Optional test enum
     """'''
         val expectedTestType2=
         '''class TestType2(BaseDataClass):
-    testType2Value1: List[Decimal] = Field([], description="Test number list")
+    testType2Value1: list[Decimal] = Field([], description='Test number list', min_length=1)
     """
     Test number list
     """
-    @rosetta_condition
-    def cardinality_testType2Value1(self):
-        return check_cardinality(self.testType2Value1, 1, None)
-    
-    testType2Value2: Optional[datetime.date] = Field(None, description="Test date")
+    testType2Value2: Optional[datetime.date] = Field(None, description='Test date')
     """
     Test date
     """
-    testEnum: Optional[com.rosetta.test.model.TestEnum.TestEnum] = Field(None, description="Optional test enum")
+    testEnum: Optional[com.rosetta.test.model.TestEnum.TestEnum] = Field(None, description='Optional test enum')
     """
     Optional test enum
     """'''
-        assertTrue(python.toString.contains(expectedTestType))
-        assertTrue(python.toString.contains(expectedTestType2))
+        assertTrue(python.toString.contains(expectedTestType), "expectedTestType\n" + expectedTestType + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedTestType2), "expectedTestType\n" + expectedTestType2 + "\npython\n" + python)
     }        
     
     @Test
@@ -602,11 +587,11 @@ class ModelObjectGeneratorTest {
     """
     Provides an abstract base class shared by Price and Quantity.
     """
-    amount: Decimal = Field(..., description="Specifies an amount to be qualified and used in a Price or Quantity definition.")
+    amount: Decimal = Field(..., description='Specifies an amount to be qualified and used in a Price or Quantity definition.')
     """
     Specifies an amount to be qualified and used in a Price or Quantity definition.
     """
-    unitOfAmount: com.rosetta.test.model.UnitType.UnitType = Field(..., description="Qualifies the unit by which the amount is measured.")
+    unitOfAmount: Annotated[com.rosetta.test.model.UnitType.UnitType, com.rosetta.test.model.UnitType.UnitType.serializer(), com.rosetta.test.model.UnitType.UnitType.validator()] = Field(..., description='Qualifies the unit by which the amount is measured.')
     """
     Qualifies the unit by which the amount is measured.
     """'''
@@ -616,7 +601,7 @@ class ModelObjectGeneratorTest {
     """
     Defines the unit to be used for price, quantity, or other purposes
     """
-    currency: Optional[str] = Field(None, description="Defines the currency to be used as a unit for a price, quantity, or other purpose.")
+    currency: Optional[str] = Field(None, description='Defines the currency to be used as a unit for a price, quantity, or other purpose.')
     """
     Defines the currency to be used as a unit for a price, quantity, or other purpose.
     """'''
@@ -626,17 +611,17 @@ class ModelObjectGeneratorTest {
     """
     Specifies a quantity to be associated to a financial product, for example a trade amount or a cashflow amount resulting from a trade.
     """
-    multiplier: Optional[Decimal] = Field(None, description="Defines the number to be multiplied by the amount to derive a total quantity.")
+    multiplier: Optional[Decimal] = Field(None, description='Defines the number to be multiplied by the amount to derive a total quantity.')
     """
     Defines the number to be multiplied by the amount to derive a total quantity.
     """
-    multiplierUnit: Optional[com.rosetta.test.model.UnitType.UnitType] = Field(None, description="Qualifies the multiplier with the applicable unit. For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).")
+    multiplierUnit: Optional[Annotated[com.rosetta.test.model.UnitType.UnitType, com.rosetta.test.model.UnitType.UnitType.serializer(), com.rosetta.test.model.UnitType.UnitType.validator()]] = Field(None, description='Qualifies the multiplier with the applicable unit. For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).')
     """
     Qualifies the multiplier with the applicable unit.  For example in the case of the Coal (API2) CIF ARA (ARGUS-McCloskey) Futures Contract on the CME, where the unitOfAmount would be contracts, the multiplier would 1,000 and the mulitiplier Unit would be 1,000 MT (Metric Tons).
     """'''
-        assertTrue(python.toString.contains(expectedMeasureBase))
-        assertTrue(python.toString.contains(expectedUnitType))
-        assertTrue(python.toString.contains(expectedQuantity))
+        assertTrue(python.toString.contains(expectedMeasureBase), "expected\n" + expectedMeasureBase + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedUnitType), "expected\n" + expectedUnitType + "\npython\n" + python)
+        assertTrue(python.toString.contains(expectedQuantity), "expected\n" + expectedQuantity + "\npython\n" + python)
     }
 
     @Test
@@ -648,7 +633,7 @@ class ModelObjectGeneratorTest {
 
         type TestType2 extends TestType3:
             TestType2Value1 number (0..1) <"Test number">
-            TestType2Value2 date (0..*) <"Test date">
+            TestType2Value2 date (1..*) <"Test date">
 
         type TestType3:
             TestType3Value1 string (0..1) <"Test string">
@@ -656,35 +641,32 @@ class ModelObjectGeneratorTest {
         '''.generatePython
        
         val expectedTestType = '''class TestType(TestType2):
-    TestTypeValue1: str = Field(..., description="Test string")
+    TestTypeValue1: str = Field(..., description='Test string')
     """
     Test string
     """
-    TestTypeValue2: Optional[int] = Field(None, description="Test int")
+    TestTypeValue2: Optional[int] = Field(None, description='Test int')
     """
     Test int
     """'''
         val expectedTestType2 ='''class TestType2(TestType3):
-    TestType2Value1: Optional[Decimal] = Field(None, description="Test number")
+    TestType2Value1: Optional[Decimal] = Field(None, description='Test number')
     """
     Test number
     """
-    TestType2Value2: List[datetime.date] = Field([], description="Test date")
+    TestType2Value2: list[datetime.date] = Field([], description='Test date', min_length=1)
     """
     Test date
     """'''
         val expectedTestType3 = '''class TestType3(BaseDataClass):
-    TestType3Value1: Optional[str] = Field(None, description="Test string")
+    TestType3Value1: Optional[str] = Field(None, description='Test string')
     """
     Test string
     """
-    TestType4Value2: List[int] = Field([], description="Test int")
+    TestType4Value2: list[int] = Field([], description='Test int', min_length=1)
     """
     Test int
-    """
-    @rosetta_condition
-    def cardinality_TestType4Value2(self):
-        return check_cardinality(self.TestType4Value2, 1, None)'''
+    """'''
         
         assertTrue(python.toString.contains(expectedTestType)) 
         assertTrue(python.toString.contains(expectedTestType2)) 
@@ -697,7 +679,7 @@ class ModelObjectGeneratorTest {
             field1 string (0..1) <"Test string field 1">
             field2 string (0..1) <"Test string field 2">
             field3 number (0..1) <"Test number field 3">
-            field4 number (0..*) <"Test number field 4">
+            field4 number (1..*) <"Test number field 4">
             condition BusinessCentersChoice: <"Choice rule to represent an FpML choice construct.">
                     required choice field1, field2
         '''.generatePython
@@ -708,30 +690,30 @@ class ModelObjectGeneratorTest {
     """
     Test type with one-of condition.
     """
-    field1: Optional[str] = Field(None, description="Test string field 1")
+    field1: Optional[str] = Field(None, description='Test string field 1')
     """
     Test string field 1
     """
-    field2: Optional[str] = Field(None, description="Test string field 2")
+    field2: Optional[str] = Field(None, description='Test string field 2')
     """
     Test string field 2
     """
-    field3: Optional[Decimal] = Field(None, description="Test number field 3")
+    field3: Optional[Decimal] = Field(None, description='Test number field 3')
     """
     Test number field 3
     """
-    field4: List[Decimal] = Field([], description="Test number field 4")
+    field4: list[Decimal] = Field([], description='Test number field 4', min_length=1)
     """
     Test number field 4
     """
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_BusinessCentersChoice(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'field1', 'field2', necessity=True)'''
+        return rune_check_one_of(self, 'field1', 'field2', necessity=True)'''
         assertTrue(types.contains(expected))
     }
 
@@ -741,7 +723,7 @@ class ModelObjectGeneratorTest {
             field1 string (0..1) <"Test string field 1">
             field2 string (0..1) <"Test string field 2">
             field3 number (0..1) <"Test number field 3">
-            field4 number (0..*) <"Test number field 4">
+            field4 number (1..*) <"Test number field 4">
             condition BusinessCentersChoice: <"Choice rule to represent an FpML choice construct.">
                     if field1 exists
                             then field3 > 0
@@ -751,37 +733,37 @@ class ModelObjectGeneratorTest {
     """
     Test type with one-of condition.
     """
-    field1: Optional[str] = Field(None, description="Test string field 1")
+    field1: Optional[str] = Field(None, description='Test string field 1')
     """
     Test string field 1
     """
-    field2: Optional[str] = Field(None, description="Test string field 2")
+    field2: Optional[str] = Field(None, description='Test string field 2')
     """
     Test string field 2
     """
-    field3: Optional[Decimal] = Field(None, description="Test number field 3")
+    field3: Optional[Decimal] = Field(None, description='Test number field 3')
     """
     Test number field 3
     """
-    field4: List[Decimal] = Field([], description="Test number field 4")
+    field4: list[Decimal] = Field([], description='Test number field 4', min_length=1)
     """
     Test number field 4
     """
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_BusinessCentersChoice(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
         def _then_fn0():
-            return all_elements(rosetta_resolve_attr(self, "field3"), ">", 0)
+            return rune_all_elements(rune_resolve_attr(self, "field3"), ">", 0)
         
         def _else_fn0():
             return True
         
-        return if_cond_fn(rosetta_attr_exists(rosetta_resolve_attr(self, "field1")), _then_fn0, _else_fn0)'''
-        assertTrue(python.toString.contains(expected))
+        return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "field1")), _then_fn0, _else_fn0)'''
+        assertTrue(python.toString.contains(expected), "expected\n:" + expected + "\npython\n" + python)
     }
 
     @Test
@@ -806,47 +788,47 @@ class ModelObjectGeneratorTest {
                     or (intValue2 exists and intValue1 exists and intValue1 is absent)'''.generatePython
 
         val expectedA = '''class A(BaseDataClass):
-    a0: Optional[int] = Field(None, description="")
-    a1: Optional[int] = Field(None, description="")
+    a0: Optional[int] = Field(None, description='')
+    a1: Optional[int] = Field(None, description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_(self):
         item = self
-        return rosetta_check_one_of(self, 'a0', 'a1', necessity=True)'''
+        return rune_check_one_of(self, 'a0', 'a1', necessity=True)'''
         
         val expectedB = '''class B(BaseDataClass):
-    intValue1: Optional[int] = Field(None, description="")
-    intValue2: Optional[int] = Field(None, description="")
-    aValue: com.rosetta.test.model.A.A = Field(..., description="")
+    intValue1: Optional[int] = Field(None, description='')
+    intValue2: Optional[int] = Field(None, description='')
+    aValue: Annotated[com.rosetta.test.model.A.A, com.rosetta.test.model.A.A.serializer(), com.rosetta.test.model.A.A.validator()] = Field(..., description='')
     
-    @rosetta_condition
+    @rune_condition
     def condition_0_Rule(self):
         item = self
-        return all_elements(rosetta_resolve_attr(self, "intValue1"), "<", 100)
+        return rune_all_elements(rune_resolve_attr(self, "intValue1"), "<", 100)
     
-    @rosetta_condition
+    @rune_condition
     def condition_1_OneOrTwo(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
+        return rune_check_one_of(self, 'intValue1', 'intValue2', necessity=False)
     
-    @rosetta_condition
+    @rune_condition
     def condition_2_ReqOneOrTwo(self):
         """
         Choice rule to represent an FpML choice construct.
         """
         item = self
-        return rosetta_check_one_of(self, 'intValue1', 'intValue2', necessity=True)
+        return rune_check_one_of(self, 'intValue1', 'intValue2', necessity=True)
     
-    @rosetta_condition
+    @rune_condition
     def condition_3_SecondOneOrTwo(self):
         """
         FpML specifies a choice between adjustedDate and [unadjustedDate (required), dateAdjutsments (required), adjustedDate (optional)].
         """
         item = self
-        return ((rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(self, "aValue"), "a0")) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))) or ((rosetta_attr_exists(rosetta_resolve_attr(self, "intValue2")) and rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1"))) and (not rosetta_attr_exists(rosetta_resolve_attr(self, "intValue1")))))'''
+        return ((rune_attr_exists(rune_resolve_attr(rune_resolve_attr(self, "aValue"), "a0")) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and rune_attr_exists(rune_resolve_attr(self, "intValue1")))) or ((rune_attr_exists(rune_resolve_attr(self, "intValue2")) and rune_attr_exists(rune_resolve_attr(self, "intValue1"))) and (not rune_attr_exists(rune_resolve_attr(self, "intValue1")))))'''
 
         assertTrue(python.toString.contains(expectedA))
         assertTrue(python.toString.contains(expectedB))

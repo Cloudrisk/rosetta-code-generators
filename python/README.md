@@ -22,7 +22,7 @@ The Python package requires Python version 3.10+.
 - `src/main/resources`  - the package and source for building the Python Rosetta Runtime library used by the generated code
 - `src/test`  - Java/Xtend code to run JUnit tests on the code generation process
 - `build/build_cdm.sh` - used to create a Python package from code generated using CDM Rune definitions
-- `build/resources` - Rune source used to generate inputs to Python (pytest) based unit tests
+- `build/resources` - configuration scripts to setup and tear down the Python unit testing environment
 - `test` - Python unit tests and scripts to run the tests
 
 # Generation 
@@ -54,7 +54,7 @@ mkdir -p [CODEGEN]/.m2
 mkdir -p [CODEGEN]/github/REGnosys
 ```
 
-2. Fork and clone the Rosetta CDM repository 
+2. Fork and clone the generator 
 
 Fork a copy from `https://github.com/REGnosys/rosetta-code-generators` ([MYREPO])
 
@@ -63,83 +63,101 @@ cd [CODEGEN]/github/REGnosys/
 git clone https://github.com/[MYREPO]/rosetta-code-generators.git
 ```
 
-3. Download settings.xml from the below link to .m2 directory and update for your repository path
-
-[settings.xml](https://github.com/REGnosys/rosetta-code-generators/issues/149#issuecomment-1151680983)
-
-save to [CODEGEN]/.m2/settings.xml
-
-Edit settings.xml and update <localRepository> to [CODEGEN]/.m2/repository. 
-
-```
-<localRepository>[CODEGEN]/.m2/repository</localRepository>
-```
-
-4. Run a clean maven install 
-
-```
-cd [CODEGEN]/github/REGnosys/rosetta-code-generators
-mvn -s [CODEGEN]/.m2/settings.xml clean install
-```
-All the tests should pass.
-
-5. Create a Python project
-
-```
-mvn archetype:generate -DgroupId=com.regnosys.rosetta.code-generators  -DartifactId=python
-```
-Take the defaults for all of the prompts
-
-6. Fork and clone the Python codebase and run a maven clean install
-
-Fork a copy from https://github.com/Cloudrisk/isda-cdm-python.git to your own repo referred to as [MYPYTHONREPO] 
+3. Run a clean maven install 
 
 ```
 cd [CODEGEN]/github/REGnosys/rosetta-code-generators/python
-git clone https://github.com/[MYPYTHONREPO]/isda-cdm-python.git
+mvn -s clean install
 ```
-Copy the contents of the repo to the working directory
+All the tests should pass.
 
+More build and testing instructions can be found in [BUILDANDTEST.md](./BUILDANDTEST.md)
+
+# Reading From and Writing To a String
+
+The generated Python code can deserialize and serialize an object.
+
+## Deserializing from a string
+
+To deserialize from a string and create a object of the model specified in the string invoke the function:
+
+`BaseDataClass.rune_deserialize` with the following parameters
+
+    rune_json (str): A JSON string.
+
+    validate_model (bool, optional): Validate the model after
+    deserialization. It checks also all Rune type constraints. Defaults
+    to True.
+
+    strict (bool, optional): Perform strict attribute validation.
+    Defaults to True.
+
+    raise_validation_errors (bool, optional): Raise an exception in
+    case a validation error has occurred. Defaults to True.
+
+    Returns:
+      BaseModel: The Rune model.
+
+To serialize from an object ("[obj]") of a generated class, invoke the function:
+
+`[obj].rune_serialize` with the following parameters:
+
+    validate_model (bool, optional): Validate the model prior
+    serialization. It checks also all Rune type constraints.
+    Defaults to True.
+
+    strict (bool, optional): Perform strict attribute validation. 
+    Defaults to True.
+
+    raise_validation_errors (bool, optional): Raise an exception in
+    case a validation error has occurred. Defaults to True.
+
+    indent (int | None, optional): Indentation to use in the JSON
+    output. If None is passed, the output will be compact. Defaults to
+    None.
+
+    include (IncEx | None, optional): Field(s) to include in the JSON
+    output. Defaults to None.
+
+    exclude (IncEx | None, optional): Field(s) to exclude from the
+    JSON output. Defaults to None.
+
+    context (Any | None, optional): Additional context to pass to the
+    serializer. Defaults to None.
+
+    by_alias (bool, optional): Whether to serialize using field
+    aliases. Defaults to False.
+
+    exclude_unset (bool, optional): Whether to exclude fields that
+    have not been explicitly set. Defaults to True.
+
+    exclude_defaults (bool, optional): Whether to exclude fields that
+    are set to their default value. Defaults to True.
+
+    exclude_none (bool, optional): Whether to exclude fields that have
+    a value of `None`. Defaults to False.
+
+    round_trip (bool, optional): If True, dumped values should be
+    valid as input for non-idempotent types such as Json[T]. Defaults to
+    False.
+
+    warnings (bool | Literal['none', 'warn', 'error'], optional): How
+    to handle serialization errors. False/"none" ignores them,
+    True/"warn" logs errors, "error" raises a
+    PydanticSerializationError`. Defaults to True.
+
+    serialize_as_any (bool, optional): Whether to serialize fields
+    with duck-typing serialization behavior. Defaults to False.
+
+    Returns:
+      A string.
+
+# To Generate CDM from Rune
+
+Use this script to generated the Python version of CDM
+```sh
+build/build_cdm.sh
 ```
-cp -Rf ./isda-cdm-python/***** ./
-cp -Rf ./isda-cdm-python/.***** ./
-```
+This will generate CDM from the master branch of the [FINOS Repo](https://github.com/finos/common-domain-model)
 
-Run a maven clean install
-```
-mvn -s [CODEGEN]/.m2/settings.xml clean install
-```
-(tbc but likely to fail)
-
-7. Update properties in the parent `pom.xml` (located in `[CODEGEN]/github/REGnosys/rosetta-code-generators`)
-
-Change the Rosetta versions to those currently supported in the Python code:
-
-- set `rosetta.dsl.version` to 4.44.0 in all places
-  `<rosetta.dsl.version>4.44.0</rosetta.dsl.version>`
-        
-- set `rosetta.bundle.version` to `3.13.0`
-  `<rosetta.bundle.version>3.13.0</rosetta.bundle.version>`
-
-Optionally comment out modules for other languages to speed up compilation and runtime
-
-```
-    <!--mdule>sample</!module-->
-    <!--module>daml</!module-->
-    <!--mdule>default-cdm-generators</!module-->
-    <!--module>typescript</module-->
-    <!--module>scala</module-->
-    <!--module>golang</module-->
-    <!--module>c-sharp</module-->
-```
-8. Open in eclipse  
-
-- Import an existing maven project
-- Update maven user preferences to use settings.xml as created above: `[CODEGEN]/.m2/settings.xml`
-- Update java version to 11
-
-8. To generate the Python implementation of CDM
-
-Run `PythonFilesGeneratorTest.xtend` as a JUnit test
-
-There should be one test which passes
+To use a different version of CDM, update CDM_VERSION in the script.

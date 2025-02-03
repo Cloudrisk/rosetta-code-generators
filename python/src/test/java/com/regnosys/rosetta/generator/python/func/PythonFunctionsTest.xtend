@@ -55,12 +55,12 @@ class PythonFunctionsTest {
             
             
             def _then_fn0():
-                return (-1 * rosetta_resolve_attr(self, "arg"))
+                return (-1 * rune_resolve_attr(self, "arg"))
             
             def _else_fn0():
-                return rosetta_resolve_attr(self, "arg")
+                return rune_resolve_attr(self, "arg")
             
-            result =  if_cond_fn(all_elements(rosetta_resolve_attr(self, "arg"), "<", 0), _then_fn0, _else_fn0)
+            result =  if_cond_fn(rune_all_elements(rune_resolve_attr(self, "arg"), "<", 0), _then_fn0, _else_fn0)
             
             
             return result
@@ -109,8 +109,8 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            resultVector = rosetta_resolve_attr(self, "vector")
-            resultVector.add_rosetta_attr(self, rosetta_resolve_attr(self, "value"))
+            resultVector = rune_resolve_attr(self, "vector")
+            resultVector.add_rune_attr(self, rune_resolve_attr(self, "value"))
             
             
             return resultVector
@@ -252,14 +252,14 @@ class PythonFunctionsTest {
             
             # conditions
             
-            @rosetta_local_condition(_pre_registry)
+            @rune_local_condition(_pre_registry)
             def condition_0_CurrencyOrFinancialUnitExists(self):
-                return (rosetta_attr_exists(rosetta_resolve_attr(self, "currency")) or rosetta_attr_exists(rosetta_resolve_attr(self, "financialUnit")))
+                return (rune_attr_exists(rune_resolve_attr(self, "currency")) or rune_attr_exists(rune_resolve_attr(self, "financialUnit")))
             # Execute all registered conditions
             execute_local_conditions(_pre_registry, 'Pre-condition')
             
-            unitType = _get_rosetta_object('UnitType', 'currency', rosetta_resolve_attr(self, "currency"))
-            unitType = set_rosetta_attr(rosetta_resolve_attr(self, 'unitType'), 'financialUnit', rosetta_resolve_attr(self, "financialUnit"))
+            unitType = _get_rune_object('UnitType', 'currency', rune_resolve_attr(self, "currency"))
+            unitType = set_rune_attr(rune_resolve_attr(self, 'unitType'), 'financialUnit', rune_resolve_attr(self, "financialUnit"))
             
             
             return unitType
@@ -323,9 +323,9 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            reset = _get_rosetta_object('Reset', 'resetValue', rosetta_resolve_attr(rosetta_resolve_attr(self, "observation"), "observedValue"))
-            reset = set_rosetta_attr(rosetta_resolve_attr(self, 'reset'), 'resetDate', rosetta_resolve_attr(self, "date"))
-            reset.add_rosetta_attr(rosetta_resolve_attr(rosetta_resolve_attr(self, reset), 'observations'), rosetta_resolve_attr(self, "observation"))
+            reset = _get_rune_object('Reset', 'resetValue', rune_resolve_attr(rune_resolve_attr(self, "observation"), "observedValue"))
+            reset = set_rune_attr(rune_resolve_attr(self, 'reset'), 'resetDate', rune_resolve_attr(self, "date"))
+            reset.add_rune_attr(rune_resolve_attr(rune_resolve_attr(self, reset), 'observations'), rune_resolve_attr(self, "observation"))
             
             
             return reset
@@ -380,7 +380,7 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            filteredQuantities = rosetta_filter(rosetta_resolve_attr(self, "quantities"), lambda item: all_elements(rosetta_resolve_attr(rosetta_resolve_attr(self, "quantities"), "unit"), "=", rosetta_resolve_attr(self, "unit")))
+            filteredQuantities = rune_filter(rune_resolve_attr(self, "quantities"), lambda item: rune_all_elements(rune_resolve_attr(rune_resolve_attr(self, "quantities"), "unit"), "=", rune_resolve_attr(self, "unit")))
             
             
             return filteredQuantities
@@ -451,42 +451,42 @@ class PythonFunctionsTest {
             
             
             def _then_fn5():
-                return Min(rosetta_resolve_attr(self, "n1"), rosetta_resolve_attr(self, "n2"))
+                return Min(rune_resolve_attr(self, "n1"), rune_resolve_attr(self, "n2"))
             
             def _else_fn5():
                 return True
             
             def _then_fn4():
-                return Max(rosetta_resolve_attr(self, "n1"), rosetta_resolve_attr(self, "n2"))
+                return Max(rune_resolve_attr(self, "n1"), rune_resolve_attr(self, "n2"))
             
             def _else_fn4():
-                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "MIN")), _then_fn5, _else_fn5)
+                return if_cond_fn(rune_all_elements(rune_resolve_attr(self, "op"), "=", rune_resolve_attr(ArithmeticOperationEnum, "MIN")), _then_fn5, _else_fn5)
             
             def _then_fn3():
-                return (rosetta_resolve_attr(self, "n1") / rosetta_resolve_attr(self, "n2"))
+                return (rune_resolve_attr(self, "n1") / rune_resolve_attr(self, "n2"))
             
             def _else_fn3():
-                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "MAX")), _then_fn4, _else_fn4)
+                return if_cond_fn(rune_all_elements(rune_resolve_attr(self, "op"), "=", rune_resolve_attr(ArithmeticOperationEnum, "MAX")), _then_fn4, _else_fn4)
             
             def _then_fn2():
-                return (rosetta_resolve_attr(self, "n1") * rosetta_resolve_attr(self, "n2"))
+                return (rune_resolve_attr(self, "n1") * rune_resolve_attr(self, "n2"))
             
             def _else_fn2():
-                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "DIVIDE")), _then_fn3, _else_fn3)
+                return if_cond_fn(rune_all_elements(rune_resolve_attr(self, "op"), "=", rune_resolve_attr(ArithmeticOperationEnum, "DIVIDE")), _then_fn3, _else_fn3)
             
             def _then_fn1():
-                return (rosetta_resolve_attr(self, "n1") - rosetta_resolve_attr(self, "n2"))
+                return (rune_resolve_attr(self, "n1") - rune_resolve_attr(self, "n2"))
             
             def _else_fn1():
-                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "MULTIPLY")), _then_fn2, _else_fn2)
+                return if_cond_fn(rune_all_elements(rune_resolve_attr(self, "op"), "=", rune_resolve_attr(ArithmeticOperationEnum, "MULTIPLY")), _then_fn2, _else_fn2)
             
             def _then_fn0():
-                return (rosetta_resolve_attr(self, "n1") + rosetta_resolve_attr(self, "n2"))
+                return (rune_resolve_attr(self, "n1") + rune_resolve_attr(self, "n2"))
             
             def _else_fn0():
-                return if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "SUBTRACT")), _then_fn1, _else_fn1)
+                return if_cond_fn(rune_all_elements(rune_resolve_attr(self, "op"), "=", rune_resolve_attr(ArithmeticOperationEnum, "SUBTRACT")), _then_fn1, _else_fn1)
             
-            result =  if_cond_fn(all_elements(rosetta_resolve_attr(self, "op"), "=", rosetta_resolve_attr(ArithmeticOperationEnum, "ADD")), _then_fn0, _else_fn0)
+            result =  if_cond_fn(rune_all_elements(rune_resolve_attr(self, "op"), "=", rune_resolve_attr(ArithmeticOperationEnum, "ADD")), _then_fn0, _else_fn0)
             
             
             return result
@@ -537,7 +537,7 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            filteredQuantities = rosetta_filter(rosetta_resolve_attr(self, "quantities"), lambda item: rosetta_attr_exists(rosetta_resolve_attr(rosetta_resolve_attr(item, "unit"), "currency")))
+            filteredQuantities = rune_filter(rune_resolve_attr(self, "quantities"), lambda item: rune_attr_exists(rune_resolve_attr(rune_resolve_attr(item, "unit"), "currency")))
             
             
             return filteredQuantities
@@ -588,13 +588,13 @@ class PythonFunctionsTest {
             
             
             def _then_fn0():
-                return rosetta_resolve_attr(self, "inp1")
+                return rune_resolve_attr(self, "inp1")
             
             def _else_fn0():
                 return True
             
-            Alias = if_cond_fn(all_elements(rosetta_resolve_attr(self, "inp1"), "<", 0), _then_fn0, _else_fn0)
-            result =  rosetta_resolve_attr(self, "Alias")
+            Alias = if_cond_fn(rune_all_elements(rune_resolve_attr(self, "inp1"), "<", 0), _then_fn0, _else_fn0)
+            result =  rune_resolve_attr(self, "Alias")
             
             
             return result
@@ -654,9 +654,9 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            Alias1 = rosetta_resolve_attr(rosetta_resolve_attr(self, "a"), "valueA")
-            Alias2 = rosetta_resolve_attr(rosetta_resolve_attr(self, "b"), "valueB")
-            c = _get_rosetta_object('C', 'valueC', (rosetta_resolve_attr(self, "Alias1") * rosetta_resolve_attr(self, "Alias2")))
+            Alias1 = rune_resolve_attr(rune_resolve_attr(self, "a"), "valueA")
+            Alias2 = rune_resolve_attr(rune_resolve_attr(self, "b"), "valueB")
+            c = _get_rune_object('C', 'valueC', (rune_resolve_attr(self, "Alias1") * rune_resolve_attr(self, "Alias2")))
             
             
             return c
@@ -732,8 +732,8 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            identifiers = _get_rosetta_object('ObservationIdentifier', 'observable', _get_rosetta_object('Observable', 'rateOption', rosetta_resolve_attr(rosetta_resolve_attr(rosetta_resolve_attr(rosetta_resolve_attr(self, "payout"), "rateSpecification"), "floatingRate"), "rateOption")))
-            identifiers = set_rosetta_attr(rosetta_resolve_attr(self, 'identifiers'), 'observationDate', rosetta_resolve_attr(self, "date"))
+            identifiers = _get_rune_object('ObservationIdentifier', 'observable', _get_rune_object('Observable', 'rateOption', rune_resolve_attr(rune_resolve_attr(rune_resolve_attr(rune_resolve_attr(self, "payout"), "rateSpecification"), "floatingRate"), "rateOption")))
+            identifiers = set_rune_attr(rune_resolve_attr(self, 'identifiers'), 'observationDate', rune_resolve_attr(self, "date"))
             
             
             return identifiers
@@ -786,13 +786,13 @@ class PythonFunctionsTest {
             
             # conditions
             
-            @rosetta_local_condition(_pre_registry)
+            @rune_local_condition(_pre_registry)
             def condition_0_PositiveNearest(self):
-                return all_elements(rosetta_resolve_attr(self, "nearest"), ">", 0)
+                return rune_all_elements(rune_resolve_attr(self, "nearest"), ">", 0)
             # Execute all registered conditions
             execute_local_conditions(_pre_registry, 'Pre-condition')
             
-            roundedValue = rosetta_resolve_attr(self, "roundedValue")
+            roundedValue = rune_resolve_attr(self, "roundedValue")
             
             
             return roundedValue
@@ -846,17 +846,17 @@ class PythonFunctionsTest {
             
             # conditions
             
-            @rosetta_local_condition(_pre_registry)
+            @rune_local_condition(_pre_registry)
             def condition_0_PositiveNearest(self):
-                return all_elements(rosetta_resolve_attr(self, "nearest"), ">", 0)
+                return rune_all_elements(rune_resolve_attr(self, "nearest"), ">", 0)
             
-            @rosetta_local_condition(_pre_registry)
+            @rune_local_condition(_pre_registry)
             def condition_1_valueNegative(self):
-                return all_elements(rosetta_resolve_attr(self, "value"), "<", 0)
+                return rune_all_elements(rune_resolve_attr(self, "value"), "<", 0)
             # Execute all registered conditions
             execute_local_conditions(_pre_registry, 'Pre-condition')
             
-            roundedValue = rosetta_resolve_attr(self, "roundedValue")
+            roundedValue = rune_resolve_attr(self, "roundedValue")
             
             
             return roundedValue
@@ -906,22 +906,22 @@ class PythonFunctionsTest {
             self = inspect.currentframe()
             
             
-            interestRatePayout = rosetta_resolve_attr(self, "interestRatePayout")
+            interestRatePayout = rune_resolve_attr(self, "interestRatePayout")
             
             # post-conditions
             
-            @rosetta_local_condition(_post_registry)
+            @rune_local_condition(_post_registry)
             def condition_0_InterestRatePayoutTerms(self):
                 """
                 Interest rate payout must inherit terms from the Master Confirmation Agreement when it exists.
                 """
                 def _then_fn0():
-                    return all_elements(rosetta_resolve_attr(rosetta_resolve_attr(self, "interestRatePayout"), "paymentDates"), "=", rosetta_resolve_attr(rosetta_resolve_attr(self, "masterConfirmation"), "equityCashSettlementDates"))
+                    return rune_all_elements(rune_resolve_attr(rune_resolve_attr(self, "interestRatePayout"), "paymentDates"), "=", rune_resolve_attr(rune_resolve_attr(self, "masterConfirmation"), "equityCashSettlementDates"))
                 
                 def _else_fn0():
                     return True
                 
-                return if_cond_fn(rosetta_attr_exists(rosetta_resolve_attr(self, "masterConfirmation")), _then_fn0, _else_fn0)
+                return if_cond_fn(rune_attr_exists(rune_resolve_attr(self, "masterConfirmation")), _then_fn0, _else_fn0)
             # Execute all registered post-conditions
             execute_local_conditions(_post_registry, 'Post-condition')
             
@@ -987,7 +987,7 @@ def DayCountFraction(interestRatePayout: InterestRatePayout, date: datetime.date
     self = inspect.currentframe()
     
     
-    a = rosetta_resolve_attr(self, "a")
+    a = rune_resolve_attr(self, "a")
     
     
     return a'''
