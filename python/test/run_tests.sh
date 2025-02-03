@@ -40,7 +40,7 @@ $PYEXE -m pip install python_rosetta_dsl-0.0.0-py3-none-any.whl
 # run tests
 echo "***** run tests"
 cd $MY_PATH
-$PYEXE -m pytest -p no:cacheprovider $MY_PATH/rosetta_tests 
+$PYEXE -m pytest -p no:cacheprovider $MY_PATH/python_unit_tests/semantics 
 
 echo "***** cleanup"
 
