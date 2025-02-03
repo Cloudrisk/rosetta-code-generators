@@ -51,3 +51,4 @@ __pycache__
 **/*.egg-info
 **/rune.runtime-*.*.*-py3-none-any.whl
 **/test_helper-0.0.0-py3-none-any.whl
+**/test/serialization_tests/rune-common
