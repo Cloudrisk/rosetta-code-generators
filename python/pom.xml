@@ -16,7 +16,7 @@
     <description>Generators to create python for rosetta</description>
     <properties>
         <!-- used by PythonFilesGeneratorTest::generatePython to generate python from a rosetta source --> 
-        <cdm.rosetta.source.path>build/common-domain-model/rosetta-source/src/main/rosetta</cdm.rosetta.source.path>
+        <cdm.rosetta.source.path>[Path to Rune]</cdm.rosetta.source.path>
         <cdm.python.output.path>target/python-cdm</cdm.python.output.path>
         <unittest.rosetta.source.path>test/python_unit_tests/rosetta</unittest.rosetta.source.path>
         <unittest.python.output.path>target/python/unit_tests</unittest.python.output.path>

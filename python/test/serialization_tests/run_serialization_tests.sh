@@ -52,4 +52,4 @@ $PYEXE -m pytest -p no:cacheprovider .
 echo "***** cleanup"
 
 deactivate
-source $MY_PATH/$BUILDPATH/cleanup_python_env.sh
+#source $MY_PATH/$BUILDPATH/cleanup_python_env.sh

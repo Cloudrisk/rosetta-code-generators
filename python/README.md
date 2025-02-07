@@ -19,15 +19,14 @@ The Python package requires Python version 3.10+.
 
 - `README.md` - this file, for documentation purposes
 - `src/main`  - Java/Xtend code to generate Python from Rune
-- `src/main/resources`  - the package and source for building the Python Rosetta Runtime library used by the generated code
 - `src/test`  - Java/Xtend code to run JUnit tests on the code generation process
+- `build` - configuration scripts to setup and tear down the Python unit testing environment
 - `build/build_cdm.sh` - used to create a Python package from code generated using CDM Rune definitions
-- `build/resources` - configuration scripts to setup and tear down the Python unit testing environment
 - `test` - Python unit tests and scripts to run the tests
 
 # Generation 
 
-At present, the only way to generate the Python code itself is by running a unit test in a development environment.
+At present, the only way to generate Python code from the generator in this development environment is by running a unit test.
 
 The following instructions are based on directions found at:
 
@@ -50,7 +49,7 @@ See below and [BUILDANDTEST.md](BUILDANDTEST.md) for instructions on building an
 
 1. Create a directory structure hereafter referred to as [CODEGEN]
 ```
-mkdir -p [CODEGEN]/.m2
+mkdir -p [CODEGEN]
 mkdir -p [CODEGEN]/github/REGnosys
 ```
 
