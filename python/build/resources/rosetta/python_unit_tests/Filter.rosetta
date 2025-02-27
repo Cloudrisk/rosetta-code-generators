@@ -5,9 +5,8 @@ type FilterItem:
 
 type FilterTest : <"Test filter operation condition">
     fis FilterItem (1..*)
-    target int (1..1)
     condition Test:
-        if [fis filter i [i->fi = target]] count = 1
-        then True
+        if fis filter item->fi = 5
+    	then True
         else
             False

@@ -31,4 +31,4 @@ echo "**** Install CDM ****"
 # run tests
 $PYEXE -m pytest -p no:cacheprovider $MYPATH/runtime_tests $MYPATH/rosetta_tests 
 
-rm -rf .pytest
+#rm -rf .pytest

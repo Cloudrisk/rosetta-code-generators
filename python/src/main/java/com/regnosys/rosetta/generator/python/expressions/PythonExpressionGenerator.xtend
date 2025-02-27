@@ -521,7 +521,12 @@ class PythonExpressionGenerator {
                 if (expr.operator == "<>") {
                     '''any_elements(«generateExpression(expr.left, iflvl,isLambda)», "«expr.operator»", «generateExpression(expr.right, iflvl, isLambda)»)'''
                 } else {
+                	if(isLambda){
                     '''all_elements(«generateExpression(expr.left, iflvl, isLambda)», "«expr.operator»", «generateExpression(expr.right, iflvl, isLambda)»)'''
+                	}
+                	else{
+                    '''all_elements(«generateExpression(expr.left, iflvl, isLambda)», "«expr.operator»", «generateExpression(expr.right, iflvl, isLambda)»)'''
+                	}
                 }
             }
         } else {
