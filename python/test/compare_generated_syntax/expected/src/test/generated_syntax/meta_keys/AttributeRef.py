@@ -13,6 +13,7 @@ from rune.runtime.base_data_class import BaseDataClass
 from rune.runtime.metadata import *
 from rune.runtime.utils import *
 from rune.runtime.conditions import *
+from rune.runtime.func_proxy import *
 __all__ = ['AttributeRef']
 
 

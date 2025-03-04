@@ -68,7 +68,7 @@ class PythonAttributeProcessor {
             throw new Exception("Attribute type is null for " + ra.name + " in class " + rosettaClass.name);
         }
         var attrName = PythonTranslator.mangleName(ra.getName()) // mangle the attribute name if it is a Python keyword
-        val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ')
+        val attrDesc = (ra.definition === null) ? '' : ra.definition.replaceAll('\\s+', ' ').replace("'", "\\'");
         // get the properties / parameters if there are any (applies to string and number)
         val attrProp = new HashMap<String, String>();
         if (attrRType instanceof RStringType) {

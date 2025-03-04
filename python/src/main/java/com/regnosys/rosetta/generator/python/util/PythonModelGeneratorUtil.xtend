@@ -52,6 +52,7 @@ class PythonModelGeneratorUtil {
             from rune.runtime.metadata import *
             from rune.runtime.utils import *
             from rune.runtime.conditions import *
+            from rune.runtime.func_proxy import *
             __all__ = [«"'"+name+"'"»]
             
         '''
@@ -71,6 +72,7 @@ class PythonModelGeneratorUtil {
             from rune.runtime.metadata import *
             from rune.runtime.utils import *
             from rune.runtime.conditions import *
+            from rune.runtime.func_proxy import *
         '''
         imports
     }
